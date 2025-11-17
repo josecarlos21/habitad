@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Users, FileText, Vote as VoteIcon } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { EmptyState } from "@/components/app/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const mockAssemblies = [
     {
@@ -103,14 +105,34 @@ function VotingCard({ vote, assemblyTitle }: { vote: any, assemblyTitle: string 
 }
 
 export default function AsambleasPage() {
-    const activeAssembly = mockAssemblies.find(a => a.status === 'active');
-    const pastAssemblies = mockAssemblies.filter(a => a.status === 'past');
+    const [assemblies, setAssemblies] = React.useState<any[]>([]);
+    const [isLoading, setIsLoading] = React.useState(true);
+
+     React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setAssemblies(mockAssemblies);
+            setIsLoading(false);
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    const activeAssembly = assemblies.find(a => a.status === 'active');
+    const pastAssemblies = assemblies.filter(a => a.status === 'past');
 
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <h1 className="text-2xl font-bold">Asambleas y Votaciones</h1>
 
-            {activeAssembly ? (
+            {isLoading ? (
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader><Skeleton className="h-8 w-1/2" /></CardHeader>
+                        <CardContent><Skeleton className="h-20 w-full" /></CardContent>
+                    </Card>
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                </div>
+            ) : activeAssembly ? (
                 <div className="grid gap-6 lg:grid-cols-2">
                     <div>
                         <Card className="bg-primary/5 dark:bg-primary/10 border-primary/20">
@@ -147,44 +169,43 @@ export default function AsambleasPage() {
                     </div>
                 </div>
             ) : (
-                 <div className="rounded-lg border border-dashed p-8 text-center">
-                    <Users className="h-12 w-12 mx-auto text-muted-foreground" />
-                    <h3 className="mt-4 text-lg font-semibold">No hay asambleas próximas</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">Se te notificará cuando se convoque una nueva asamblea.</p>
-                </div>
+                 <EmptyState
+                    icon={Users}
+                    title="No hay asambleas próximas"
+                    description="Se te notificará cuando se convoque una nueva asamblea."
+                />
             )}
             
-            <div className="mt-8">
-                <h2 className="text-xl font-bold mb-4">Historial de Asambleas</h2>
-                {pastAssemblies.length > 0 ? (
-                    <Accordion type="single" collapsible className="w-full">
-                        {pastAssemblies.map(assembly => (
-                            <AccordionItem value={assembly.id} key={assembly.id}>
-                                <AccordionTrigger>
-                                    <div className="flex flex-col items-start text-left">
-                                        <span className="font-semibold">{assembly.title}</span>
-                                        <span className="text-sm text-muted-foreground">{format(new Date(assembly.date), "dd 'de' MMMM, yyyy", { locale: es })}</span>
-                                    </div>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                     <div className="space-y-4">
-                                        <p className="text-sm text-muted-foreground">{assembly.topics.join(' ')}</p>
-                                         <a href={assembly.docs[0].url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-primary hover:underline">
-                                            <FileText className="h-4 w-4" />
-                                            Ver minuta de la asamblea
-                                        </a>
-                                    </div>
-                                </AccordionContent>
-                            </AccordionItem>
-                        ))}
-                    </Accordion>
-                ) : (
-                    <p className="text-sm text-muted-foreground">No hay asambleas pasadas registradas.</p>
-                )}
-            </div>
+            {!isLoading && (
+                <div className="mt-8">
+                    <h2 className="text-xl font-bold mb-4">Historial de Asambleas</h2>
+                    {pastAssemblies.length > 0 ? (
+                        <Accordion type="single" collapsible className="w-full">
+                            {pastAssemblies.map(assembly => (
+                                <AccordionItem value={assembly.id} key={assembly.id}>
+                                    <AccordionTrigger>
+                                        <div className="flex flex-col items-start text-left">
+                                            <span className="font-semibold">{assembly.title}</span>
+                                            <span className="text-sm text-muted-foreground">{format(new Date(assembly.date), "dd 'de' MMMM, yyyy", { locale: es })}</span>
+                                        </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="space-y-4">
+                                            <p className="text-sm text-muted-foreground">{assembly.topics.join(' ')}</p>
+                                            <a href={assembly.docs[0].url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-primary hover:underline">
+                                                <FileText className="h-4 w-4" />
+                                                Ver minuta de la asamblea
+                                            </a>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                    ) : (
+                        <p className="text-sm text-muted-foreground">No hay asambleas pasadas registradas.</p>
+                    )}
+                </div>
+            )}
         </main>
     );
 }
-
-
-    

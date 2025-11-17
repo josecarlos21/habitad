@@ -74,7 +74,6 @@ export default function PaqueteriaPage() {
                                     </div>
                                 </CardHeader>
                             </Card>
-                        </Card>
                         )
                     })}
                 </div>
