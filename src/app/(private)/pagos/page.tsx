@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,8 +17,8 @@ const statusMap: Record<Invoice['status'], { label: string; icon: React.ElementT
 };
 
 export default function PagosPage() {
-    const dueInvoices = invoices.filter(i => i.status === 'pending' || i.status === 'overdue');
-    const paidInvoices = invoices.filter(i => i.status === 'paid');
+    const dueInvoices: Invoice[] = invoices.filter(i => i.status === 'pending' || i.status === 'overdue');
+    const paidInvoices: Invoice[] = invoices.filter(i => i.status === 'paid');
 
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

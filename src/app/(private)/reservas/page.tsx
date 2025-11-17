@@ -1,8 +1,10 @@
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { amenities } from "@/lib/mocks";
 import { Calendar } from "lucide-react";
+import type { Amenity } from "@/lib/types";
 
 export default function ReservasPage() {
     return (
@@ -10,7 +12,7 @@ export default function ReservasPage() {
             <h1 className="text-2xl font-bold">Reservar Amenidades</h1>
             
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {amenities.map(amenity => (
+                {amenities.map((amenity: Amenity) => (
                     <Card key={amenity.id} className="overflow-hidden flex flex-col">
                         <CardHeader className="p-0">
                             <div className="relative h-48 w-full">

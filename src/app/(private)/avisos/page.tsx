@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { announcements } from "@/lib/mocks";
@@ -20,7 +21,7 @@ export default function AvisosPage() {
             
             {announcements.length > 0 ? (
                 <div className="space-y-6">
-                    {announcements.map(announcement => {
+                    {announcements.map((announcement: Announcement) => {
                         const category = categoryMap[announcement.category];
                         return (
                             <Card key={announcement.id} className={announcement.pinned ? "border-primary" : ""}>
