@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,9 +11,20 @@ import { LogOut, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/app/empty-state";
+import { useToast } from "@/hooks/use-toast";
+import React from "react";
 
 export default function PerfilPage() {
     const { user, isLoading } = useUser();
+    const { toast } = useToast();
+    
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        toast({
+            title: "Perfil Actualizado",
+            description: "Tus datos personales han sido guardados con éxito.",
+        });
+    }
 
     if (isLoading) {
         return <ProfileSkeleton />
@@ -32,29 +44,31 @@ export default function PerfilPage() {
             <h1 className="text-2xl font-bold">Mi Perfil</h1>
             <div className="grid gap-8 md:grid-cols-3">
                 <div className="md:col-span-2">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Información Personal</CardTitle>
-                            <CardDescription>Estos son tus datos personales. Mantenlos actualizados.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="name">Nombre completo</Label>
-                                <Input id="name" defaultValue={user.name} />
+                    <form onSubmit={handleSubmit}>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Información Personal</CardTitle>
+                                <CardDescription>Estos son tus datos personales. Mantenlos actualizados.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="name">Nombre completo</Label>
+                                    <Input id="name" defaultValue={user.name} required/>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="email">Correo electrónico</Label>
+                                    <Input id="email" type="email" defaultValue={user.email} required/>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="phone">Teléfono</Label>
+                                    <Input id="phone" type="tel" defaultValue={user.phone} />
+                                </div>
+                            </CardContent>
+                            <div className="p-6 pt-0">
+                            <Button type="submit">Guardar Cambios</Button>
                             </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="email">Correo electrónico</Label>
-                                <Input id="email" type="email" defaultValue={user.email} />
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="phone">Teléfono</Label>
-                                <Input id="phone" type="tel" defaultValue={user.phone} />
-                            </div>
-                        </CardContent>
-                        <div className="p-6 pt-0">
-                           <Button>Guardar Cambios</Button>
-                        </div>
-                    </Card>
+                        </Card>
+                    </form>
                 </div>
                 <div className="space-y-6">
                     <Card>
@@ -134,7 +148,7 @@ function ProfileSkeleton() {
                                 <div className="space-y-2">
                                     <Skeleton className="h-6 w-32" />
                                     <Skeleton className="h-4 w-20" />
-                                </div>
+                                 </div>
                             </div>
                         </CardHeader>
                         <CardContent>

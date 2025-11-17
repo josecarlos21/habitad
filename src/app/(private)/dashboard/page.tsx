@@ -1,10 +1,11 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowRight, Calendar, Package, QrCode, Wrench } from "lucide-react";
+import { ArrowRight, Calendar, CheckCircle, Package, QrCode, Wrench } from "lucide-react";
 import { announcements, bookings, invoices, tickets, amenities, user } from "@/lib/mocks";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -187,7 +188,7 @@ export default function DashboardPage() {
           title="Tickets de Mantenimiento"
           icon={Wrench}
           isLoading={isLoading}
-          footer={<Button size="sm" variant="outline" className="w-full">Crear Nuevo Ticket</Button>}
+          footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/mantenimiento">Crear Nuevo Ticket</Link></Button>}
           emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes tickets activos.</p>}
         >
              <ul className="space-y-2">

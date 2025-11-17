@@ -1,10 +1,63 @@
 
+"use client";
+
 import Image from "next/image";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { amenities } from "@/lib/mocks";
-import { Calendar } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import type { Amenity } from "@/lib/types";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription, SheetFooter } from "@/components/ui/sheet";
+import { Calendar } from "@/components/ui/calendar";
+import { useToast } from "@/hooks/use-toast";
+
+function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
+    const { toast } = useToast();
+    const [open, setOpen] = React.useState(false);
+    const [date, setDate] = React.useState<Date | undefined>(new Date());
+
+    const handleSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+        toast({
+            title: "Reserva Confirmada",
+            description: `Tu reserva para ${amenity.name} ha sido realizada con éxito.`,
+        });
+        setOpen(false);
+    };
+
+    return (
+        <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+                <Button className="w-full">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    Reservar
+                </Button>
+            </SheetTrigger>
+            <SheetContent>
+                <form onSubmit={handleSubmit}>
+                    <SheetHeader>
+                        <SheetTitle>Reservar: {amenity.name}</SheetTitle>
+                        <SheetDescription>
+                            Selecciona una fecha y horario para tu reserva.
+                        </SheetDescription>
+                    </SheetHeader>
+                    <div className="py-4">
+                        <Calendar
+                            mode="single"
+                            selected={date}
+                            onSelect={setDate}
+                            className="rounded-md border"
+                        />
+                    </div>
+                    <SheetFooter>
+                        <Button type="submit" disabled={!date}>Confirmar Reserva</Button>
+                    </SheetFooter>
+                </form>
+            </SheetContent>
+        </Sheet>
+    )
+}
 
 export default function ReservasPage() {
     return (
@@ -30,10 +83,7 @@ export default function ReservasPage() {
                             <CardDescription className="mt-2 flex-1">{amenity.description}</CardDescription>
                         </div>
                         <CardFooter>
-                            <Button className="w-full">
-                                <Calendar className="mr-2 h-4 w-4" />
-                                Reservar
-                            </Button>
+                           <BookAmenitySheet amenity={amenity} />
                         </CardFooter>
                     </Card>
                 ))}
