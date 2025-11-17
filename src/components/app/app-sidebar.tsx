@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import React, { useState } from "react";
 import {
   Sidebar,
   SidebarHeader,
@@ -26,8 +27,20 @@ import {
 import { Icons } from "@/components/icons";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { user } from "@/lib/mocks";
 import { Button } from "../ui/button";
+
+// Simulando un usuario que vendría de un hook de autenticación como `useUser()`
+const useUser = () => {
+    const [user, setUser] = useState({
+        id: 'user_1_live',
+        name: 'Residente Conectado',
+        email: 'residente@habitat.com',
+        units: [{ tower: 'A', number: '101' }],
+        imageUrl: 'https://i.pravatar.cc/150?u=user_1_live'
+    });
+
+    return { user };
+};
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "Inicio" },
@@ -47,10 +60,15 @@ const secondaryNavItems = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
 
   const isActive = (path: string) => {
     return pathname === path;
   };
+
+  if (!user) {
+    return null; // O un skeleton/loader
+  }
 
   return (
     <Sidebar>
@@ -102,9 +120,11 @@ export function AppSidebar() {
             </SidebarMenuItem>
           ))}
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Cerrar sesión">
-              <LogOut className="size-5" />
-              <span>Cerrar sesión</span>
+             <SidebarMenuButton tooltip="Cerrar sesión" asChild>
+                <Link href="/auth/login">
+                    <LogOut className="size-5" />
+                    <span>Cerrar sesión</span>
+                </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -113,7 +133,7 @@ export function AppSidebar() {
 
         <div className="flex items-center gap-3 p-2">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={`https://i.pravatar.cc/150?u=${user.id}`} alt={user.name} />
+              <AvatarImage src={user.imageUrl} alt={user.name} />
               <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col overflow-hidden">

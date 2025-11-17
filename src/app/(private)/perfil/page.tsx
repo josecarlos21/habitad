@@ -1,15 +1,36 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { user } from "@/lib/mocks";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
+// Simulando un usuario que vendría de un hook de autenticación como `useUser()`
+const useUser = () => {
+    const [user, setUser] = useState({
+        id: 'user_1_live',
+        name: 'Residente Conectado',
+        email: 'residente@habitat.com',
+        phone: '555 555 5555',
+        units: [{ tower: 'A', number: '101' }],
+        imageUrl: 'https://i.pravatar.cc/150?u=user_1_live'
+    });
+
+    return { user };
+};
 
 
 export default function PerfilPage() {
+    const { user } = useUser();
+
+    if (!user) {
+        return <div>Cargando perfil...</div>;
+    }
+
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <h1 className="text-2xl font-bold">Mi Perfil</h1>
@@ -44,7 +65,7 @@ export default function PerfilPage() {
                         <CardHeader className="pb-4">
                             <div className="flex items-center gap-4">
                                 <Avatar className="h-16 w-16">
-                                    <AvatarImage src={`https://i.pravatar.cc/150?u=${user.id}`} />
+                                    <AvatarImage src={user.imageUrl} />
                                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                 </Avatar>
                                 <div>
