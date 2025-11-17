@@ -9,12 +9,15 @@ import { ArrowRight, Calendar, CheckCircle, Package, QrCode, Wrench } from "luci
 import { announcements, bookings, invoices, tickets, amenities, user } from "@/lib/mocks";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Invoice, Ticket, Booking, Announcement } from "@/lib/types";
+import { useUser } from "@/hooks/use-user";
 
 // Organism: NextPaymentCard
 function NextPaymentCard({ invoice, isLoading }: { invoice: Invoice | undefined, isLoading: boolean }) {
+  const { user } = useUser();
+  
   if (isLoading) {
     return (
       <Card className="lg:col-span-2">
@@ -37,7 +40,7 @@ function NextPaymentCard({ invoice, isLoading }: { invoice: Invoice | undefined,
     return (
       <Card className="lg:col-span-2 flex flex-col items-center justify-center text-center p-8">
         <CardHeader>
-          <CardTitle>¡Felicidades, {user.name.split(' ')[0]}!</CardTitle>
+          <CardTitle>¡Felicidades, {user?.name.split(' ')[0]}!</CardTitle>
           <CardDescription>Estás al corriente con tus pagos.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -174,52 +177,60 @@ export default function DashboardPage() {
             isLoading={isLoading}
             emptyState={<p className="text-sm text-muted-foreground text-center py-4">No hay avisos recientes.</p>}
         >
-            <ul className="space-y-4">
-              {recentAnnouncements.map(ann => (
-                <li key={ann.id}>
-                    <p className="font-semibold text-sm">{ann.title}</p>
-                    <p className="text-xs text-muted-foreground">{ann.body.substring(0, 70)}...</p>
-                </li>
-              ))}
-            </ul>
+            {recentAnnouncements.length > 0 ? (
+                <ul className="space-y-4">
+                  {recentAnnouncements.map(ann => (
+                    <li key={ann.id}>
+                        <p className="font-semibold text-sm">{ann.title}</p>
+                        <p className="text-xs text-muted-foreground">{ann.body.substring(0, 70)}...</p>
+                    </li>
+                  ))}
+                </ul>
+            ) : null}
         </DashboardCard>
 
         <DashboardCard
           title="Tickets de Mantenimiento"
           icon={Wrench}
+          link={{ href: "/mantenimiento", label: "Ver todos" }}
           isLoading={isLoading}
-          footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/mantenimiento">Crear Nuevo Ticket</Link></Button>}
+          footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/mantenimiento/crear">Crear Nuevo Ticket</Link></Button>}
           emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes tickets activos.</p>}
         >
-             <ul className="space-y-2">
-              {activeTickets.slice(0, 3).map(ticket => (
-                 <li key={ticket.id} className="flex items-center justify-between">
-                    <div>
-                        <p className="text-sm font-medium">{ticket.title}</p>
-                        <p className="text-xs text-muted-foreground">Abierto {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}</p>
-                    </div>
-                    <Badge variant={ticket.status === 'open' ? "destructive" : "secondary"}>{ticket.status === 'open' ? 'Abierto' : 'En Progreso'}</Badge>
-                 </li>
-              ))}
-             </ul>
+            {activeTickets.length > 0 ? (
+                 <ul className="space-y-2">
+                  {activeTickets.slice(0, 3).map(ticket => (
+                     <li key={ticket.id} className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-medium">{ticket.title}</p>
+                            <p className="text-xs text-muted-foreground">Abierto {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}</p>
+                        </div>
+                        <Badge variant={ticket.status === 'open' ? "destructive" : "secondary"}>{ticket.status === 'open' ? 'Abierto' : 'En Progreso'}</Badge>
+                     </li>
+                  ))}
+                 </ul>
+            ) : null}
         </DashboardCard>
         
         <DashboardCard
             title="Próximas Reservas"
             icon={Calendar}
+            link={{ href: "/reservas", label: "Ver todas" }}
             isLoading={isLoading}
             emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes próximas reservas.</p>}
         >
-            <ul className="space-y-2">
-                {upcomingBookings.map(booking => (
-                    <li key={booking.id} className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm font-medium">{amenities.find(a => a.id === booking.amenityId)?.name}</p>
-                            <p className="text-xs text-muted-foreground">{format(new Date(booking.slot.start), "eeee dd 'de' MMMM, h:mm a", { locale: es })}</p>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+            {upcomingBookings.length > 0 ? (
+                <ul className="space-y-2">
+                    {upcomingBookings.map(booking => (
+                        <li key={booking.id} className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium">{amenities.find(a => a.id === booking.amenityId)?.name}</p>
+                                <p className="text-xs text-muted-foreground">{format(new Date(booking.slot.start), "eeee dd 'de' MMMM, h:mm a", { locale: es })}</p>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            ): null}
         </DashboardCard>
       </div>
     </main>

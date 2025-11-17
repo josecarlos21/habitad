@@ -1,4 +1,6 @@
 
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { announcements } from "@/lib/mocks";
@@ -6,6 +8,7 @@ import type { Announcement } from "@/lib/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Bell, Calendar, Tag } from "lucide-react";
+import React from "react";
 
 const categoryMap: Record<Announcement['category'], { label: string; className: string }> = {
     admin: { label: "Administración", className: "bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300" },
@@ -15,13 +18,47 @@ const categoryMap: Record<Announcement['category'], { label: string; className: 
 };
 
 export default function AvisosPage() {
+    const [announcementList, setAnnouncementList] = React.useState<Announcement[]>([]);
+    const [isLoading, setIsLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        // Simulate fetching data
+        const timer = setTimeout(() => {
+            setAnnouncementList(announcements);
+            setIsLoading(false);
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <h1 className="text-2xl font-bold">Avisos</h1>
             
-            {announcements.length > 0 ? (
+            {isLoading ? (
+                 <div className="space-y-6">
+                    {[...Array(3)].map((_, i) => (
+                        <Card key={i}>
+                            <CardHeader>
+                                <div className="animate-pulse">
+                                    <div className="h-6 w-3/4 rounded bg-muted"></div>
+                                    <div className="mt-4 flex items-center gap-4">
+                                        <div className="h-4 w-1/3 rounded bg-muted"></div>
+                                        <div className="h-4 w-1/4 rounded bg-muted"></div>
+                                    </div>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="animate-pulse space-y-2">
+                                    <div className="h-4 w-full rounded bg-muted"></div>
+                                    <div className="h-4 w-5/6 rounded bg-muted"></div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                 </div>
+            ) : announcementList.length > 0 ? (
                 <div className="space-y-6">
-                    {announcements.map((announcement: Announcement) => {
+                    {announcementList.map((announcement: Announcement) => {
                         const category = categoryMap[announcement.category];
                         return (
                             <Card key={announcement.id} className={announcement.pinned ? "border-primary" : ""}>
