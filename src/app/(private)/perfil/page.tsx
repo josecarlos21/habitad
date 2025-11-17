@@ -5,24 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useUser } from "@/hooks/use-user";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-// Simulando un usuario que vendría de un hook de autenticación como `useUser()`
-const useUser = () => {
-    const [user, setUser] = useState({
-        id: 'user_1_live',
-        name: 'Residente Conectado',
-        email: 'residente@habitat.com',
-        phone: '555 555 5555',
-        units: [{ tower: 'A', number: '101' }],
-        imageUrl: 'https://i.pravatar.cc/150?u=user_1_live'
-    });
-
-    return { user };
-};
-
 
 export default function PerfilPage() {
     const { user } = useUser();

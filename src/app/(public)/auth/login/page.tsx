@@ -38,9 +38,10 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="tu@email.com"
+                placeholder="residente@habitat.com"
                 required
                 autoFocus
+                defaultValue="residente@habitat.com"
               />
             </div>
           </div>

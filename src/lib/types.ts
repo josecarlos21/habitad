@@ -8,6 +8,7 @@ export interface User {
   phone?: string;
   role: "resident" | "admin" | "guard";
   units: Unit[];
+  imageUrl?: string;
 }
 
 export interface Unit {

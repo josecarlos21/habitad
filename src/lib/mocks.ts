@@ -5,17 +5,16 @@ export const units: Unit[] = [
     { id: 'u_102', tower: 'A', number: '102' },
 ];
 
-// USER MOCK IS DEPRECATED. Data will now come from a `useUser` hook.
-/*
 export const user: User = {
-    id: 'user_1',
-    name: 'Juan Pérez',
-    email: 'juan.perez@email.com',
-    phone: '5512345678',
+    id: 'user_1_live',
+    name: 'Residente Conectado',
+    email: 'residente@habitat.com',
+    phone: '555 555 5555',
+    units: [{ tower: 'A', number: '101' }],
+    imageUrl: 'https://i.pravatar.cc/150?u=user_1_live',
     role: 'resident',
-    units: [units[0]],
 };
-*/
+
 
 export const invoices: Invoice[] = [
     { id: 'inv_1', unitId: 'u_101', concept: 'Mantenimiento Noviembre 2025', amount: 2450.00, currency: 'MXN', dueDate: '2025-11-30T23:59:59Z', status: 'pending' },

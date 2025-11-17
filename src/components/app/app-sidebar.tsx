@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import {
   Sidebar,
   SidebarHeader,
@@ -28,19 +28,7 @@ import { Icons } from "@/components/icons";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
-
-// Simulando un usuario que vendría de un hook de autenticación como `useUser()`
-const useUser = () => {
-    const [user, setUser] = useState({
-        id: 'user_1_live',
-        name: 'Residente Conectado',
-        email: 'residente@habitat.com',
-        units: [{ tower: 'A', number: '101' }],
-        imageUrl: 'https://i.pravatar.cc/150?u=user_1_live'
-    });
-
-    return { user };
-};
+import { useUser } from "@/hooks/use-user";
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "Inicio" },
@@ -87,7 +75,7 @@ export function AppSidebar() {
       <SidebarMenu className="flex-1 p-2">
         {navItems.map((item) => (
           <SidebarMenuItem key={item.href}>
-            <SidebarMenuButton
+             <SidebarMenuButton
               asChild
               isActive={isActive(item.href)}
               tooltip={item.label}
