@@ -69,15 +69,16 @@ export function AppSidebar() {
       <SidebarMenu className="flex-1 p-2">
         {navItems.map((item) => (
           <SidebarMenuItem key={item.href}>
-            <Link href={item.href} legacyBehavior passHref>
-              <SidebarMenuButton
-                isActive={isActive(item.href)}
-                tooltip={item.label}
-              >
+            <SidebarMenuButton
+              asChild
+              isActive={isActive(item.href)}
+              tooltip={item.label}
+            >
+              <Link href={item.href}>
                 <item.icon className="size-5" />
                 <span>{item.label}</span>
-              </SidebarMenuButton>
-            </Link>
+              </Link>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
@@ -88,15 +89,16 @@ export function AppSidebar() {
         <SidebarMenu className="p-2">
            {secondaryNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} legacyBehavior passHref>
-                <SidebarMenuButton
-                  isActive={isActive(item.href)}
-                  tooltip={item.label}
-                >
+              <SidebarMenuButton
+                asChild
+                isActive={isActive(item.href)}
+                tooltip={item.label}
+              >
+                <Link href={item.href}>
                   <item.icon className="size-5" />
                   <span>{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
           <SidebarMenuItem>
