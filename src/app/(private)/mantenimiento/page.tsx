@@ -152,8 +152,8 @@ export default function MantenimientoPage() {
                                     </p>
                                 </CardContent>
                                 <div className="p-4 pt-0">
-                                    <Button variant="outline" className="w-full asChild">
-                                        <Link href="#">
+                                    <Button variant="outline" className="w-full" asChild>
+                                        <Link href={`/mantenimiento/${ticket.id}`}>
                                             <MessageSquare className="mr-2 h-4 w-4" />
                                             Ver detalles
                                         </Link>
