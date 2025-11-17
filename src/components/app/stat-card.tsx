@@ -15,6 +15,7 @@ interface StatCardProps {
   accent?: "primary" | "neutral";
   footer?: ReactNode;
   children?: ReactNode;
+  className?: string;
 }
 
 export function StatCard({
@@ -27,6 +28,7 @@ export function StatCard({
   accent = "neutral",
   footer,
   children,
+  className,
 }: StatCardProps) {
   if (isLoading) {
     return (
@@ -43,7 +45,12 @@ export function StatCard({
   }
 
   return (
-    <Card className={cn(accent === "primary" && "bg-gradient-to-r from-primary/90 to-primary text-primary-foreground")}>
+    <Card
+      className={cn(
+        accent === "primary" && "bg-gradient-to-r from-primary/90 to-primary text-primary-foreground",
+        className
+      )}
+    >
       <CardHeader className="flex flex-row items-start justify-between space-y-0">
         <div>
           <CardTitle className="text-base">{title}</CardTitle>
