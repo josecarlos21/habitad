@@ -4,18 +4,19 @@ import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 import { tickets } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { MessageSquare, PlusCircle, Wrench } from "lucide-react";
 import Link from "next/link";
+import React from "react";
 
 const statusMap: Record<Ticket['status'], { label: string; className: string }> = {
     open: { label: "Abierto", className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-300/50" },
@@ -25,8 +26,21 @@ const statusMap: Record<Ticket['status'], { label: string; className: string }> 
 };
 
 function CreateTicketSheet() {
+    const { toast } = useToast();
+    const [open, setOpen] = React.useState(false);
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        // Here you would normally handle form submission to a server
+        toast({
+            title: "Ticket Enviado",
+            description: "Tu solicitud de mantenimiento ha sido creada con éxito.",
+        });
+        setOpen(false); // Close sheet after submission
+    };
+
     return (
-        <Sheet>
+        <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
                 <Button>
                     <PlusCircle className="mr-2 h-4 w-4" />
@@ -34,39 +48,41 @@ function CreateTicketSheet() {
                 </Button>
             </SheetTrigger>
             <SheetContent>
-                <SheetHeader>
-                    <SheetTitle>Crear Nuevo Ticket de Mantenimiento</SheetTitle>
-                    <SheetDescription>
-                        Describe el problema que estás experimentando. Tu ticket será asignado al personal correspondiente.
-                    </SheetDescription>
-                </SheetHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="title">Título</Label>
-                        <Input id="title" placeholder="Ej: Fuga de agua en el baño" />
+                <form onSubmit={handleSubmit}>
+                    <SheetHeader>
+                        <SheetTitle>Crear Nuevo Ticket de Mantenimiento</SheetTitle>
+                        <SheetDescription>
+                            Describe el problema que estás experimentando. Tu ticket será asignado al personal correspondiente.
+                        </SheetDescription>
+                    </SheetHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="title">Título</Label>
+                            <Input id="title" placeholder="Ej: Fuga de agua en el baño" required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="category">Categoría</Label>
+                            <Select required>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Selecciona una categoría" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="plumbing">Plomería</SelectItem>
+                                    <SelectItem value="electrical">Electricidad</SelectItem>
+                                    <SelectItem value="common_area">Área Común</SelectItem>
+                                    <SelectItem value="other">Otro</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="description">Descripción</Label>
+                            <Textarea id="description" placeholder="Describe el problema a detalle..." required/>
+                        </div>
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="category">Categoría</Label>
-                        <Select>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Selecciona una categoría" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="plumbing">Plomería</SelectItem>
-                                <SelectItem value="electrical">Electricidad</SelectItem>
-                                <SelectItem value="common_area">Área Común</SelectItem>
-                                <SelectItem value="other">Otro</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="description">Descripción</Label>
-                        <Textarea id="description" placeholder="Describe el problema a detalle..." />
-                    </div>
-                </div>
-                <SheetFooter>
-                    <Button type="submit">Enviar Ticket</Button>
-                </SheetFooter>
+                    <SheetFooter>
+                        <Button type="submit">Enviar Ticket</Button>
+                    </SheetFooter>
+                </form>
             </SheetContent>
         </Sheet>
     )

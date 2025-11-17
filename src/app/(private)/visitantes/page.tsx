@@ -3,18 +3,32 @@
 import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useToast } from "@/hooks/use-toast";
 import { visitorPasses } from "@/lib/mocks";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PlusCircle, QrCode, UserPlus } from "lucide-react";
+import React from "react";
 
 function GeneratePassSheet() {
+    const { toast } = useToast();
+    const [open, setOpen] = React.useState(false);
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        toast({
+            title: "Pase Generado",
+            description: "El pase de visitante ha sido creado y compartido.",
+        });
+        setOpen(false);
+    };
+
     return (
-         <Sheet>
+         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
                  <Button>
                     <PlusCircle className="mr-2 h-4 w-4" />
@@ -22,25 +36,27 @@ function GeneratePassSheet() {
                 </Button>
             </SheetTrigger>
             <SheetContent>
-                <SheetHeader>
-                    <SheetTitle>Generar Pase de Visitante</SheetTitle>
-                    <SheetDescription>
-                        Completa los datos para generar un código QR para tu visitante.
-                    </SheetDescription>
-                </SheetHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="visitor-name">Nombre del Visitante</Label>
-                        <Input id="visitor-name" placeholder="Ej: Juan Pérez" />
+                <form onSubmit={handleSubmit}>
+                    <SheetHeader>
+                        <SheetTitle>Generar Pase de Visitante</SheetTitle>
+                        <SheetDescription>
+                            Completa los datos para generar un código QR para tu visitante.
+                        </SheetDescription>
+                    </SheetHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="visitor-name">Nombre del Visitante</Label>
+                            <Input id="visitor-name" placeholder="Ej: Juan Pérez" required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="validity">Validez del Pase</Label>
+                            <Input id="validity" type="datetime-local" required />
+                        </div>
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="validity">Validez del Pase</Label>
-                        <Input id="validity" type="datetime-local" />
-                    </div>
-                </div>
-                <SheetFooter>
-                    <Button type="submit">Generar y Compartir</Button>
-                </SheetFooter>
+                    <SheetFooter>
+                        <Button type="submit">Generar y Compartir</Button>
+                    </SheetFooter>
+                </form>
             </SheetContent>
         </Sheet>
     )
