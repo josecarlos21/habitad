@@ -1,11 +1,18 @@
-import type {Metadata} from 'next';
-import './globals.css';
+import type { Metadata } from "next";
+import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { SessionProvider } from "@/hooks/use-session";
+import { Inter } from "next/font/google";
 
 export const metadata: Metadata = {
   title: 'Habitat Conectado',
   description: 'Gestión de condominios moderna y eficiente.',
 };
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+});
 
 export default function RootLayout({
   children,
@@ -15,14 +22,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className="font-body antialiased">
-        {children}
-        <Toaster />
+      <body className={`${inter.variable} font-body antialiased`}>
+        <SessionProvider>
+          {children}
+          <Toaster />
+        </SessionProvider>
       </body>
     </html>
   );

@@ -14,42 +14,34 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { EmptyState } from "@/components/app/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/app/page-header";
+import { StatCard } from "@/components/app/stat-card";
+import { fetchAssemblies } from "@/services/mock-api";
 
-const mockAssemblies = [
-    {
-        id: "asm_1",
-        title: "Asamblea General Ordinaria Noviembre 2025",
-        date: "2025-11-28T19:00:00Z",
-        status: "active",
-        topics: ["Presupuesto 2026", "Elección de comité de vigilancia", "Mantenimiento de áreas comunes"],
-        docs: [{ name: "Convocatoria Oficial", url: "#" }, { name: "Propuesta Presupuesto 2026", url: "#" }],
-        vote: {
-            id: "vote_1",
-            question: "¿Aprueba el presupuesto presentado para el año 2026?",
-            options: ["Sí, apruebo", "No, rechazo", "Me abstengo"],
-            status: "open",
-        }
-    },
-    {
-        id: "asm_2",
-        title: "Asamblea Extraordinaria - Proyecto Alberca",
-        date: "2025-08-15T18:00:00Z",
-        status: "past",
-        topics: ["Presentación y votación de la propuesta para remodelar la alberca."],
-        docs: [{ name: "Minuta de la Asamblea", url: "#" }],
-    },
-     {
-        id: "asm_3",
-        title: "Asamblea General Ordinaria 2024",
-        date: "2024-11-30T19:00:00Z",
-        status: "past",
-        topics: ["Resultados 2024", "Presupuesto 2025"],
-        docs: [{ name: "Minuta de la Asamblea", url: "#" }],
-    }
-];
+type AssemblyStatus = "active" | "past";
+interface AssemblyDocument {
+    name: string;
+    url: string;
+}
 
+interface AssemblyVote {
+    id: string;
+    question: string;
+    options: string[];
+    status: "open" | "closed";
+}
 
-function VotingCard({ vote, assemblyTitle }: { vote: any, assemblyTitle: string }) {
+interface Assembly {
+    id: string;
+    title: string;
+    date: string;
+    status: AssemblyStatus;
+    topics: string[];
+    docs: AssemblyDocument[];
+    vote?: AssemblyVote;
+}
+
+function VotingCard({ vote, assemblyTitle }: { vote: AssemblyVote, assemblyTitle: string }) {
     const { toast } = useToast();
     const [selectedOption, setSelectedOption] = React.useState<string | null>(null);
     const [isVoted, setIsVoted] = React.useState(false);
@@ -105,23 +97,46 @@ function VotingCard({ vote, assemblyTitle }: { vote: any, assemblyTitle: string 
 }
 
 export default function AsambleasPage() {
-    const [assemblies, setAssemblies] = React.useState<any[]>([]);
+    const [assemblies, setAssemblies] = React.useState<Assembly[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
 
      React.useEffect(() => {
-        const timer = setTimeout(() => {
-            setAssemblies(mockAssemblies);
-            setIsLoading(false);
-        }, 1000);
-        return () => clearTimeout(timer);
+        let isMounted = true;
+        const loadAssemblies = async () => {
+            setIsLoading(true);
+            const data = await fetchAssemblies();
+            if (isMounted) {
+                setAssemblies(data);
+                setIsLoading(false);
+            }
+        };
+        loadAssemblies();
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     const activeAssembly = assemblies.find(a => a.status === 'active');
     const pastAssemblies = assemblies.filter(a => a.status === 'past');
 
+    const stats = {
+        active: assemblies.filter((a) => a.status === "active").length,
+        past: assemblies.filter((a) => a.status === "past").length,
+        withVote: assemblies.filter((a) => Boolean(a.vote)).length,
+    };
+
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            <h1 className="text-2xl font-bold">Asambleas y Votaciones</h1>
+        <main className="flex flex-1 flex-col gap-6 p-4 md:gap-8 md:p-8">
+            <PageHeader
+                title="Asambleas y votaciones"
+                description="Consulta convocatorias, documentos y participa en las decisiones."
+            />
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <StatCard title="Asambleas activas" description="Convocadas" value={stats.active} icon={Users} isLoading={isLoading}/>
+                <StatCard title="Historial" description="Eventos anteriores" value={stats.past} icon={FileText} isLoading={isLoading}/>
+                <StatCard title="Votaciones" description="Con votación abierta" value={stats.withVote} icon={VoteIcon} isLoading={isLoading}/>
+            </div>
 
             {isLoading ? (
                 <div className="space-y-6">

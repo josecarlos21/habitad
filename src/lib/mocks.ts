@@ -10,7 +10,7 @@ export const user: User = {
     name: 'Residente Conectado',
     email: 'residente@habitat.com',
     phone: '555 555 5555',
-    units: [{ tower: 'A', number: '101' }],
+    units: [{ id: 'u_101', tower: 'A', number: '101' }],
     imageUrl: 'https://i.pravatar.cc/150?u=user_1_live',
     role: 'resident',
 };

@@ -1,0 +1,99 @@
+{
+  "$schema": "https://design-tokens.github.io/schema.json",
+  "color": {
+    "brand": {
+      "primary": { "$type": "color", "$value": "#6C63FF" },
+      "secondary": { "$type": "color", "$value": "#14B8A6" }
+    },
+    "neutral": {
+      "background": { "$type": "color", "$value": "#0F1014" },
+      "surface": { "$type": "color", "$value": "#1A1B23" },
+      "border": { "$type": "color", "$value": "#272938" },
+      "textPrimary": { "$type": "color", "$value": "#F4F6FB" },
+      "textSecondary": { "$type": "color", "$value": "#A4A7B7" }
+    },
+    "semantic": {
+      "info": { "$type": "color", "$value": "#0EA5E9" },
+      "success": { "$type": "color", "$value": "#22C55E" },
+      "warning": { "$type": "color", "$value": "#FACC15" },
+      "danger": { "$type": "color", "$value": "#EF4444" }
+    },
+    "sidebar": {
+      "background": { "$type": "color", "$value": "#0B0C11" },
+      "accent": { "$type": "color", "$value": "#1F2030" }
+    }
+  },
+  "typography": {
+    "families": {
+      "brand": { "$type": "fontFamily", "$value": ["Inter", "system-ui", "sans-serif"] },
+      "mono": { "$type": "fontFamily", "$value": ["JetBrains Mono", "monospace"] }
+    },
+    "scale": {
+      "xs": { "$type": "fontSize", "$value": "0.75rem" },
+      "sm": { "$type": "fontSize", "$value": "0.875rem" },
+      "md": { "$type": "fontSize", "$value": "1rem" },
+      "lg": { "$type": "fontSize", "$value": "1.125rem" },
+      "xl": { "$type": "fontSize", "$value": "1.5rem" }
+    },
+    "lineHeight": {
+      "tight": { "$type": "lineHeight", "$value": 1.2 },
+      "default": { "$type": "lineHeight", "$value": 1.4 },
+      "relaxed": { "$type": "lineHeight", "$value": 1.6 }
+    },
+    "weight": {
+      "regular": { "$type": "fontWeight", "$value": 400 },
+      "medium": { "$type": "fontWeight", "$value": 500 },
+      "bold": { "$type": "fontWeight", "$value": 700 }
+    }
+  },
+  "space": {
+    "2": { "$type": "dimension", "$value": "8px" },
+    "3": { "$type": "dimension", "$value": "12px" },
+    "4": { "$type": "dimension", "$value": "16px" },
+    "6": { "$type": "dimension", "$value": "24px" }
+  },
+  "radius": {
+    "sm": { "$type": "dimension", "$value": "6px" },
+    "md": { "$type": "dimension", "$value": "12px" },
+    "lg": { "$type": "dimension", "$value": "16px" },
+    "pill": { "$type": "dimension", "$value": "999px" }
+  },
+  "shadow": {
+    "sm": { "$type": "shadow", "$value": "0 1px 3px rgba(0,0,0,0.25)" },
+    "md": { "$type": "shadow", "$value": "0 8px 24px rgba(0,0,0,0.35)" },
+    "focus": { "$type": "shadow", "$value": "0 0 0 3px rgba(108,99,255,0.45)" }
+  },
+  "opacity": {
+    "disabled": { "$type": "opacity", "$value": 0.5 },
+    "overlay": { "$type": "opacity", "$value": 0.8 }
+  },
+  "motion": {
+    "easings": {
+      "standard": { "$type": "cubicBezier", "$value": [0.2, 0, 0, 1] },
+      "entrance": { "$type": "cubicBezier", "$value": [0.34, 1.56, 0.64, 1] },
+      "exit": { "$type": "cubicBezier", "$value": [0.4, 0, 1, 1] }
+    },
+    "durations": {
+      "fast": { "$type": "duration", "$value": "120ms" },
+      "base": { "$type": "duration", "$value": "200ms" },
+      "slow": { "$type": "duration", "$value": "320ms" }
+    }
+  },
+  "component": {
+    "state": {
+      "hover": { "$type": "opacity", "$value": 0.9 },
+      "active": { "$type": "opacity", "$value": 0.8 },
+      "focusRing": { "$type": "color", "$value": "#A5B4FC" }
+    }
+  },
+  "modes": {
+    "light": { "$type": "string", "$value": "default" },
+    "dark": { "$type": "string", "$value": "dark" },
+    "high-contrast": { "$type": "string", "$value": "contrast" }
+  },
+  "density": {
+    "compact": { "$type": "dimension", "$value": "4px" },
+    "cozy": { "$type": "dimension", "$value": "8px" },
+    "comfy": { "$type": "dimension", "$value": "12px" }
+  }
+}

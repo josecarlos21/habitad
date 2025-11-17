@@ -1,21 +1,10 @@
-import { user as mockUser } from '@/lib/mocks';
-import { User } from '@/lib/types';
-import { useEffect, useState } from 'react';
+import { useSession } from "@/hooks/use-session";
 
-// This is a mock hook. In a real app, you would fetch this from your auth provider.
+// Este hook ahora depende del estado de sesión mock.
 export const useUser = () => {
-    const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        // Simulate fetching user data
-        const timer = setTimeout(() => {
-            setUser(mockUser);
-            setIsLoading(false);
-        }, 1000);
-
-        return () => clearTimeout(timer);
-    }, []);
+    const { session } = useSession();
+    const isLoading = session.status === "checking";
+    const user = session.status === "authenticated" ? session.user : null;
 
     return { user, isLoading };
 };
