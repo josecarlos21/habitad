@@ -3,13 +3,14 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { announcements } from "@/lib/mocks";
+import { announcements as mockAnnouncements } from "@/lib/mocks";
 import type { Announcement } from "@/lib/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Bell, Calendar, Tag } from "lucide-react";
 import React from "react";
 import { EmptyState } from "@/components/app/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const categoryMap: Record<Announcement['category'], { label: string; className: string }> = {
     admin: { label: "Administración", className: "bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300" },
@@ -25,7 +26,7 @@ export default function AvisosPage() {
     React.useEffect(() => {
         // Simulate fetching data
         const timer = setTimeout(() => {
-            setAnnouncementList(announcements);
+            setAnnouncementList(mockAnnouncements);
             setIsLoading(false);
         }, 1000);
         return () => clearTimeout(timer);
