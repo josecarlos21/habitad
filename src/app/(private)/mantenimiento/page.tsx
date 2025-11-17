@@ -1,11 +1,20 @@
+"use client";
+
+import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Textarea } from "@/components/ui/textarea";
 import { tickets } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { PlusCircle, MessageSquare } from "lucide-react";
+import { MessageSquare, PlusCircle, Wrench } from "lucide-react";
 import Link from "next/link";
 
 const statusMap: Record<Ticket['status'], { label: string; className: string }> = {
@@ -15,15 +24,60 @@ const statusMap: Record<Ticket['status'], { label: string; className: string }> 
     closed: { label: "Cerrado", className: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border-green-300/50" },
 };
 
+function CreateTicketSheet() {
+    return (
+        <Sheet>
+            <SheetTrigger asChild>
+                <Button>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Nuevo Ticket
+                </Button>
+            </SheetTrigger>
+            <SheetContent>
+                <SheetHeader>
+                    <SheetTitle>Crear Nuevo Ticket de Mantenimiento</SheetTitle>
+                    <SheetDescription>
+                        Describe el problema que estás experimentando. Tu ticket será asignado al personal correspondiente.
+                    </SheetDescription>
+                </SheetHeader>
+                <div className="grid gap-4 py-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="title">Título</Label>
+                        <Input id="title" placeholder="Ej: Fuga de agua en el baño" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="category">Categoría</Label>
+                        <Select>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Selecciona una categoría" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="plumbing">Plomería</SelectItem>
+                                <SelectItem value="electrical">Electricidad</SelectItem>
+                                <SelectItem value="common_area">Área Común</SelectItem>
+                                <SelectItem value="other">Otro</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="description">Descripción</Label>
+                        <Textarea id="description" placeholder="Describe el problema a detalle..." />
+                    </div>
+                </div>
+                <SheetFooter>
+                    <Button type="submit">Enviar Ticket</Button>
+                </SheetFooter>
+            </SheetContent>
+        </Sheet>
+    )
+}
+
 export default function MantenimientoPage() {
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
              <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold">Mantenimiento</h1>
-                <Button>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Nuevo Ticket
-                </Button>
+                <CreateTicketSheet />
             </div>
             
             {tickets.length > 0 ? (
@@ -59,16 +113,12 @@ export default function MantenimientoPage() {
                     })}
                 </div>
             ) : (
-                <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
-                    <div className="flex flex-col items-center gap-1 text-center">
-                        <h3 className="text-2xl font-bold tracking-tight">No tienes tickets</h3>
-                        <p className="text-sm text-muted-foreground">Crea un nuevo ticket para reportar un problema.</p>
-                        <Button className="mt-4">
-                            <PlusCircle className="mr-2 h-4 w-4" />
-                            Crear Ticket
-                        </Button>
-                    </div>
-                </div>
+                <EmptyState
+                    icon={Wrench}
+                    title="No tienes tickets"
+                    description="Crea un nuevo ticket para reportar un problema."
+                    action={<CreateTicketSheet />}
+                />
             )}
         </main>
     )

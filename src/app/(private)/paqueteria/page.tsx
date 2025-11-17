@@ -1,10 +1,11 @@
+import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader } from "@/components/ui/card";
 import { parcels } from "@/lib/mocks";
 import type { Parcel } from "@/lib/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Package, PackageCheck, Truck } from "lucide-react";
+import { Package, PackageCheck } from "lucide-react";
 
 const statusMap: Record<Parcel['status'], { label: string; icon: React.ElementType; className: string }> = {
     at_guard: { label: "En conserjería", icon: Package, className: "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300" },
@@ -27,8 +28,8 @@ export default function PaqueteriaPage() {
                                         <status.icon className="h-6 w-6" />
                                     </div>
                                     <div className="flex-1">
-                                        <CardTitle className="text-base font-semibold">{parcel.carrier}</CardTitle>
-                                        <CardDescription>Tracking: {parcel.trackingNumber}</CardDescription>
+                                        <h3 className="text-base font-semibold">{parcel.carrier}</h3>
+                                        <p className="text-sm text-muted-foreground">Tracking: {parcel.trackingNumber}</p>
                                     </div>
                                     <div className="text-right">
                                         <Badge variant="outline" className={status.className}>{status.label}</Badge>
@@ -42,13 +43,11 @@ export default function PaqueteriaPage() {
                     })}
                 </div>
             ) : (
-                 <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm min-h-[50vh]">
-                    <div className="flex flex-col items-center gap-1 text-center">
-                        <Package className="h-12 w-12 text-muted-foreground" />
-                        <h3 className="text-2xl font-bold tracking-tight">Sin paquetes</h3>
-                        <p className="text-sm text-muted-foreground">No tienes paquetes pendientes de recoger.</p>
-                    </div>
-                </div>
+                <EmptyState
+                    icon={Package}
+                    title="Sin paquetes"
+                    description="No tienes paquetes pendientes de recoger."
+                />
             )}
         </main>
     );
