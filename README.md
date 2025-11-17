@@ -12,6 +12,8 @@ Prototype UI for a condominium super-app built with Next.js 15, React 18, Tailwi
    - Dashboard (`/(private)/dashboard`) expone métricas, CTA y diálogos para pagos/tickets/pases.
 3. **Módulos residentes**  
    - Pagos, Mantenimiento, Reservas, Visitantes, Paquetería, Avisos, Asambleas, Perfil y Ajustes comparten patrón `PageHeader + StatCard + filtros/diálogos`, con estados de carga y vacíos.
+4. **Logout**  
+   - El botón “Cerrar sesión” en el sidebar usa `useSession().logout()` y redirige a `/auth/login`, limpiando la sesión persistida.
 
 ## Scripts
 

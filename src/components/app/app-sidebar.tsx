@@ -29,6 +29,8 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { useUser } from "@/hooks/use-user";
+import { useSession } from "@/hooks/use-session";
+import { useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "Inicio" },
@@ -48,7 +50,9 @@ const secondaryNavItems = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { user } = useUser();
+  const { logout } = useSession();
 
   const isActive = (path: string) => {
     return pathname === path;
@@ -108,11 +112,9 @@ export function AppSidebar() {
             </SidebarMenuItem>
           ))}
           <SidebarMenuItem>
-             <SidebarMenuButton tooltip="Cerrar sesión" asChild>
-                <Link href="/auth/login">
-                    <LogOut className="size-5" />
-                    <span>Cerrar sesión</span>
-                </Link>
+             <SidebarMenuButton tooltip="Cerrar sesión" onClick={() => { logout(); router.replace("/auth/login"); }}>
+                <LogOut className="size-5" />
+                <span>Cerrar sesión</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
