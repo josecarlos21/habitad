@@ -1,18 +1,18 @@
 
 "use client";
 
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { format, formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
+import { ArrowRight, Calendar, CheckCircle, Package, QrCode, Wrench } from "lucide-react";
+import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
-import { ArrowRight, Calendar, CheckCircle, Package, QrCode, Wrench } from "lucide-react";
-import { announcements, bookings, invoices, tickets, amenities, user } from "@/lib/mocks";
-import { format, formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
-import React, { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { announcements, bookings, invoices, tickets, amenities } from "@/lib/mocks";
 import type { Invoice, Ticket, Booking, Announcement } from "@/lib/types";
-import { useUser } from "@/hooks/use-user";
 
 // Organism: NextPaymentCard
 function NextPaymentCard({ invoice, isLoading }: { invoice: Invoice | undefined, isLoading: boolean }) {

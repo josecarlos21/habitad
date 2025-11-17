@@ -1,18 +1,19 @@
 
 "use client";
 
+import React from "react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { ArrowRight, CheckCircle, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { invoices } from "@/lib/mocks";
+import { invoices as mockInvoices } from "@/lib/mocks";
 import type { Invoice } from "@/lib/types";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { ArrowRight, CheckCircle, Clock } from "lucide-react";
-import React from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const statusMap: Record<Invoice['status'], { label: string; icon: React.ElementType; className: string }> = {
     paid: { label: "Pagado", icon: CheckCircle, className: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300" },
@@ -27,7 +28,7 @@ export default function PagosPage() {
     React.useEffect(() => {
         // Simulate fetching data
         const timer = setTimeout(() => {
-            setInvoiceList(invoices);
+            setInvoiceList(mockInvoices);
             setIsLoading(false);
         }, 1000);
         return () => clearTimeout(timer);
@@ -78,17 +79,28 @@ function InvoiceTable({ invoices, isLoading }: { invoices: Invoice[], isLoading:
 
     if (isLoading) {
         return (
-            <div className="space-y-4">
-                {[...Array(3)].map((_, i) => (
-                    <div key={i} className="flex animate-pulse items-center space-x-4 rounded-md border p-4">
-                        <div className="flex-1 space-y-2 py-1">
-                            <div className="h-4 w-2/3 rounded bg-muted"></div>
-                            <div className="h-4 w-1/3 rounded bg-muted"></div>
-                        </div>
-                        <div className="h-8 w-20 rounded-md bg-muted"></div>
-                    </div>
-                ))}
-            </div>
+             <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Concepto</TableHead>
+                        <TableHead>Estado</TableHead>
+                        <TableHead>Vencimiento</TableHead>
+                        <TableHead className="text-right">Monto</TableHead>
+                        <TableHead><span className="sr-only">Acciones</span></TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {[...Array(3)].map((_, i) => (
+                         <TableRow key={i}>
+                            <TableCell><Skeleton className="h-5 w-48" /></TableCell>
+                            <TableCell><Skeleton className="h-6 w-24 rounded-full" /></TableCell>
+                            <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                            <TableCell className="text-right"><Skeleton className="h-5 w-16 ml-auto" /></TableCell>
+                            <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
         )
     }
 

@@ -1,18 +1,18 @@
 
-
 "use client";
 
 import Image from "next/image";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { amenities } from "@/lib/mocks";
-import { Calendar as CalendarIcon, Loader2 } from "lucide-react";
+import { amenities as mockAmenities } from "@/lib/mocks";
+import { Calendar as CalendarIcon } from "lucide-react";
 import type { Amenity } from "@/lib/types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription, SheetFooter } from "@/components/ui/sheet";
 import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/app/empty-state";
 
 function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
     const { toast } = useToast();
@@ -69,7 +69,7 @@ export default function ReservasPage() {
      React.useEffect(() => {
         // Simulate fetching data
         const timer = setTimeout(() => {
-            setAmenityList(amenities);
+            setAmenityList(mockAmenities);
             setIsLoading(false);
         }, 1000);
         return () => clearTimeout(timer);
@@ -121,13 +121,11 @@ export default function ReservasPage() {
                     ))}
                 </div>
              ) : (
-                <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm min-h-[50vh]">
-                    <div className="flex flex-col items-center gap-1 text-center">
-                        <CalendarIcon className="h-12 w-12 text-muted-foreground" />
-                        <h3 className="text-2xl font-bold tracking-tight">No hay amenidades disponibles</h3>
-                        <p className="text-sm text-muted-foreground">Contacta a la administración para más información.</p>
-                    </div>
-                </div>
+                <EmptyState
+                    icon={CalendarIcon}
+                    title="No hay amenidades disponibles"
+                    description="Contacta a la administración para más información."
+                />
             )}
         </main>
     );

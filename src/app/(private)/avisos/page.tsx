@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Bell, Calendar, Tag } from "lucide-react";
 import React from "react";
+import { EmptyState } from "@/components/app/empty-state";
 
 const categoryMap: Record<Announcement['category'], { label: string; className: string }> = {
     admin: { label: "Administración", className: "bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300" },
@@ -80,13 +81,11 @@ export default function AvisosPage() {
                     })}
                 </div>
             ) : (
-                <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm min-h-[50vh]">
-                    <div className="flex flex-col items-center gap-1 text-center">
-                        <Bell className="h-12 w-12 text-muted-foreground" />
-                        <h3 className="text-2xl font-bold tracking-tight">Sin avisos por ahora</h3>
-                        <p className="text-sm text-muted-foreground">Todo está tranquilo. Vuelve más tarde.</p>
-                    </div>
-                </div>
+                <EmptyState
+                    icon={Bell}
+                    title="Sin avisos por ahora"
+                    description="Todo está tranquilo. Vuelve más tarde."
+                />
             )}
         </main>
     )

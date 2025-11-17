@@ -1,5 +1,10 @@
+
 "use client";
 
+import React from "react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { PlusCircle, QrCode, UserPlus } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,11 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
-import { visitorPasses } from "@/lib/mocks";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { PlusCircle, QrCode, UserPlus } from "lucide-react";
-import React from "react";
+import { visitorPasses as mockVisitorPasses } from "@/lib/mocks";
+import type { VisitorPass } from "@/lib/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function GeneratePassSheet() {
     const { toast } = useToast();
@@ -63,6 +66,18 @@ function GeneratePassSheet() {
 }
 
 export default function VisitantesPage() {
+    const [visitorPasses, setVisitorPasses] = React.useState<VisitorPass[]>([]);
+    const [isLoading, setIsLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        // Simulate fetching data
+        const timer = setTimeout(() => {
+            setVisitorPasses(mockVisitorPasses);
+            setIsLoading(false);
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex items-center justify-between">
@@ -70,7 +85,26 @@ export default function VisitantesPage() {
                 <GeneratePassSheet />
             </div>
             
-            {visitorPasses.length > 0 ? (
+            {isLoading ? (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {[...Array(3)].map((_, i) => (
+                        <Card key={i}>
+                            <CardHeader className="flex-row items-start gap-4 space-y-0">
+                                <Skeleton className="h-12 w-12 rounded-lg" />
+                                <div className="flex-1 space-y-2">
+                                    <Skeleton className="h-5 w-3/4" />
+                                    <Skeleton className="h-4 w-1/2" />
+                                </div>
+                                <Skeleton className="h-6 w-16 rounded-full" />
+                            </CardHeader>
+                            <CardContent className="flex justify-end gap-2">
+                                <Skeleton className="h-9 w-24" />
+                                <Skeleton className="h-9 w-28" />
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            ) : visitorPasses.length > 0 ? (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {visitorPasses.map(pass => {
                         const isValid = new Date(pass.validTo) > new Date();

@@ -1,5 +1,11 @@
+
 "use client";
 
+import React from "react";
+import Link from "next/link";
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { MessageSquare, PlusCircle, Wrench } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,13 +16,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { tickets } from "@/lib/mocks";
+import { tickets as mockTickets } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
-import { formatDistanceToNow } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { MessageSquare, PlusCircle, Wrench } from "lucide-react";
-import Link from "next/link";
-import React from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const statusMap: Record<Ticket['status'], { label: string; className: string }> = {
     open: { label: "Abierto", className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-300/50" },
@@ -89,6 +91,18 @@ function CreateTicketSheet() {
 }
 
 export default function MantenimientoPage() {
+    const [tickets, setTickets] = React.useState<Ticket[]>([]);
+    const [isLoading, setIsLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        // Simulate fetching data
+        const timer = setTimeout(() => {
+            setTickets(mockTickets);
+            setIsLoading(false);
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
              <div className="flex items-center justify-between">
@@ -96,7 +110,28 @@ export default function MantenimientoPage() {
                 <CreateTicketSheet />
             </div>
             
-            {tickets.length > 0 ? (
+            {isLoading ? (
+                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {[...Array(3)].map((_, i) => (
+                        <Card key={i} className="flex flex-col">
+                            <CardHeader>
+                               <Skeleton className="h-5 w-3/4" />
+                               <Skeleton className="h-4 w-1/2 mt-2" />
+                            </CardHeader>
+                            <CardContent className="flex-1">
+                                <div className="space-y-2">
+                                  <Skeleton className="h-4 w-full" />
+                                  <Skeleton className="h-4 w-full" />
+                                  <Skeleton className="h-4 w-5/6" />
+                                </div>
+                            </CardContent>
+                            <div className="p-4 pt-0">
+                                <Skeleton className="h-9 w-full" />
+                            </div>
+                        </Card>
+                    ))}
+                 </div>
+            ) : tickets.length > 0 ? (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {tickets.map(ticket => {
                         const status = statusMap[ticket.status];
