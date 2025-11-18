@@ -2,7 +2,7 @@
 
 import { useSidebar } from "../ui/sidebar";
 import { Button } from "../ui/button";
-import { Menu } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@/hooks/use-user";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -15,10 +15,14 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Icons } from "../icons";
+import { ThemeToggle } from "./theme-toggle";
+import { LiveClock } from "./live-clock";
+import { LanguageToggle } from "./language-toggle";
+
 
 export function AppHeader() {
   const { toggleSidebar } = useSidebar();
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -40,7 +44,13 @@ export function AppHeader() {
         </Link>
       </div>
 
-      <div className="flex w-full items-center justify-end gap-4 md:ml-auto md:gap-2 lg:gap-4">
+      <div className="flex w-full items-center justify-end gap-2 md:ml-auto md:gap-4">
+        <div className="hidden items-center gap-2 md:flex">
+          <LiveClock />
+          <Separator orientation="vertical" className="h-6" />
+          <LanguageToggle />
+        </div>
+        <ThemeToggle />
         {user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

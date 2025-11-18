@@ -12,7 +12,7 @@ export const useUser = () => {
         const timer = setTimeout(() => {
             setUser(mockUser);
             setIsLoading(false);
-        }, 1000);
+        }, 500); // Reduced delay for a snappier feel
 
         return () => clearTimeout(timer);
     }, []);
