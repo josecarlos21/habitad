@@ -55,7 +55,7 @@ function NextPaymentCard({ invoice, isLoading }: { invoice: Invoice | undefined,
   }
   
   return (
-    <Card className="lg:col-span-2 bg-gradient-to-tr from-primary/10 via-background to-background border-primary/20 text-foreground shadow-lg">
+    <Card className="lg:col-span-2 bg-gradient-to-tr from-primary/10 via-card to-card text-foreground">
       <CardHeader>
         <CardTitle className="text-primary">Tu Próximo Pago</CardTitle>
         <CardDescription className="text-foreground/80">{invoice.concept}</CardDescription>
@@ -126,7 +126,7 @@ function DashboardCard({
     const hasContent = React.Children.count(children) > 0;
     
     return (
-        <Card className={cn("flex flex-col transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg", className)}>
+        <Card className={cn("flex flex-col", className)}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-base font-medium">{title}</CardTitle>
             {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
@@ -165,7 +165,7 @@ export default function DashboardPage() {
     setIsLoading(true);
     const timer = setTimeout(() => {
         setIsLoading(false);
-    }, 500); // Reduced delay
+    }, 300); // Reduced delay
     return () => clearTimeout(timer);
   }, []);
 

@@ -8,7 +8,7 @@
     --background: 240 5% 98%; /* off-white (#FAFAFB) */
     --foreground: 240 10% 3.9%; /* near-black */
 
-    --card: 0 0% 100%; /* white */
+    --card: 221 83% 98%; /* lighter blue */
     --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
@@ -49,7 +49,7 @@
     --background: 240 6% 10%; /* near-black (#17171A) */
     --foreground: 0 0% 98%; /* off-white */
 
-    --card: 240 4% 14%; /* slightly lighter black (#212124) */
+    --card: 221 30% 12%; /* dark blue */
     --card-foreground: 0 0% 98%;
 
     --popover: 240 10% 3.9%;
