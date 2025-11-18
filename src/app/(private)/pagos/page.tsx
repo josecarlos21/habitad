@@ -4,18 +4,16 @@
 import React from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { ArrowRight, CheckCircle, Clock } from "lucide-react";
+import { ArrowRight, CheckCircle, Clock, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { invoices as mockInvoices } from "@/lib/mocks";
 import type { Invoice } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/app/empty-state";
 
 const statusMap: Record<Invoice['status'], { label: string; icon: React.ElementType; variant: "success" | "warning" | "destructive" }> = {
     paid: { label: "Pagado", icon: CheckCircle, variant: "success" },
@@ -41,49 +39,49 @@ export default function PagosPage() {
 
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
-            <h1 className="text-2xl font-bold tracking-tight">Pagos</h1>
-            <Tabs defaultValue="due">
-                <TabsList className="grid w-full grid-cols-2 md:w-[400px]">
-                    <TabsTrigger value="due">Adeudos</TabsTrigger>
-                    <TabsTrigger value="history">Historial</TabsTrigger>
-                </TabsList>
-                <TabsContent value="due" className="animate-fade-in">
-                     {isLoading ? (
-                        <div className="space-y-2 mt-4">
-                            {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
-                        </div>
-                    ) : dueInvoices.length > 0 ? (
-                         <div className="space-y-2 mt-4">
-                            {dueInvoices.map((invoice, i) => <InvoiceCard key={invoice.id} invoice={invoice} animationDelay={i * 100}/>)}
-                        </div>
-                    ) : (
-                        <Card className="mt-4">
-                            <CardHeader>
-                               <CardTitle>¡Felicidades!</CardTitle>
-                                <CardDescription>No tienes adeudos pendientes.</CardDescription>
-                            </CardHeader>
-                        </Card>
-                    )}
-                </TabsContent>
-                <TabsContent value="history" className="animate-fade-in">
-                    {isLoading ? (
-                         <div className="space-y-2 mt-4">
-                            {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
-                        </div>
-                    ) : paidInvoices.length > 0 ? (
-                         <div className="space-y-2 mt-4">
-                            {paidInvoices.map((invoice, i) => <InvoiceCard key={invoice.id} invoice={invoice} animationDelay={i * 100} />)}
-                        </div>
-                    ) : (
-                        <Card className="mt-4">
-                            <CardHeader>
-                               <CardTitle>Sin historial</CardTitle>
-                                <CardDescription>Aún no has realizado ningún pago.</CardDescription>
-                            </CardHeader>
-                        </Card>
-                    )}
-                </TabsContent>
-            </Tabs>
+            <h1 className="text-2xl font-bold tracking-tight">Pagos y Adeudos</h1>
+
+            {isLoading ? (
+                <div className="space-y-4">
+                    <Skeleton className="h-8 w-48" />
+                    <Skeleton className="h-24 w-full" />
+                    <Skeleton className="h-24 w-full" />
+                </div>
+            ) : (
+                <>
+                     <section className="animate-slide-up-and-fade">
+                        <h2 className="text-lg font-semibold mb-3">Adeudos Pendientes</h2>
+                         {dueInvoices.length > 0 ? (
+                             <div className="space-y-2">
+                                {dueInvoices.map((invoice, i) => <InvoiceCard key={invoice.id} invoice={invoice} animationDelay={i * 100}/>)}
+                            </div>
+                        ) : (
+                             <Card className="flex flex-col items-center justify-center text-center p-8 border-dashed">
+                                <CardHeader className="p-0">
+                                    <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                                    <CardTitle>¡Felicidades!</CardTitle>
+                                    <CardDescription>No tienes adeudos pendientes.</CardDescription>
+                                </CardHeader>
+                            </Card>
+                        )}
+                    </section>
+
+                    <section className="mt-8 animate-slide-up-and-fade" style={{animationDelay: '200ms'}}>
+                        <h2 className="text-lg font-semibold mb-3">Historial de Pagos</h2>
+                        {paidInvoices.length > 0 ? (
+                            <div className="space-y-2">
+                                {paidInvoices.map((invoice, i) => <InvoiceCard key={invoice.id} invoice={invoice} animationDelay={i * 100} />)}
+                            </div>
+                        ) : (
+                           <EmptyState 
+                                icon={CreditCard}
+                                title="Sin historial"
+                                description="Aún no has realizado ningún pago."
+                           />
+                        )}
+                    </section>
+                </>
+            )}
         </main>
     );
 }
@@ -117,7 +115,8 @@ function InvoiceCard({ invoice, animationDelay }: { invoice: Invoice, animationD
                 <div className="flex-1">
                     <p className="font-semibold text-sm">{invoice.concept}</p>
                     <p className="text-xs text-muted-foreground">
-                        Vence el {format(new Date(invoice.dueDate), "dd MMM, yyyy", { locale: es })}
+                        {status.variant === 'paid' ? 'Pagado el ' : 'Vence el '} 
+                        {format(new Date(invoice.dueDate), "dd MMM, yyyy", { locale: es })}
                     </p>
                 </div>
                 <div className="flex flex-col items-end gap-1">

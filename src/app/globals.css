@@ -6,13 +6,13 @@
 @layer base {
   :root {
     --background: 240 5% 98%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 240 5% 20%; /* Changed from near-black to very dark grey */
 
     --card: 240 5% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 5% 20%;
  
     --popover: 240 5% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 240 5% 20%;
  
     --primary: 221 83% 53%;
     --primary-foreground: 210 40% 98%;
@@ -53,7 +53,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
  
-    --primary: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
  
     --secondary: 217.2 32.6% 17.5%;
@@ -70,14 +70,7 @@
  
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 210 40% 98%;
-
-    /* Chart Colors */
-    --chart-1: 217 91% 60%;
-    --chart-2: 158 68% 46%;
-    --chart-3: 43 74% 66%;
-    --chart-4: 27 87% 67%;
-    --chart-5: 0 84.2% 60.2%;
+    --ring: 212.7 26.8% 83.9%;
   }
 }
  
@@ -87,7 +80,34 @@
   }
   body {
     @apply bg-background text-foreground;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 }
+
+.animate-slide-up-and-fade {
+  animation: slide-up-and-fade 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes slide-up-and-fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
