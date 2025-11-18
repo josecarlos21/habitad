@@ -46,7 +46,7 @@ body {
     --chart-5: 0 84.2% 60.2%;
 
     /* Radius Tokens */
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     /* Sidebar Theme */
     --sidebar-background: 240 10% 3.9%;
@@ -114,5 +114,7 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }

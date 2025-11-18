@@ -60,7 +60,7 @@ function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
                     )}
                 </SheetHeader>
                 {isBooked ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center">
+                    <div className="flex flex-col items-center justify-center h-full text-center p-4 animate-fade-in">
                         <CheckCircle className="w-20 h-20 text-green-500 mb-4" />
                         <h3 className="text-xl font-semibold">¡Reserva Exitosa!</h3>
                         <p className="text-muted-foreground mt-2">
@@ -97,6 +97,7 @@ export default function ReservasPage() {
     const [isLoading, setIsLoading] = React.useState(true);
 
      React.useEffect(() => {
+        setIsLoading(true);
         const timer = setTimeout(() => {
             setAmenityList(mockAmenities);
             setIsLoading(false);
@@ -105,8 +106,8 @@ export default function ReservasPage() {
     }, []);
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            <h1 className="text-2xl font-bold">Reservar Amenidades</h1>
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
+            <h1 className="text-2xl font-bold tracking-tight">Reservar Amenidades</h1>
             
             {isLoading ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -126,14 +127,19 @@ export default function ReservasPage() {
                 </div>
             ) : amenityList.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {amenityList.map((amenity: Amenity) => (
-                        <Card key={amenity.id} className="overflow-hidden flex flex-col">
+                    {amenityList.map((amenity: Amenity, i) => (
+                        <Card 
+                            key={amenity.id} 
+                            className="overflow-hidden flex flex-col transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade"
+                            style={{animationDelay: `${i * 100}ms`}}
+                        >
                             <CardHeader className="p-0">
                                 <div className="relative h-48 w-full">
                                     <Image 
                                         src={amenity.image} 
                                         alt={amenity.name} 
                                         fill
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         style={{ objectFit: 'cover' }}
                                         data-ai-hint="amenity lifestyle"
                                     />

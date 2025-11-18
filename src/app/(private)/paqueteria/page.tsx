@@ -22,6 +22,7 @@ export default function PaqueteriaPage() {
     const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
+        setIsLoading(true);
         const timer = setTimeout(() => {
             setParcels(mockParcels);
             setIsLoading(false);
@@ -30,8 +31,8 @@ export default function PaqueteriaPage() {
     }, []);
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            <h1 className="text-2xl font-bold">Paquetería</h1>
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
+            <h1 className="text-2xl font-bold tracking-tight">Paquetería</h1>
             
             {isLoading ? (
                  <div className="space-y-4">
@@ -53,10 +54,14 @@ export default function PaqueteriaPage() {
                  </div>
             ) : parcels.length > 0 ? (
                 <div className="space-y-4">
-                    {parcels.map(parcel => {
+                    {parcels.map((parcel, i) => {
                         const status = statusMap[parcel.status];
                         return (
-                             <Card key={parcel.id}>
+                             <Card 
+                                key={parcel.id} 
+                                className="transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade"
+                                style={{animationDelay: `${i * 100}ms`}}
+                             >
                                 <CardHeader className="flex flex-row items-center gap-4 space-y-0">
                                     <div className="grid h-10 w-10 place-items-center rounded-lg bg-muted">
                                         <status.icon className="h-6 w-6 text-muted-foreground" />

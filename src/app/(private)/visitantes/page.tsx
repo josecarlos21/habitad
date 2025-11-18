@@ -4,7 +4,7 @@
 import React from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { UserPlus, QrCode } from "lucide-react";
+import { UserPlus, QrCode, Share2, Trash2 } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ export default function VisitantesPage() {
     const { toast } = useToast();
 
     React.useEffect(() => {
+        setIsLoading(true);
         const timer = setTimeout(() => {
             setVisitorPasses(mockVisitorPasses);
             setIsLoading(false);
@@ -44,14 +45,14 @@ export default function VisitantesPage() {
     }
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Visitantes</h1>
+                <h1 className="text-2xl font-bold tracking-tight">Visitantes</h1>
                 <GeneratePassSheet onPassGenerated={handlePassGenerated} />
             </div>
             
             {isLoading ? (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {[...Array(3)].map((_, i) => (
                         <Card key={i}>
                             <CardHeader className="flex-row items-start gap-4 space-y-0">
@@ -64,17 +65,21 @@ export default function VisitantesPage() {
                             </CardHeader>
                             <CardContent className="flex justify-end gap-2">
                                 <Skeleton className="h-9 w-24" />
-                                <Skeleton className="h-9 w-28" />
+                                <Skeleton className="h-9 w-24" />
                             </CardContent>
                         </Card>
                     ))}
                 </div>
             ) : visitorPasses.length > 0 ? (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {visitorPasses.map(pass => {
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {visitorPasses.map((pass, i) => {
                         const isValid = new Date(pass.validTo) > new Date();
                         return (
-                            <Card key={pass.id}>
+                            <Card 
+                                key={pass.id}
+                                className="transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade"
+                                style={{animationDelay: `${i * 100}ms`}}
+                            >
                                 <CardHeader className="flex-row items-start gap-4 space-y-0">
                                     <div className="grid h-12 w-12 place-items-center rounded-lg border">
                                       <QrCode className="h-8 w-8 text-muted-foreground" />
@@ -90,8 +95,14 @@ export default function VisitantesPage() {
                                     </Badge>
                                 </CardHeader>
                                 <CardContent className="flex justify-end gap-2">
-                                    <Button variant="outline" size="sm">Compartir</Button>
-                                    <Button variant="ghost" size="sm">Ver detalles</Button>
+                                    <Button variant="outline" size="sm">
+                                        <Share2 className="mr-2 h-3.5 w-3.5"/>
+                                        Compartir
+                                    </Button>
+                                    <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                                         <Trash2 className="mr-2 h-3.5 w-3.5"/>
+                                        Cancelar
+                                    </Button>
                                 </CardContent>
                             </Card>
                         )

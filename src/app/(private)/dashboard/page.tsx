@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import { ArrowRight, Calendar, CheckCircle, QrCode, Wrench } from "lucide-react";
+import { ArrowRight, Calendar, CheckCircle, QrCode, Wrench, Bell } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { announcements, bookings, invoices, tickets, amenities } from "@/lib/mocks";
 import type { Invoice, Ticket, Booking, Announcement } from "@/lib/types";
+import { cn } from "@/lib/utils";
+
 
 function NextPaymentCard({ invoice, isLoading }: { invoice: Invoice | undefined, isLoading: boolean }) {
   const { user } = useUser();
@@ -53,13 +55,13 @@ function NextPaymentCard({ invoice, isLoading }: { invoice: Invoice | undefined,
   }
   
   return (
-    <Card className="lg:col-span-2 bg-gradient-to-tr from-primary/10 to-primary/20 text-primary-foreground shadow-lg">
+    <Card className="lg:col-span-2 bg-gradient-to-tr from-primary/10 via-background to-background border-primary/20 text-foreground shadow-lg">
       <CardHeader>
         <CardTitle className="text-primary">Tu Próximo Pago</CardTitle>
         <CardDescription className="text-foreground/80">{invoice.concept}</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-4xl font-bold text-foreground">${invoice.amount.toLocaleString('es-MX')}</p>
+        <p className="text-4xl font-bold">${invoice.amount.toLocaleString('es-MX')}</p>
         <p className="text-sm text-muted-foreground">Vence el {format(new Date(invoice.dueDate), "dd 'de' MMMM", { locale: es })}</p>
       </CardContent>
       <CardFooter>
@@ -109,7 +111,8 @@ function DashboardCard({
   children,
   isLoading,
   footer,
-  emptyState
+  emptyState,
+  className
 }: {
   title: string;
   link?: { href: string; label: string };
@@ -118,14 +121,14 @@ function DashboardCard({
   isLoading: boolean;
   footer?: React.ReactNode;
   emptyState?: React.ReactNode;
+  className?: string;
 }) {
     const hasContent = React.Children.count(children) > 0;
     
     return (
-        <Card className="flex flex-col">
+        <Card className={cn("flex flex-col transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg", className)}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-base font-medium">{title}</CardTitle>
-            {link && !isLoading && <Link href={link.href} className="text-sm text-primary hover:underline">{link.label}</Link>}
             {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
           </CardHeader>
           <CardContent className="flex-1">
@@ -141,7 +144,16 @@ function DashboardCard({
                 emptyState || <p className="text-sm text-muted-foreground text-center py-4">No hay información disponible.</p>
             )}
           </CardContent>
-          {footer && !isLoading && <CardFooter>{footer}</CardFooter>}
+           {(footer || link) && !isLoading && (
+              <CardFooter className="flex justify-end">
+                {footer}
+                 {link && (
+                    <Button variant="link" size="sm" asChild className="ml-auto">
+                        <Link href={link.href}>{link.label} <ArrowRight className="ml-1 h-3 w-3" /></Link>
+                    </Button>
+                )}
+              </CardFooter>
+          )}
         </Card>
     )
 }
@@ -150,6 +162,7 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
+    setIsLoading(true);
     const timer = setTimeout(() => {
         setIsLoading(false);
     }, 1500);
@@ -162,80 +175,91 @@ export default function DashboardPage() {
   const recentAnnouncements = announcements.slice(0, 3);
 
   return (
-    <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <NextPaymentCard invoice={nextPayment} isLoading={isLoading} />
-        <QuickAccessCard isLoading={isLoading} />
+    <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
+       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="lg:col-span-2 animate-slide-up-and-fade" style={{animationDelay: '150ms'}}>
+          <NextPaymentCard invoice={nextPayment} isLoading={isLoading} />
+        </div>
+         <div className="animate-slide-up-and-fade" style={{animationDelay: '300ms'}}>
+          <QuickAccessCard isLoading={isLoading} />
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <DashboardCard 
-            title="Avisos Recientes"
-            link={{href: "/avisos", label: "Ver todos"}}
-            isLoading={isLoading}
-            emptyState={<p className="text-sm text-muted-foreground text-center py-4">No hay avisos recientes.</p>}
-        >
-            {recentAnnouncements.length > 0 ? (
-                <ul className="space-y-4">
-                  {recentAnnouncements.map(ann => (
-                    <li key={ann.id}>
-                      <Link href="/avisos" className="block hover:bg-muted p-2 rounded-md">
-                        <p className="font-semibold text-sm">{ann.title}</p>
-                        <p className="text-xs text-muted-foreground">{ann.body.substring(0, 70)}...</p>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-            ) : null}
-        </DashboardCard>
-
-        <DashboardCard
-          title="Tickets de Mantenimiento"
-          icon={Wrench}
-          link={{ href: "/mantenimiento", label: "Ver todos" }}
-          isLoading={isLoading}
-          footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/mantenimiento/crear">Crear Nuevo Ticket</Link></Button>}
-          emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes tickets activos.</p>}
-        >
-            {activeTickets.length > 0 ? (
-                 <ul className="space-y-2">
-                  {activeTickets.slice(0, 3).map(ticket => (
-                     <li key={ticket.id} className="flex items-center justify-between hover:bg-muted p-2 rounded-md">
-                       <Link href={`/mantenimiento/${ticket.id}`} className="w-full">
-                        <div>
-                            <p className="text-sm font-medium">{ticket.title}</p>
-                            <p className="text-xs text-muted-foreground">Abierto {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}</p>
-                        </div>
+        <div className="animate-slide-up-and-fade" style={{animationDelay: '450ms'}}>
+          <DashboardCard 
+              title="Avisos Recientes"
+              icon={Bell}
+              link={{href: "/avisos", label: "Ver todos"}}
+              isLoading={isLoading}
+              emptyState={<p className="text-sm text-muted-foreground text-center py-4">No hay avisos recientes.</p>}
+          >
+              {recentAnnouncements.length > 0 ? (
+                  <ul className="space-y-1">
+                    {recentAnnouncements.map(ann => (
+                      <li key={ann.id}>
+                        <Link href="/avisos" className="block hover:bg-muted p-2 rounded-md transition-colors">
+                          <p className="font-semibold text-sm truncate">{ann.title}</p>
+                          <p className="text-xs text-muted-foreground truncate">{ann.body}</p>
                         </Link>
-                        <Badge variant={ticket.status === 'open' ? "destructive" : "secondary"}>{ticket.status === 'open' ? 'Abierto' : 'En Progreso'}</Badge>
-                     </li>
-                  ))}
-                 </ul>
-            ) : null}
-        </DashboardCard>
-        
-        <DashboardCard
-            title="Próximas Reservas"
-            icon={Calendar}
-            link={{ href: "/reservas", label: "Ver todas" }}
-            isLoading={isLoading}
-            emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes próximas reservas.</p>}
-        >
-            {upcomingBookings.length > 0 ? (
-                <ul className="space-y-2">
-                    {upcomingBookings.map(booking => (
-                        <li key={booking.id} className="flex items-center justify-between hover:bg-muted p-2 rounded-md">
-                           <Link href="/reservas" className="w-full">
-                            <div>
-                                <p className="text-sm font-medium">{amenities.find(a => a.id === booking.amenityId)?.name}</p>
-                                <p className="text-xs text-muted-foreground">{format(new Date(booking.slot.start), "eeee dd 'de' MMMM, h:mm a", { locale: es })}</p>
-                            </div>
-                            </Link>
-                        </li>
+                      </li>
                     ))}
-                </ul>
-            ): null}
-        </DashboardCard>
+                  </ul>
+              ) : null}
+          </DashboardCard>
+        </div>
+
+        <div className="animate-slide-up-and-fade" style={{animationDelay: '600ms'}}>
+          <DashboardCard
+            title="Tickets de Mantenimiento"
+            icon={Wrench}
+            link={{ href: "/mantenimiento", label: "Ver todos" }}
+            isLoading={isLoading}
+            footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/mantenimiento/crear">Crear Nuevo Ticket</Link></Button>}
+            emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes tickets activos.</p>}
+          >
+              {activeTickets.length > 0 ? (
+                  <ul className="space-y-2">
+                    {activeTickets.slice(0, 3).map(ticket => (
+                      <li key={ticket.id}>
+                        <Link href={`/mantenimiento/${ticket.id}`} className="flex items-center justify-between hover:bg-muted p-2 rounded-md transition-colors w-full">
+                          <div>
+                              <p className="text-sm font-medium">{ticket.title}</p>
+                              <p className="text-xs text-muted-foreground">Abierto {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}</p>
+                          </div>
+                          <Badge variant={ticket.status === 'open' ? "destructive" : "secondary"}>{ticket.status === 'open' ? 'Abierto' : 'En Progreso'}</Badge>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+              ) : null}
+          </DashboardCard>
+        </div>
+
+        <div className="animate-slide-up-and-fade" style={{animationDelay: '750ms'}}>
+          <DashboardCard
+              title="Próximas Reservas"
+              icon={Calendar}
+              link={{ href: "/reservas", label: "Ver todas" }}
+              isLoading={isLoading}
+              emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes próximas reservas.</p>}
+          >
+              {upcomingBookings.length > 0 ? (
+                  <ul className="space-y-2">
+                      {upcomingBookings.map(booking => (
+                          <li key={booking.id}>
+                            <Link href="/reservas" className="flex items-center justify-between hover:bg-muted p-2 rounded-md transition-colors w-full">
+                              <div>
+                                  <p className="text-sm font-medium">{amenities.find(a => a.id === booking.amenityId)?.name}</p>
+                                  <p className="text-xs text-muted-foreground">{format(new Date(booking.slot.start), "eeee dd 'de' MMMM, h:mm a", { locale: es })}</p>
+                              </div>
+                            </Link>
+                          </li>
+                      ))}
+                  </ul>
+              ): null}
+          </DashboardCard>
+        </div>
       </div>
     </main>
   );

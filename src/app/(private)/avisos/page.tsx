@@ -24,6 +24,7 @@ export default function AvisosPage() {
     const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
+        setIsLoading(true);
         const timer = setTimeout(() => {
             setAnnouncementList(mockAnnouncements);
             setIsLoading(false);
@@ -32,8 +33,8 @@ export default function AvisosPage() {
     }, []);
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            <h1 className="text-2xl font-bold">Avisos</h1>
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
+            <h1 className="text-2xl font-bold tracking-tight">Avisos</h1>
             
             {isLoading ? (
                  <div className="space-y-6">
@@ -57,10 +58,14 @@ export default function AvisosPage() {
                  </div>
             ) : announcementList.length > 0 ? (
                 <div className="space-y-6">
-                    {announcementList.map((announcement: Announcement) => {
+                    {announcementList.map((announcement: Announcement, i) => {
                         const category = categoryMap[announcement.category];
                         return (
-                            <Card key={announcement.id} className={announcement.pinned ? "border-primary" : ""}>
+                            <Card 
+                                key={announcement.id} 
+                                className={`transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade ${announcement.pinned ? "border-primary" : ""}`}
+                                style={{animationDelay: `${i * 100}ms`}}
+                            >
                                 <CardHeader>
                                     <div className="flex flex-wrap items-start justify-between gap-2">
                                         <CardTitle>{announcement.title}</CardTitle>

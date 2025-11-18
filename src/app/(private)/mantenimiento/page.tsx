@@ -29,6 +29,7 @@ export default function MantenimientoPage() {
     const { toast } = useToast();
 
     React.useEffect(() => {
+        setIsLoading(true);
         const timer = setTimeout(() => {
             setTickets(mockTickets);
             setIsLoading(false);
@@ -52,14 +53,14 @@ export default function MantenimientoPage() {
     }
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
              <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Mantenimiento</h1>
+                <h1 className="text-2xl font-bold tracking-tight">Mantenimiento</h1>
                 <CreateTicketSheet onTicketCreated={handleTicketCreated} />
             </div>
             
             {isLoading ? (
-                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {[...Array(3)].map((_, i) => (
                         <Card key={i} className="flex flex-col">
                             <CardHeader>
@@ -80,11 +81,15 @@ export default function MantenimientoPage() {
                     ))}
                  </div>
             ) : tickets.length > 0 ? (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {tickets.map(ticket => {
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {tickets.map((ticket, i) => {
                         const status = statusMap[ticket.status];
                         return (
-                            <Card key={ticket.id} className="flex flex-col">
+                            <Card 
+                                key={ticket.id} 
+                                className="flex flex-col transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade"
+                                style={{animationDelay: `${i * 100}ms`}}
+                            >
                                 <CardHeader>
                                     <div className="flex items-start justify-between">
                                         <CardTitle className="text-base">{ticket.title}</CardTitle>

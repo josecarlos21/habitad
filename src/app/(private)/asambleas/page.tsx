@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Users, FileText, Vote as VoteIcon } from "lucide-react";
+import { Users, FileText, Vote as VoteIcon, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { EmptyState } from "@/components/app/empty-state";
@@ -38,36 +38,34 @@ function VotingCard({ vote, assemblyTitle }: { vote: any, assemblyTitle: string 
         }
     };
     
-    if (isVoted) {
-        return (
-             <Card className="bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800">
-                <CardHeader>
-                    <CardTitle className="text-green-800 dark:text-green-300">¡Gracias por votar!</CardTitle>
-                    <CardDescription className="text-green-700 dark:text-green-400">Tu participación es importante para la comunidad.</CardDescription>
-                </CardHeader>
-            </Card>
-        )
-    }
-
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle><VoteIcon className="inline-block mr-2" /> Votación en Curso</CardTitle>
-                <CardDescription>{vote.question}</CardDescription>
+        <Card className="transition-all duration-300">
+             <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    {isVoted ? <CheckCircle className="text-green-500"/> : <VoteIcon />}
+                     {isVoted ? "¡Gracias por votar!" : "Votación en Curso"}
+                </CardTitle>
+                <CardDescription>
+                    {isVoted ? "Tu participación es importante para la comunidad." : vote.question}
+                </CardDescription>
             </CardHeader>
-            <CardContent>
-                <RadioGroup onValueChange={setSelectedOption} className="gap-4">
-                    {vote.options.map((option: string) => (
-                        <div key={option} className="flex items-center space-x-2">
-                            <RadioGroupItem value={option} id={option} />
-                            <Label htmlFor={option} className="font-normal">{option}</Label>
-                        </div>
-                    ))}
-                </RadioGroup>
-            </CardContent>
-            <div className="p-6 pt-0">
-                <Button onClick={handleSubmitVote} className="w-full">Emitir Voto</Button>
-            </div>
+            {!isVoted && (
+                <>
+                    <CardContent>
+                        <RadioGroup onValueChange={setSelectedOption} className="gap-4">
+                            {vote.options.map((option: string) => (
+                                <div key={option} className="flex items-center space-x-2">
+                                    <RadioGroupItem value={option} id={option} />
+                                    <Label htmlFor={option} className="font-normal">{option}</Label>
+                                </div>
+                            ))}
+                        </RadioGroup>
+                    </CardContent>
+                    <CardContent>
+                        <Button onClick={handleSubmitVote} className="w-full">Emitir Voto</Button>
+                    </CardContent>
+                </>
+            )}
         </Card>
     )
 }
@@ -77,6 +75,7 @@ export default function AsambleasPage() {
     const [isLoading, setIsLoading] = React.useState(true);
 
      React.useEffect(() => {
+        setIsLoading(true);
         const timer = setTimeout(() => {
             setAssemblies(mockAssemblies);
             setIsLoading(false);
@@ -88,8 +87,8 @@ export default function AsambleasPage() {
     const pastAssemblies = assemblies.filter(a => a.status === 'past');
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            <h1 className="text-2xl font-bold">Asambleas y Votaciones</h1>
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
+            <h1 className="text-2xl font-bold tracking-tight">Asambleas y Votaciones</h1>
 
             {isLoading ? (
                 <div className="space-y-6">
@@ -107,7 +106,7 @@ export default function AsambleasPage() {
                 </div>
             ) : activeAssembly ? (
                 <div className="grid gap-6 lg:grid-cols-2">
-                    <div>
+                    <div className="animate-slide-up-and-fade" style={{animationDelay: '150ms'}}>
                         <Card>
                             <CardHeader>
                                 <div className="flex justify-between items-start">
@@ -137,7 +136,7 @@ export default function AsambleasPage() {
                             </CardContent>
                         </Card>
                     </div>
-                     <div>
+                     <div className="animate-slide-up-and-fade" style={{animationDelay: '300ms'}}>
                         {activeAssembly.vote && <VotingCard vote={activeAssembly.vote} assemblyTitle={activeAssembly.title} />}
                     </div>
                 </div>
@@ -154,8 +153,8 @@ export default function AsambleasPage() {
                     <h2 className="text-xl font-bold mb-4">Historial de Asambleas</h2>
                     {pastAssemblies.length > 0 ? (
                         <Accordion type="single" collapsible className="w-full">
-                            {pastAssemblies.map(assembly => (
-                                <AccordionItem value={assembly.id} key={assembly.id}>
+                            {pastAssemblies.map((assembly, i) => (
+                                <AccordionItem value={assembly.id} key={assembly.id} className="animate-slide-up-and-fade" style={{animationDelay: `${i * 100 + 400}ms`}}>
                                     <AccordionTrigger>
                                         <div className="flex flex-col items-start text-left">
                                             <span className="font-semibold">{assembly.title}</span>

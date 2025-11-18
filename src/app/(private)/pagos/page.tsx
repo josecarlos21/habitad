@@ -26,6 +26,7 @@ export default function PagosPage() {
     const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
+        setIsLoading(true);
         const timer = setTimeout(() => {
             setInvoiceList(mockInvoices);
             setIsLoading(false);
@@ -37,14 +38,14 @@ export default function PagosPage() {
     const paidInvoices: Invoice[] = invoiceList.filter(i => i.status === 'paid');
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            <h1 className="text-2xl font-bold">Pagos</h1>
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
+            <h1 className="text-2xl font-bold tracking-tight">Pagos</h1>
             <Tabs defaultValue="due">
                 <TabsList className="grid w-full grid-cols-2 md:w-[400px]">
                     <TabsTrigger value="due">Adeudos</TabsTrigger>
                     <TabsTrigger value="history">Historial</TabsTrigger>
                 </TabsList>
-                <TabsContent value="due">
+                <TabsContent value="due" className="animate-fade-in">
                     <Card>
                         <CardHeader>
                             <CardTitle>Adeudos Pendientes</CardTitle>
@@ -61,7 +62,7 @@ export default function PagosPage() {
                         </CardContent>
                     </Card>
                 </TabsContent>
-                <TabsContent value="history">
+                <TabsContent value="history" className="animate-fade-in">
                     <Card>
                          <CardHeader>
                             <CardTitle>Historial de Pagos</CardTitle>
@@ -85,28 +86,30 @@ export default function PagosPage() {
 
 function InvoiceTableSkeleton() {
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>Concepto</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Vencimiento</TableHead>
-                    <TableHead className="text-right">Monto</TableHead>
-                    <TableHead><span className="sr-only">Acciones</span></TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {[...Array(3)].map((_, i) => (
-                     <TableRow key={i}>
-                        <TableCell><Skeleton className="h-5 w-48" /></TableCell>
-                        <TableCell><Skeleton className="h-6 w-24 rounded-full" /></TableCell>
-                        <TableCell><Skeleton className="h-5 w-20" /></TableCell>
-                        <TableCell className="text-right"><Skeleton className="h-5 w-16 ml-auto" /></TableCell>
-                        <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
+        <div className="overflow-x-auto">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Concepto</TableHead>
+                        <TableHead>Estado</TableHead>
+                        <TableHead>Vencimiento</TableHead>
+                        <TableHead className="text-right">Monto</TableHead>
+                        <TableHead><span className="sr-only">Acciones</span></TableHead>
                     </TableRow>
-                ))}
-            </TableBody>
-        </Table>
+                </TableHeader>
+                <TableBody>
+                    {[...Array(3)].map((_, i) => (
+                        <TableRow key={i}>
+                            <TableCell><Skeleton className="h-5 w-48" /></TableCell>
+                            <TableCell><Skeleton className="h-6 w-24 rounded-full" /></TableCell>
+                            <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                            <TableCell className="text-right"><Skeleton className="h-5 w-16 ml-auto" /></TableCell>
+                            <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
     )
 }
 
@@ -124,46 +127,48 @@ function InvoiceTable({ invoices }: { invoices: Invoice[]}) {
     }
 
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>Concepto</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Vencimiento</TableHead>
-                    <TableHead className="text-right">Monto</TableHead>
-                    <TableHead><span className="sr-only">Acciones</span></TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {invoices.map((invoice) => {
-                    const status = statusMap[invoice.status];
-                    return (
-                        <TableRow key={invoice.id}>
-                            <TableCell className="font-medium">{invoice.concept}</TableCell>
-                            <TableCell>
-                                <Badge variant="outline" className={status.className}>
-                                    <status.icon className="mr-2 h-3 w-3"/>
-                                    {status.label}
-                                </Badge>
-                            </TableCell>
-                            <TableCell>{format(new Date(invoice.dueDate), "dd MMM, yyyy", { locale: es })}</TableCell>
-                            <TableCell className="text-right">${invoice.amount.toLocaleString('es-MX')}</TableCell>
-                             <TableCell className="text-right">
-                                {(invoice.status === 'pending' || invoice.status === 'overdue') && (
-                                    <Button variant="ghost" size="sm" onClick={() => handleActionClick(invoice)}>
-                                        Pagar <ArrowRight className="ml-2 h-4 w-4" />
-                                    </Button>
-                                )}
-                                {invoice.status === 'paid' && (
-                                    <Button variant="link" size="sm" onClick={() => handleActionClick(invoice)}>
-                                        Ver Recibo
-                                    </Button>
-                                )}
-                            </TableCell>
-                        </TableRow>
-                    );
-                })}
-            </TableBody>
-        </Table>
+        <div className="overflow-x-auto">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Concepto</TableHead>
+                        <TableHead>Estado</TableHead>
+                        <TableHead>Vencimiento</TableHead>
+                        <TableHead className="text-right">Monto</TableHead>
+                        <TableHead><span className="sr-only">Acciones</span></TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {invoices.map((invoice, i) => {
+                        const status = statusMap[invoice.status];
+                        return (
+                            <TableRow key={invoice.id} className="animate-slide-up-and-fade" style={{animationDelay: `${i * 100}ms`}}>
+                                <TableCell className="font-medium">{invoice.concept}</TableCell>
+                                <TableCell>
+                                    <Badge variant="outline" className={status.className}>
+                                        <status.icon className="mr-2 h-3 w-3"/>
+                                        {status.label}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell>{format(new Date(invoice.dueDate), "dd MMM, yyyy", { locale: es })}</TableCell>
+                                <TableCell className="text-right">${invoice.amount.toLocaleString('es-MX')}</TableCell>
+                                <TableCell className="text-right">
+                                    {(invoice.status === 'pending' || invoice.status === 'overdue') && (
+                                        <Button variant="ghost" size="sm" onClick={() => handleActionClick(invoice)}>
+                                            Pagar <ArrowRight className="ml-2 h-4 w-4" />
+                                        </Button>
+                                    )}
+                                    {invoice.status === 'paid' && (
+                                        <Button variant="link" size="sm" onClick={() => handleActionClick(invoice)}>
+                                            Ver Recibo
+                                        </Button>
+                                    )}
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
+                </TableBody>
+            </Table>
+        </div>
     );
 }
