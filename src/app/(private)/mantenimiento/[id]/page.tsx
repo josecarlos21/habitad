@@ -84,12 +84,13 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex items-center gap-4">
-                <Button variant="outline" size="sm" asChild>
+                <Button variant="outline" size="icon" asChild>
                     <Link href="/mantenimiento">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Volver
+                        <ArrowLeft className="h-4 w-4" />
+                        <span className="sr-only">Volver</span>
                     </Link>
                 </Button>
+                 <h1 className="text-xl font-semibold md:text-2xl">{ticket.title}</h1>
             </div>
             <div className="grid gap-6 lg:grid-cols-3">
                 <div className="lg:col-span-2 space-y-6">
@@ -98,8 +99,8 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                             <div className="flex items-start justify-between">
                                 <div>
                                     <Badge variant="outline" className={status.className}>{status.label}</Badge>
-                                    <CardTitle className="mt-2 text-2xl">{ticket.title}</CardTitle>
-                                    <CardDescription>
+                                    <CardTitle className="mt-2 text-2xl sr-only">{ticket.title}</CardTitle>
+                                    <CardDescription className="mt-2">
                                         Ticket #{ticket.id.split('_')[1]} &bull; Creado {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}
                                     </CardDescription>
                                 </div>
@@ -176,4 +177,3 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
         </main>
     );
 }
-

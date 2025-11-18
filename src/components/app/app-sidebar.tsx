@@ -27,7 +27,6 @@ import {
 import { Icons } from "@/components/icons";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
 import { useUser } from "@/hooks/use-user";
 
 const navItems = [
@@ -54,21 +53,17 @@ export function AppSidebar() {
     return pathname === path;
   };
 
-  if (!user) {
-    return null; // O un skeleton/loader
-  }
-
   return (
-    <Sidebar>
-      <SidebarHeader>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-sidebar-accent size-10 rounded-lg">
-            <Icons.logo className="size-6 text-primary" />
-          </Button>
-          <div className="flex flex-col">
-            <h1 className="text-lg font-semibold text-sidebar-foreground">Habitat</h1>
-            <p className="text-xs text-muted-foreground">Conectado</p>
-          </div>
+    <Sidebar variant="inset" collapsible="icon">
+      <SidebarHeader className="hidden md:flex">
+         <div className="flex items-center gap-2">
+            <Link href="/dashboard" className="flex items-center gap-2">
+                <Icons.logo className="h-6 w-6 text-primary" />
+                <div className="flex flex-col text-left">
+                    <h1 className="text-lg font-semibold text-sidebar-foreground">Habitat</h1>
+                    <p className="text-xs text-muted-foreground">Conectado</p>
+                </div>
+            </Link>
         </div>
       </SidebarHeader>
 
@@ -117,18 +112,20 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
 
-        <Separator className="my-2" />
+        <Separator className="my-2 hidden md:block" />
 
-        <div className="flex items-center gap-3 p-2">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={user.imageUrl} alt={user.name} />
-              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col overflow-hidden">
-                <p className="font-semibold truncate text-sidebar-foreground">{user.name}</p>
-                <p className="text-xs text-muted-foreground truncate">{user.units[0].tower}-{user.units[0].number}</p>
-            </div>
-        </div>
+        {user && (
+          <div className="hidden items-center gap-3 p-2 md:flex">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={user.imageUrl} alt={user.name} />
+                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col overflow-hidden">
+                  <p className="font-semibold truncate text-sidebar-foreground">{user.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user.units[0].tower}-{user.units[0].number}</p>
+              </div>
+          </div>
+        )}
       </SidebarFooter>
     </Sidebar>
   );

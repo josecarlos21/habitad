@@ -1,3 +1,4 @@
+import { AppHeader } from "@/components/app/app-header";
 import { AppSidebar } from "@/components/app/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
@@ -8,12 +9,15 @@ export default function PrivateLayout({
 }) {
   return (
     <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-            <div className="min-h-screen">
-                {children}
-            </div>
-        </SidebarInset>
+      <div className="flex min-h-screen flex-col">
+        <AppHeader />
+        <div className="flex flex-1">
+          <AppSidebar />
+          <main className="flex-1 overflow-y-auto">
+             {children}
+          </main>
+        </div>
+      </div>
     </SidebarProvider>
   );
 }
