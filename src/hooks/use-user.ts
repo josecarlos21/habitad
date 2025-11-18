@@ -1,3 +1,4 @@
+
 import { user as mockUser } from '@/lib/mocks';
 import { User } from '@/lib/types';
 import { useEffect, useState } from 'react';
@@ -12,7 +13,7 @@ export const useUser = () => {
         const timer = setTimeout(() => {
             setUser(mockUser);
             setIsLoading(false);
-        }, 500); // Reduced delay for a snappier feel
+        }, 150); // Reduced delay for a snappier feel
 
         return () => clearTimeout(timer);
     }, []);

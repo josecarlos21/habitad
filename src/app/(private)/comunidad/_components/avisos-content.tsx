@@ -28,7 +28,7 @@ export default function AvisosPageContent() {
         const timer = setTimeout(() => {
             setAnnouncementList(mockAnnouncements);
             setIsLoading(false);
-        }, 1000);
+        }, 300); // Reduced delay
         return () => clearTimeout(timer);
     }, []);
 

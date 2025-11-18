@@ -165,7 +165,7 @@ export default function DashboardPage() {
     setIsLoading(true);
     const timer = setTimeout(() => {
         setIsLoading(false);
-    }, 1500);
+    }, 500); // Reduced delay
     return () => clearTimeout(timer);
   }, []);
 
@@ -213,7 +213,7 @@ export default function DashboardPage() {
           <DashboardCard
             title="Tickets de Mantenimiento"
             icon={Wrench}
-            link={{ href: "/servicios", label: "Ver todos" }}
+            link={{ href: "/servicios?tab=mantenimiento", label: "Ver todos" }}
             isLoading={isLoading}
             footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/servicios?tab=mantenimiento">Crear Nuevo Ticket</Link></Button>}
             emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes tickets activos.</p>}

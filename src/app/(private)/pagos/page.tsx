@@ -30,7 +30,7 @@ export default function PagosPage() {
         const timer = setTimeout(() => {
             setInvoiceList(mockInvoices);
             setIsLoading(false);
-        }, 1000);
+        }, 300); // Reduced delay
         return () => clearTimeout(timer);
     }, []);
 

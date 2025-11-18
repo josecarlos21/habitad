@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { tickets as mockTickets } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CreateTicketSheet } from "../../mantenimiento/_components/create-ticket-sheet";
+import { CreateTicketSheet } from "../../servicios/_components/create-ticket-sheet";
 
 const statusMap: Record<Ticket['status'], { label: string; className: string }> = {
     open: { label: "Abierto", className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-300/50" },
@@ -33,7 +33,7 @@ export default function MantenimientoPageContent() {
         const timer = setTimeout(() => {
             setTickets(mockTickets);
             setIsLoading(false);
-        }, 1000);
+        }, 300); // Reduced delay
         return () => clearTimeout(timer);
     }, []);
 

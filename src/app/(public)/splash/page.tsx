@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect } from 'react';
@@ -10,7 +11,7 @@ export default function SplashPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.replace('/auth');
-    }, 2000); 
+    }, 1500); // Reduced delay
 
     return () => clearTimeout(timer);
   }, [router]);

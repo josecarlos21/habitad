@@ -79,7 +79,7 @@ export default function AsambleasPageContent() {
         const timer = setTimeout(() => {
             setAssemblies(mockAssemblies);
             setIsLoading(false);
-        }, 1000);
+        }, 300); // Reduced delay
         return () => clearTimeout(timer);
     }, []);
 

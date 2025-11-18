@@ -25,7 +25,7 @@ export default function VisitantesPageContent() {
         const timer = setTimeout(() => {
             setVisitorPasses(mockVisitorPasses);
             setIsLoading(false);
-        }, 1000);
+        }, 300); // Reduced delay
         return () => clearTimeout(timer);
     }, []);
 
