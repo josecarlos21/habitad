@@ -26,7 +26,6 @@ export default function PagosPage() {
     const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
-        // Simulate fetching data
         const timer = setTimeout(() => {
             setInvoiceList(mockInvoices);
             setIsLoading(false);
@@ -52,8 +51,13 @@ export default function PagosPage() {
                             <CardDescription>Aquí puedes ver y pagar tus cuotas pendientes.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <InvoiceTable invoices={dueInvoices} isLoading={isLoading} />
-                             {!isLoading && dueInvoices.length === 0 && <p className="text-center text-muted-foreground p-8">¡Felicidades! No tienes adeudos pendientes.</p>}
+                            {isLoading ? (
+                                <InvoiceTableSkeleton />
+                            ) : dueInvoices.length > 0 ? (
+                                <InvoiceTable invoices={dueInvoices} />
+                            ) : (
+                                <p className="text-center text-muted-foreground p-8">¡Felicidades! No tienes adeudos pendientes.</p>
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -64,8 +68,13 @@ export default function PagosPage() {
                             <CardDescription>Consulta tus pagos realizados anteriormente.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <InvoiceTable invoices={paidInvoices} isLoading={isLoading} />
-                            {!isLoading && paidInvoices.length === 0 && <p className="text-center text-muted-foreground p-8">Aún no has realizado ningún pago.</p>}
+                             {isLoading ? (
+                                <InvoiceTableSkeleton />
+                            ) : paidInvoices.length > 0 ? (
+                                <InvoiceTable invoices={paidInvoices} />
+                            ) : (
+                                <p className="text-center text-muted-foreground p-8">Aún no has realizado ningún pago.</p>
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -74,35 +83,35 @@ export default function PagosPage() {
     );
 }
 
-function InvoiceTable({ invoices, isLoading }: { invoices: Invoice[], isLoading: boolean }) {
-    const { toast } = useToast();
-
-    if (isLoading) {
-        return (
-             <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Concepto</TableHead>
-                        <TableHead>Estado</TableHead>
-                        <TableHead>Vencimiento</TableHead>
-                        <TableHead className="text-right">Monto</TableHead>
-                        <TableHead><span className="sr-only">Acciones</span></TableHead>
+function InvoiceTableSkeleton() {
+    return (
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHead>Concepto</TableHead>
+                    <TableHead>Estado</TableHead>
+                    <TableHead>Vencimiento</TableHead>
+                    <TableHead className="text-right">Monto</TableHead>
+                    <TableHead><span className="sr-only">Acciones</span></TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {[...Array(3)].map((_, i) => (
+                     <TableRow key={i}>
+                        <TableCell><Skeleton className="h-5 w-48" /></TableCell>
+                        <TableCell><Skeleton className="h-6 w-24 rounded-full" /></TableCell>
+                        <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                        <TableCell className="text-right"><Skeleton className="h-5 w-16 ml-auto" /></TableCell>
+                        <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
                     </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {[...Array(3)].map((_, i) => (
-                         <TableRow key={i}>
-                            <TableCell><Skeleton className="h-5 w-48" /></TableCell>
-                            <TableCell><Skeleton className="h-6 w-24 rounded-full" /></TableCell>
-                            <TableCell><Skeleton className="h-5 w-20" /></TableCell>
-                            <TableCell className="text-right"><Skeleton className="h-5 w-16 ml-auto" /></TableCell>
-                            <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        )
-    }
+                ))}
+            </TableBody>
+        </Table>
+    )
+}
+
+function InvoiceTable({ invoices }: { invoices: Invoice[]}) {
+    const { toast } = useToast();
 
     if (invoices.length === 0) return null;
 

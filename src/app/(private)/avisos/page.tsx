@@ -13,7 +13,7 @@ import { EmptyState } from "@/components/app/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const categoryMap: Record<Announcement['category'], { label: string; className: string }> = {
-    admin: { label: "Administración", className: "bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300" },
+    admin: { label: "Administración", className: "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300" },
     security: { label: "Seguridad", className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300" },
     maintenance: { label: "Mantenimiento", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300" },
     event: { label: "Evento", className: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300" },
@@ -24,7 +24,6 @@ export default function AvisosPage() {
     const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
-        // Simulate fetching data
         const timer = setTimeout(() => {
             setAnnouncementList(mockAnnouncements);
             setIsLoading(false);
@@ -41,18 +40,16 @@ export default function AvisosPage() {
                     {[...Array(3)].map((_, i) => (
                         <Card key={i}>
                             <CardHeader>
-                                <div className="animate-pulse">
-                                    <div className="h-6 w-3/4 rounded bg-muted"></div>
-                                    <div className="mt-4 flex items-center gap-4">
-                                        <div className="h-4 w-1/3 rounded bg-muted"></div>
-                                        <div className="h-4 w-1/4 rounded bg-muted"></div>
-                                    </div>
+                                <Skeleton className="h-6 w-3/4 rounded-md" />
+                                <div className="mt-4 flex items-center gap-4">
+                                    <Skeleton className="h-4 w-1/3 rounded-md" />
+                                    <Skeleton className="h-4 w-1/4 rounded-md" />
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <div className="animate-pulse space-y-2">
-                                    <div className="h-4 w-full rounded bg-muted"></div>
-                                    <div className="h-4 w-5/6 rounded bg-muted"></div>
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-full rounded-md" />
+                                    <Skeleton className="h-4 w-5/6 rounded-md" />
                                 </div>
                             </CardContent>
                         </Card>

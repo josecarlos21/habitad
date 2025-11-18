@@ -1,4 +1,4 @@
-import type { User, Unit, Invoice, Ticket, Amenity, Booking, Parcel, Announcement, VisitorPass } from './types';
+import type { User, Unit, Invoice, Ticket, Amenity, Booking, Parcel, Announcement, VisitorPass, Assembly } from './types';
 
 export const units: Unit[] = [
     { id: 'u_101', tower: 'A', number: '101' },
@@ -55,4 +55,38 @@ export const announcements: Announcement[] = [
 export const visitorPasses: VisitorPass[] = [
     { id: 'vp_1', userId: 'user_1', visitorName: 'Ana García', validFrom: new Date().toISOString(), validTo: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString(), qrToken: 'qr_token_ana_garcia_123' },
     { id: 'vp_2', userId: 'user_1', visitorName: 'Servicio de Internet', validFrom: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(), validTo: new Date(new Date(new Date().setDate(new Date().getDate() + 2)).setHours(18, 0, 0, 0)).toISOString(), qrToken: 'qr_token_internet_456' },
+];
+
+export const mockAssemblies: Assembly[] = [
+    { 
+        id: 'as_1', 
+        title: 'Asamblea General Ordinaria Noviembre 2025', 
+        date: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString(),
+        status: 'active',
+        topics: ['Revisión de presupuesto anual', 'Elección de nuevo comité de vigilancia', 'Propuesta de mejora de amenidades'],
+        docs: [{ name: 'Convocatoria Noviembre 2025.pdf', url: '#' }, { name: 'Presupuesto Propuesto.xlsx', url: '#' }],
+        vote: {
+            id: 'v_1',
+            assemblyId: 'as_1',
+            question: '¿Aprueba el presupuesto de mejoras para el gimnasio?',
+            options: ['Sí, apruebo', 'No, rechazo', 'Me abstengo'],
+            status: 'open'
+        }
+    },
+    { 
+        id: 'as_2', 
+        title: 'Asamblea General Extraordinaria Octubre 2025', 
+        date: '2025-10-15T19:00:00Z',
+        status: 'past',
+        topics: ['Votación sobre el nuevo sistema de seguridad'],
+        docs: [{ name: 'Minuta Asamblea Octubre 2025.pdf', url: '#' }],
+    },
+     { 
+        id: 'as_3', 
+        title: 'Asamblea General Ordinaria Septiembre 2025', 
+        date: '2025-09-20T19:00:00Z',
+        status: 'past',
+        topics: ['Reporte financiero del trimestre', 'Asuntos generales'],
+        docs: [{ name: 'Minuta Asamblea Septiembre 2025.pdf', url: '#' }],
+    }
 ];

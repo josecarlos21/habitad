@@ -22,7 +22,6 @@ export default function PaqueteriaPage() {
     const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
-        // Simulate fetching data
         const timer = setTimeout(() => {
             setParcels(mockParcels);
             setIsLoading(false);
@@ -60,7 +59,7 @@ export default function PaqueteriaPage() {
                              <Card key={parcel.id}>
                                 <CardHeader className="flex flex-row items-center gap-4 space-y-0">
                                     <div className="grid h-10 w-10 place-items-center rounded-lg bg-muted">
-                                        <status.icon className="h-6 w-6" />
+                                        <status.icon className="h-6 w-6 text-muted-foreground" />
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-base font-semibold">{parcel.carrier}</h3>

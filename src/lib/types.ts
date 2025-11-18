@@ -97,7 +97,10 @@ export interface Assembly {
   id: ID;
   title: string;
   date: string; // ISO
-  docs: string[];
+  status: "active" | "past";
+  topics: string[];
+  docs: { name: string; url: string }[];
+  vote?: Vote;
 }
 
 export interface Vote {

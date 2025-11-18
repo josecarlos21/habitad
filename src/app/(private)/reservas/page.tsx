@@ -67,7 +67,6 @@ export default function ReservasPage() {
     const [isLoading, setIsLoading] = React.useState(true);
 
      React.useEffect(() => {
-        // Simulate fetching data
         const timer = setTimeout(() => {
             setAmenityList(mockAmenities);
             setIsLoading(false);

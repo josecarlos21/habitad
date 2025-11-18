@@ -14,7 +14,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { announcements, bookings, invoices, tickets, amenities } from "@/lib/mocks";
 import type { Invoice, Ticket, Booking, Announcement } from "@/lib/types";
 
-// Organism: NextPaymentCard
 function NextPaymentCard({ invoice, isLoading }: { invoice: Invoice | undefined, isLoading: boolean }) {
   const { user } = useUser();
   
@@ -54,17 +53,17 @@ function NextPaymentCard({ invoice, isLoading }: { invoice: Invoice | undefined,
   }
   
   return (
-    <Card className="lg:col-span-2 bg-gradient-to-tr from-primary/90 to-primary text-primary-foreground shadow-lg">
+    <Card className="lg:col-span-2 bg-gradient-to-tr from-primary/10 to-primary/20 text-primary-foreground shadow-lg">
       <CardHeader>
-        <CardTitle>Tu Próximo Pago</CardTitle>
-        <CardDescription className="text-primary-foreground/80">{invoice.concept}</CardDescription>
+        <CardTitle className="text-primary">Tu Próximo Pago</CardTitle>
+        <CardDescription className="text-foreground/80">{invoice.concept}</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-4xl font-bold">${invoice.amount.toLocaleString('es-MX')}</p>
-        <p className="text-sm">Vence el {format(new Date(invoice.dueDate), "dd 'de' MMMM", { locale: es })}</p>
+        <p className="text-4xl font-bold text-foreground">${invoice.amount.toLocaleString('es-MX')}</p>
+        <p className="text-sm text-muted-foreground">Vence el {format(new Date(invoice.dueDate), "dd 'de' MMMM", { locale: es })}</p>
       </CardContent>
       <CardFooter>
-        <Button asChild variant="secondary">
+        <Button asChild>
           <Link href="/pagos">Pagar Ahora <ArrowRight className="ml-2 h-4 w-4" /></Link>
         </Button>
       </CardFooter>
@@ -72,7 +71,6 @@ function NextPaymentCard({ invoice, isLoading }: { invoice: Invoice | undefined,
   );
 }
 
-// Organism: QuickAccessCard
 function QuickAccessCard({isLoading}: {isLoading: boolean}) {
     if (isLoading) {
         return (
@@ -104,7 +102,6 @@ function QuickAccessCard({isLoading}: {isLoading: boolean}) {
   );
 }
 
-// Organism: DashboardCard
 function DashboardCard({
   title,
   link,
@@ -127,7 +124,7 @@ function DashboardCard({
     return (
         <Card className="flex flex-col">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{title}</CardTitle>
+            <CardTitle className="text-base font-medium">{title}</CardTitle>
             {link && !isLoading && <Link href={link.href} className="text-sm text-primary hover:underline">{link.label}</Link>}
             {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
           </CardHeader>
@@ -152,7 +149,6 @@ function DashboardCard({
 export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   
-  // Simulating data fetching
   useEffect(() => {
     const timer = setTimeout(() => {
         setIsLoading(false);
@@ -196,7 +192,7 @@ export default function DashboardPage() {
           icon={Wrench}
           link={{ href: "/mantenimiento", label: "Ver todos" }}
           isLoading={isLoading}
-          footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/mantenimiento">Crear Nuevo Ticket</Link></Button>}
+          footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/mantenimiento/crear">Crear Nuevo Ticket</Link></Button>}
           emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes tickets activos.</p>}
         >
             {activeTickets.length > 0 ? (

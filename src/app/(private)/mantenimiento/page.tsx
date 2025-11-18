@@ -10,15 +10,11 @@ import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { tickets as mockTickets } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CreateTicketSheet } from "./_components/create-ticket-sheet";
 
 const statusMap: Record<Ticket['status'], { label: string; className: string }> = {
     open: { label: "Abierto", className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-300/50" },
@@ -27,75 +23,12 @@ const statusMap: Record<Ticket['status'], { label: string; className: string }> 
     closed: { label: "Cerrado", className: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border-green-300/50" },
 };
 
-function CreateTicketSheet() {
-    const { toast } = useToast();
-    const [open, setOpen] = React.useState(false);
-
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        // Here you would normally handle form submission to a server
-        toast({
-            title: "Ticket Enviado",
-            description: "Tu solicitud de mantenimiento ha sido creada con éxito.",
-        });
-        setOpen(false); // Close sheet after submission
-    };
-
-    return (
-        <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-                <Button>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Nuevo Ticket
-                </Button>
-            </SheetTrigger>
-            <SheetContent>
-                <form onSubmit={handleSubmit}>
-                    <SheetHeader>
-                        <SheetTitle>Crear Nuevo Ticket de Mantenimiento</SheetTitle>
-                        <SheetDescription>
-                            Describe el problema que estás experimentando. Tu ticket será asignado al personal correspondiente.
-                        </SheetDescription>
-                    </SheetHeader>
-                    <div className="grid gap-4 py-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="title">Título</Label>
-                            <Input id="title" placeholder="Ej: Fuga de agua en el baño" required />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="category">Categoría</Label>
-                            <Select required>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Selecciona una categoría" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="plumbing">Plomería</SelectItem>
-                                    <SelectItem value="electrical">Electricidad</SelectItem>
-                                    <SelectItem value="common_area">Área Común</SelectItem>
-                                    <SelectItem value="other">Otro</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="description">Descripción</Label>
-                            <Textarea id="description" placeholder="Describe el problema a detalle..." required/>
-                        </div>
-                    </div>
-                    <SheetFooter>
-                        <Button type="submit">Enviar Ticket</Button>
-                    </SheetFooter>
-                </form>
-            </SheetContent>
-        </Sheet>
-    )
-}
-
 export default function MantenimientoPage() {
     const [tickets, setTickets] = React.useState<Ticket[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
+    const { toast } = useToast();
 
     React.useEffect(() => {
-        // Simulate fetching data
         const timer = setTimeout(() => {
             setTickets(mockTickets);
             setIsLoading(false);
@@ -103,11 +36,26 @@ export default function MantenimientoPage() {
         return () => clearTimeout(timer);
     }, []);
 
+    const handleTicketCreated = (newTicket: Omit<Ticket, 'id' | 'createdAt' | 'status' | 'unitId'>) => {
+        const ticket: Ticket = {
+            id: `t_${Date.now()}`,
+            createdAt: new Date().toISOString(),
+            status: 'open',
+            unitId: 'u_101',
+            ...newTicket
+        }
+        setTickets(prev => [ticket, ...prev]);
+        toast({
+            title: "Ticket Enviado",
+            description: "Tu solicitud de mantenimiento ha sido creada con éxito.",
+        });
+    }
+
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
              <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold">Mantenimiento</h1>
-                <CreateTicketSheet />
+                <CreateTicketSheet onTicketCreated={handleTicketCreated} />
             </div>
             
             {isLoading ? (
@@ -168,7 +116,7 @@ export default function MantenimientoPage() {
                     icon={Wrench}
                     title="No tienes tickets"
                     description="Crea un nuevo ticket para reportar un problema."
-                    action={<CreateTicketSheet />}
+                    action={<CreateTicketSheet onTicketCreated={handleTicketCreated} />}
                 />
             )}
         </main>

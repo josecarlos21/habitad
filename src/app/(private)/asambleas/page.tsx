@@ -14,40 +14,8 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { EmptyState } from "@/components/app/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-
-const mockAssemblies = [
-    {
-        id: "asm_1",
-        title: "Asamblea General Ordinaria Noviembre 2025",
-        date: "2025-11-28T19:00:00Z",
-        status: "active",
-        topics: ["Presupuesto 2026", "Elección de comité de vigilancia", "Mantenimiento de áreas comunes"],
-        docs: [{ name: "Convocatoria Oficial", url: "#" }, { name: "Propuesta Presupuesto 2026", url: "#" }],
-        vote: {
-            id: "vote_1",
-            question: "¿Aprueba el presupuesto presentado para el año 2026?",
-            options: ["Sí, apruebo", "No, rechazo", "Me abstengo"],
-            status: "open",
-        }
-    },
-    {
-        id: "asm_2",
-        title: "Asamblea Extraordinaria - Proyecto Alberca",
-        date: "2025-08-15T18:00:00Z",
-        status: "past",
-        topics: ["Presentación y votación de la propuesta para remodelar la alberca."],
-        docs: [{ name: "Minuta de la Asamblea", url: "#" }],
-    },
-     {
-        id: "asm_3",
-        title: "Asamblea General Ordinaria 2024",
-        date: "2024-11-30T19:00:00Z",
-        status: "past",
-        topics: ["Resultados 2024", "Presupuesto 2025"],
-        docs: [{ name: "Minuta de la Asamblea", url: "#" }],
-    }
-];
-
+import { mockAssemblies } from "@/lib/mocks";
+import type { Assembly } from "@/lib/types";
 
 function VotingCard({ vote, assemblyTitle }: { vote: any, assemblyTitle: string }) {
     const { toast } = useToast();
@@ -105,7 +73,7 @@ function VotingCard({ vote, assemblyTitle }: { vote: any, assemblyTitle: string 
 }
 
 export default function AsambleasPage() {
-    const [assemblies, setAssemblies] = React.useState<any[]>([]);
+    const [assemblies, setAssemblies] = React.useState<Assembly[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
 
      React.useEffect(() => {
@@ -127,15 +95,20 @@ export default function AsambleasPage() {
                 <div className="space-y-6">
                     <Card>
                         <CardHeader><Skeleton className="h-8 w-1/2" /></CardHeader>
-                        <CardContent><Skeleton className="h-20 w-full" /></CardContent>
+                        <CardContent className="space-y-4">
+                            <Skeleton className="h-6 w-full" />
+                            <Skeleton className="h-6 w-5/6" />
+                        </CardContent>
                     </Card>
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-12 w-full" />
+                    <div className="grid gap-6 lg:grid-cols-2">
+                        <Skeleton className="h-40 w-full" />
+                        <Skeleton className="h-40 w-full" />
+                    </div>
                 </div>
             ) : activeAssembly ? (
                 <div className="grid gap-6 lg:grid-cols-2">
                     <div>
-                        <Card className="bg-primary/5 dark:bg-primary/10 border-primary/20">
+                        <Card>
                             <CardHeader>
                                 <div className="flex justify-between items-start">
                                     <div>
@@ -143,7 +116,7 @@ export default function AsambleasPage() {
                                         <CardTitle className="mt-2">{activeAssembly.title}</CardTitle>
                                         <CardDescription>{format(new Date(activeAssembly.date), "EEEE dd 'de' MMMM, yyyy 'a las' HH:mm 'hrs'", { locale: es })}</CardDescription>
                                     </div>
-                                    <Users className="h-8 w-8 text-primary" />
+                                    <Users className="h-8 w-8 text-muted-foreground" />
                                 </div>
                             </CardHeader>
                             <CardContent>
@@ -191,7 +164,7 @@ export default function AsambleasPage() {
                                     </AccordionTrigger>
                                     <AccordionContent>
                                         <div className="space-y-4">
-                                            <p className="text-sm text-muted-foreground">{assembly.topics.join(' ')}</p>
+                                            <p className="text-sm text-muted-foreground">{assembly.topics.join(', ')}</p>
                                             <a href={assembly.docs[0].url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-primary hover:underline">
                                                 <FileText className="h-4 w-4" />
                                                 Ver minuta de la asamblea

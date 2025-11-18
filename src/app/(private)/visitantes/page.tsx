@@ -4,73 +4,23 @@
 import React from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { PlusCircle, QrCode, UserPlus } from "lucide-react";
+import { UserPlus, QrCode } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
 import { visitorPasses as mockVisitorPasses } from "@/lib/mocks";
 import type { VisitorPass } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
-
-function GeneratePassSheet() {
-    const { toast } = useToast();
-    const [open, setOpen] = React.useState(false);
-
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        toast({
-            title: "Pase Generado",
-            description: "El pase de visitante ha sido creado y compartido.",
-        });
-        setOpen(false);
-    };
-
-    return (
-         <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-                 <Button>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Generar Pase
-                </Button>
-            </SheetTrigger>
-            <SheetContent>
-                <form onSubmit={handleSubmit}>
-                    <SheetHeader>
-                        <SheetTitle>Generar Pase de Visitante</SheetTitle>
-                        <SheetDescription>
-                            Completa los datos para generar un código QR para tu visitante.
-                        </SheetDescription>
-                    </SheetHeader>
-                    <div className="grid gap-4 py-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="visitor-name">Nombre del Visitante</Label>
-                            <Input id="visitor-name" placeholder="Ej: Juan Pérez" required />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="validity">Validez del Pase</Label>
-                            <Input id="validity" type="datetime-local" required />
-                        </div>
-                    </div>
-                    <SheetFooter>
-                        <Button type="submit">Generar y Compartir</Button>
-                    </SheetFooter>
-                </form>
-            </SheetContent>
-        </Sheet>
-    )
-}
+import { GeneratePassSheet } from "./_components/generate-pass-sheet";
 
 export default function VisitantesPage() {
     const [visitorPasses, setVisitorPasses] = React.useState<VisitorPass[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
+    const { toast } = useToast();
 
     React.useEffect(() => {
-        // Simulate fetching data
         const timer = setTimeout(() => {
             setVisitorPasses(mockVisitorPasses);
             setIsLoading(false);
@@ -78,11 +28,26 @@ export default function VisitantesPage() {
         return () => clearTimeout(timer);
     }, []);
 
+    const handlePassGenerated = (newPass: Omit<VisitorPass, 'id' | 'qrToken' | 'userId' | 'validFrom'>) => {
+        const pass: VisitorPass = {
+            id: `vp_${Date.now()}`,
+            qrToken: `qr_${Date.now()}`,
+            userId: 'user_1',
+            validFrom: new Date().toISOString(),
+            ...newPass,
+        };
+        setVisitorPasses(prev => [pass, ...prev]);
+        toast({
+            title: "Pase Generado",
+            description: "El pase de visitante ha sido creado y compartido.",
+        });
+    }
+
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold">Visitantes</h1>
-                <GeneratePassSheet />
+                <GeneratePassSheet onPassGenerated={handlePassGenerated} />
             </div>
             
             {isLoading ? (
@@ -137,7 +102,7 @@ export default function VisitantesPage() {
                     icon={UserPlus}
                     title="Sin pases de visitante"
                     description="Genera un pase para permitir el acceso a tus visitas."
-                    action={<GeneratePassSheet />}
+                    action={<GeneratePassSheet onPassGenerated={handlePassGenerated} />}
                  />
             )}
         </main>
