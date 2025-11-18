@@ -97,7 +97,7 @@ function QuickAccessCard({isLoading}: {isLoading: boolean}) {
       </CardContent>
       <CardFooter>
         <Button variant="outline" asChild>
-          <Link href="/visitantes">Generar Pase de Visita</Link>
+          <Link href="/accesos">Generar Pase de Visita</Link>
         </Button>
       </CardFooter>
     </Card>
@@ -190,7 +190,7 @@ export default function DashboardPage() {
           <DashboardCard 
               title="Avisos Recientes"
               icon={Bell}
-              link={{href: "/avisos", label: "Ver todos"}}
+              link={{href: "/comunidad", label: "Ver todos"}}
               isLoading={isLoading}
               emptyState={<p className="text-sm text-muted-foreground text-center py-4">No hay avisos recientes.</p>}
           >
@@ -198,7 +198,7 @@ export default function DashboardPage() {
                   <ul className="space-y-1">
                     {recentAnnouncements.map(ann => (
                       <li key={ann.id}>
-                        <Link href="/avisos" className="block hover:bg-muted p-2 rounded-md transition-colors">
+                        <Link href="/comunidad" className="block hover:bg-muted p-2 rounded-md transition-colors">
                           <p className="font-semibold text-sm truncate">{ann.title}</p>
                           <p className="text-xs text-muted-foreground truncate">{ann.body}</p>
                         </Link>
@@ -213,9 +213,9 @@ export default function DashboardPage() {
           <DashboardCard
             title="Tickets de Mantenimiento"
             icon={Wrench}
-            link={{ href: "/mantenimiento", label: "Ver todos" }}
+            link={{ href: "/servicios", label: "Ver todos" }}
             isLoading={isLoading}
-            footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/mantenimiento/crear">Crear Nuevo Ticket</Link></Button>}
+            footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/servicios">Crear Nuevo Ticket</Link></Button>}
             emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes tickets activos.</p>}
           >
               {activeTickets.length > 0 ? (
@@ -240,7 +240,7 @@ export default function DashboardPage() {
           <DashboardCard
               title="Próximas Reservas"
               icon={Calendar}
-              link={{ href: "/reservas", label: "Ver todas" }}
+              link={{ href: "/servicios", label: "Ver todas" }}
               isLoading={isLoading}
               emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes próximas reservas.</p>}
           >
@@ -248,7 +248,7 @@ export default function DashboardPage() {
                   <ul className="space-y-2">
                       {upcomingBookings.map(booking => (
                           <li key={booking.id}>
-                            <Link href="/reservas" className="flex items-center justify-between hover:bg-muted p-2 rounded-md transition-colors w-full">
+                            <Link href="/servicios" className="flex items-center justify-between hover:bg-muted p-2 rounded-md transition-colors w-full">
                               <div>
                                   <p className="text-sm font-medium">{amenities.find(a => a.id === booking.amenityId)?.name}</p>
                                   <p className="text-xs text-muted-foreground">{format(new Date(booking.slot.start), "eeee dd 'de' MMMM, h:mm a", { locale: es })}</p>
@@ -264,3 +264,5 @@ export default function DashboardPage() {
     </main>
   );
 }
+
+    
