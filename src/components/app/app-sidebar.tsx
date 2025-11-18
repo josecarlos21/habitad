@@ -84,7 +84,7 @@ export function AppSidebar() {
         ))}
       </SidebarMenu>
 
-      <Separator className="my-2" />
+      <Separator className="my-2 bg-sidebar-border" />
       
       <SidebarFooter>
         <SidebarMenu className="p-2">
@@ -112,7 +112,7 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
 
-        <Separator className="my-2 hidden md:block" />
+        <Separator className="my-2 hidden bg-sidebar-border md:block" />
 
         {user && (
           <div className="hidden items-center gap-3 p-2 md:flex">

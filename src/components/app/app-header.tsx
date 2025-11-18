@@ -18,6 +18,7 @@ import { Icons } from "../icons";
 import { ThemeToggle } from "./theme-toggle";
 import { LiveClock } from "./live-clock";
 import { LanguageToggle } from "./language-toggle";
+import { Separator } from "../ui/separator";
 
 
 export function AppHeader() {
