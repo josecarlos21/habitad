@@ -215,7 +215,7 @@ export default function DashboardPage() {
             icon={Wrench}
             link={{ href: "/servicios", label: "Ver todos" }}
             isLoading={isLoading}
-            footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/servicios">Crear Nuevo Ticket</Link></Button>}
+            footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/servicios?tab=mantenimiento">Crear Nuevo Ticket</Link></Button>}
             emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes tickets activos.</p>}
           >
               {activeTickets.length > 0 ? (
@@ -264,5 +264,3 @@ export default function DashboardPage() {
     </main>
   );
 }
-
-    

@@ -40,7 +40,7 @@ export default function VisitantesPageContent() {
         setVisitorPasses(prev => [pass, ...prev]);
         toast({
             title: "Pase Generado",
-            description: "El pase de visitante ha sido creado y compartido.",
+            description: "El pase para tu visitante ha sido creado con éxito.",
         });
     }
 
@@ -119,5 +119,3 @@ export default function VisitantesPageContent() {
         </div>
     )
 }
-
-    

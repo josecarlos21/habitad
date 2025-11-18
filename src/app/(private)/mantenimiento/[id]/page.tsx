@@ -61,7 +61,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
             setTicket(prev => prev ? { ...prev, status: 'resolved' } : null);
             toast({
                 title: "Ticket Actualizado",
-                description: "El ticket ha sido marcado como 'Resuelto'.",
+                description: "Has marcado el ticket como 'Resuelto'. Administración verificará la solución.",
             });
         }
     };
@@ -95,7 +95,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex items-center gap-4">
                 <Button variant="outline" size="icon" asChild>
-                    <Link href="/mantenimiento">
+                    <Link href="/servicios?tab=mantenimiento">
                         <ArrowLeft className="h-4 w-4" />
                         <span className="sr-only">Volver</span>
                     </Link>
