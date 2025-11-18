@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import { ArrowRight, Calendar, CheckCircle, Package, QrCode, Wrench } from "lucide-react";
+import { ArrowRight, Calendar, CheckCircle, QrCode, Wrench } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
@@ -96,7 +96,9 @@ function QuickAccessCard({isLoading}: {isLoading: boolean}) {
         <p className="text-sm text-muted-foreground mt-2">Muestra este QR en la entrada</p>
       </CardContent>
       <CardFooter>
-        <Button variant="outline">Generar Pase de Visita</Button>
+        <Button variant="outline" asChild>
+          <Link href="/visitantes">Generar Pase de Visita</Link>
+        </Button>
       </CardFooter>
     </Card>
   );
@@ -194,17 +196,19 @@ export default function DashboardPage() {
           icon={Wrench}
           link={{ href: "/mantenimiento", label: "Ver todos" }}
           isLoading={isLoading}
-          footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/mantenimiento/crear">Crear Nuevo Ticket</Link></Button>}
+          footer={<Button size="sm" variant="outline" className="w-full" asChild><Link href="/mantenimiento">Crear Nuevo Ticket</Link></Button>}
           emptyState={<p className="text-sm text-muted-foreground text-center py-4">No tienes tickets activos.</p>}
         >
             {activeTickets.length > 0 ? (
                  <ul className="space-y-2">
                   {activeTickets.slice(0, 3).map(ticket => (
                      <li key={ticket.id} className="flex items-center justify-between">
+                       <Link href={`/mantenimiento/${ticket.id}`} className="w-full">
                         <div>
                             <p className="text-sm font-medium">{ticket.title}</p>
                             <p className="text-xs text-muted-foreground">Abierto {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}</p>
                         </div>
+                        </Link>
                         <Badge variant={ticket.status === 'open' ? "destructive" : "secondary"}>{ticket.status === 'open' ? 'Abierto' : 'En Progreso'}</Badge>
                      </li>
                   ))}
