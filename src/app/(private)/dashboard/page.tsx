@@ -179,8 +179,10 @@ export default function DashboardPage() {
                 <ul className="space-y-4">
                   {recentAnnouncements.map(ann => (
                     <li key={ann.id}>
+                      <Link href="/avisos" className="block hover:bg-muted p-2 rounded-md">
                         <p className="font-semibold text-sm">{ann.title}</p>
                         <p className="text-xs text-muted-foreground">{ann.body.substring(0, 70)}...</p>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -198,7 +200,7 @@ export default function DashboardPage() {
             {activeTickets.length > 0 ? (
                  <ul className="space-y-2">
                   {activeTickets.slice(0, 3).map(ticket => (
-                     <li key={ticket.id} className="flex items-center justify-between">
+                     <li key={ticket.id} className="flex items-center justify-between hover:bg-muted p-2 rounded-md">
                        <Link href={`/mantenimiento/${ticket.id}`} className="w-full">
                         <div>
                             <p className="text-sm font-medium">{ticket.title}</p>
@@ -222,11 +224,13 @@ export default function DashboardPage() {
             {upcomingBookings.length > 0 ? (
                 <ul className="space-y-2">
                     {upcomingBookings.map(booking => (
-                        <li key={booking.id} className="flex items-center justify-between">
+                        <li key={booking.id} className="flex items-center justify-between hover:bg-muted p-2 rounded-md">
+                           <Link href="/reservas" className="w-full">
                             <div>
                                 <p className="text-sm font-medium">{amenities.find(a => a.id === booking.amenityId)?.name}</p>
                                 <p className="text-xs text-muted-foreground">{format(new Date(booking.slot.start), "eeee dd 'de' MMMM, h:mm a", { locale: es })}</p>
                             </div>
+                            </Link>
                         </li>
                     ))}
                 </ul>

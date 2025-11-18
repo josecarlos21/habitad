@@ -55,6 +55,16 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
             input.value = "";
         }
     };
+
+    const handleResolveTicket = () => {
+        if (ticket) {
+            setTicket(prev => prev ? { ...prev, status: 'resolved' } : null);
+            toast({
+                title: "Ticket Actualizado",
+                description: "El ticket ha sido marcado como 'Resuelto'.",
+            });
+        }
+    };
     
     if (ticket === undefined) {
         return (
@@ -169,7 +179,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                                 <span>{mockUser.units[0].tower}-{mockUser.units[0].number}</span>
                             </div>
                              <Separator />
-                             <Button variant="secondary" className="w-full">Marcar como Resuelto</Button>
+                             <Button variant="secondary" className="w-full" onClick={handleResolveTicket} disabled={ticket.status === 'resolved' || ticket.status === 'closed'}>Marcar como Resuelto</Button>
                         </CardContent>
                     </Card>
                  </div>

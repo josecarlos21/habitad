@@ -6,30 +6,44 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { amenities as mockAmenities } from "@/lib/mocks";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, CheckCircle } from "lucide-react";
 import type { Amenity } from "@/lib/types";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription, SheetFooter } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/app/empty-state";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
     const { toast } = useToast();
     const [open, setOpen] = React.useState(false);
     const [date, setDate] = React.useState<Date | undefined>(new Date());
+    const [isBooked, setIsBooked] = React.useState(false);
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
+        setIsBooked(true);
         toast({
             title: "Reserva Confirmada",
             description: `Tu reserva para ${amenity.name} ha sido realizada con éxito.`,
         });
-        setOpen(false);
     };
+    
+    const handleOpenChange = (isOpen: boolean) => {
+        setOpen(isOpen);
+        if (!isOpen) {
+            // Reset state when closing
+            setTimeout(() => {
+                setIsBooked(false);
+                setDate(new Date());
+            }, 300);
+        }
+    }
 
     return (
-        <Sheet open={open} onOpenChange={setOpen}>
+        <Sheet open={open} onOpenChange={handleOpenChange}>
             <SheetTrigger asChild>
                 <Button className="w-full">
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -37,26 +51,42 @@ function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
                 </Button>
             </SheetTrigger>
             <SheetContent>
-                <form onSubmit={handleSubmit}>
-                    <SheetHeader>
-                        <SheetTitle>Reservar: {amenity.name}</SheetTitle>
+                 <SheetHeader>
+                    <SheetTitle>Reservar: {amenity.name}</SheetTitle>
+                    {!isBooked && (
                         <SheetDescription>
                             Selecciona una fecha y horario para tu reserva.
                         </SheetDescription>
-                    </SheetHeader>
-                    <div className="py-4">
-                        <Calendar
-                            mode="single"
-                            selected={date}
-                            onSelect={setDate}
-                            className="rounded-md border"
-                            disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))}
-                        />
+                    )}
+                </SheetHeader>
+                {isBooked ? (
+                    <div className="flex flex-col items-center justify-center h-full text-center">
+                        <CheckCircle className="w-20 h-20 text-green-500 mb-4" />
+                        <h3 className="text-xl font-semibold">¡Reserva Exitosa!</h3>
+                        <p className="text-muted-foreground mt-2">
+                           Has reservado la amenidad <span className="font-semibold text-foreground">{amenity.name}</span> para el <span className="font-semibold text-foreground">{date ? format(date, "dd 'de' MMMM, yyyy", { locale: es }) : ''}</span>.
+                        </p>
+                        <Button className="mt-6 w-full" onClick={() => handleOpenChange(false)}>Cerrar</Button>
                     </div>
-                    <SheetFooter>
-                        <Button type="submit" disabled={!date}>Confirmar Reserva</Button>
-                    </SheetFooter>
-                </form>
+                ) : (
+                    <form onSubmit={handleSubmit} className="flex flex-col h-full">
+                        <div className="py-4 flex-1">
+                            <Calendar
+                                mode="single"
+                                selected={date}
+                                onSelect={setDate}
+                                className="rounded-md border"
+                                disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))}
+                            />
+                        </div>
+                        <SheetFooter>
+                             <SheetClose asChild>
+                                <Button variant="outline">Cancelar</Button>
+                            </SheetClose>
+                            <Button type="submit" disabled={!date}>Confirmar Reserva</Button>
+                        </SheetFooter>
+                    </form>
+                )}
             </SheetContent>
         </Sheet>
     )
