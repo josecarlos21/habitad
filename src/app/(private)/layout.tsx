@@ -1,6 +1,5 @@
 
 import { AppHeader } from "@/components/app/app-header";
-import { BottomNavBar } from "@/components/app/bottom-nav-bar";
 
 export default function PrivateLayout({
   children,
@@ -10,8 +9,7 @@ export default function PrivateLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <AppHeader />
-      <main className="flex-1 overflow-y-auto pb-28">{children}</main>
-      <BottomNavBar />
+      <main className="flex-1 overflow-y-auto">{children}</main>
     </div>
   );
 }
