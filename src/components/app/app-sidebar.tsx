@@ -28,7 +28,6 @@ import { Icons } from "@/components/icons";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useUser } from "@/hooks/use-user";
-import { SheetTitle } from "../ui/sheet";
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "Inicio" },
@@ -56,7 +55,6 @@ export function AppSidebar() {
 
   return (
     <Sidebar variant="inset" collapsible="icon">
-        <SheetTitle className="sr-only">Menú de Navegación</SheetTitle>
       <SidebarHeader className="hidden md:flex">
          <div className="flex items-center gap-2">
             <Link href="/dashboard" className="flex items-center gap-2">
