@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Users, FileText, Vote as VoteIcon, CheckCircle } from "lucide-react";
+import { Users, FileText, Vote as VoteIcon, CheckCircle, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { EmptyState } from "@/components/app/empty-state";
@@ -150,24 +150,38 @@ export default function AsambleasPageContent() {
                 <div className="mt-8">
                     <h2 className="text-xl font-bold mb-4">Historial de Asambleas</h2>
                     {pastAssemblies.length > 0 ? (
-                        <Accordion type="single" collapsible className="w-full">
+                        <Accordion type="single" collapsible className="w-full space-y-2">
                             {pastAssemblies.map((assembly, i) => (
-                                <AccordionItem value={assembly.id} key={assembly.id} className="animate-slide-up-and-fade" style={{animationDelay: `${i * 100 + 400}ms`}}>
-                                    <AccordionTrigger>
-                                        <div className="flex flex-col items-start text-left">
-                                            <span className="font-semibold">{assembly.title}</span>
-                                            <span className="text-sm text-muted-foreground">{format(new Date(assembly.date), "dd 'de' MMMM, yyyy", { locale: es })}</span>
-                                        </div>
-                                    </AccordionTrigger>
-                                    <AccordionContent>
-                                        <div className="space-y-4">
-                                            <p className="text-sm text-muted-foreground">{assembly.topics.join(', ')}</p>
-                                            <a href={assembly.docs[0].url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-primary hover:underline">
-                                                <FileText className="h-4 w-4" />
-                                                Ver minuta de la asamblea
-                                            </a>
-                                        </div>
-                                    </AccordionContent>
+                                <AccordionItem 
+                                    value={assembly.id} 
+                                    key={assembly.id} 
+                                    className="animate-slide-up-and-fade border-none" 
+                                    style={{animationDelay: `${i * 100 + 400}ms`}}
+                                >
+                                     <Card className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg hover:border-primary/20">
+                                        <AccordionTrigger className="p-4 hover:no-underline">
+                                            <div className="flex items-center gap-4 w-full">
+                                                <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
+                                                    <FileText className="h-5 w-5"/>
+                                                </div>
+                                                <div className="flex-1 text-left">
+                                                    <p className="font-semibold text-sm">{assembly.title}</p>
+                                                    <p className="text-xs text-muted-foreground">{format(new Date(assembly.date), "dd 'de' MMMM, yyyy", { locale: es })}</p>
+                                                </div>
+                                                <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 accordion-arrow" />
+                                            </div>
+                                        </AccordionTrigger>
+                                        <AccordionContent>
+                                            <div className="p-4 pt-0">
+                                                <p className="text-sm text-muted-foreground mb-4">{assembly.topics.join(', ')}</p>
+                                                <Button asChild variant="link" className="p-0 h-auto">
+                                                    <a href={assembly.docs[0].url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-primary hover:underline">
+                                                        Ver minuta de la asamblea
+                                                    </a>
+                                                </Button>
+                                            </div>
+                                        </AccordionContent>
+                                     </Card>
                                 </AccordionItem>
                             ))}
                         </Accordion>

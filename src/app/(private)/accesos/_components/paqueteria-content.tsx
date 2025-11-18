@@ -4,7 +4,7 @@
 import React from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Package, PackageCheck } from "lucide-react";
+import { Package, PackageCheck, ArrowRight } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -35,46 +35,32 @@ export default function PaqueteriaPageContent() {
             <p className="text-muted-foreground mb-4">Paquetes recibidos en conserjería.</p>
 
             {isLoading ? (
-                 <div className="space-y-4">
+                 <div className="space-y-2">
                     {[...Array(3)].map((_, i) => (
-                        <Card key={i}>
-                            <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-                                <Skeleton className="h-10 w-10 rounded-lg" />
-                                <div className="flex-1 space-y-2">
-                                    <Skeleton className="h-5 w-32" />
-                                    <Skeleton className="h-4 w-48" />
-                                </div>
-                                <div className="text-right space-y-2">
-                                    <Skeleton className="h-6 w-24 ml-auto rounded-full" />
-                                    <Skeleton className="h-4 w-20 ml-auto" />
-                                </div>
-                            </CardHeader>
-                        </Card>
+                        <Skeleton key={i} className="h-20 w-full" />
                     ))}
                  </div>
             ) : parcels.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-2">
                     {parcels.map((parcel, i) => {
                         const status = statusMap[parcel.status];
                         return (
                              <Card 
                                 key={parcel.id} 
-                                className="transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade"
+                                className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade hover:border-primary/20 group"
                                 style={{animationDelay: `${i * 100}ms`}}
                              >
-                                <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-                                    <div className="grid h-10 w-10 place-items-center rounded-lg bg-muted">
-                                        <status.icon className="h-6 w-6 text-muted-foreground" />
+                                <CardHeader className="flex-row items-center gap-4 p-4">
+                                    <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
+                                        <status.icon className="h-5 w-5" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="text-base font-semibold">{parcel.carrier}</h3>
-                                        <p className="text-sm text-muted-foreground">Tracking: {parcel.trackingNumber}</p>
+                                        <h3 className="text-sm font-semibold">{parcel.carrier}</h3>
+                                        <p className="text-xs text-muted-foreground">Llegó el {format(new Date(parcel.arrivedAt), "dd MMM, hh:mm a", { locale: es })}</p>
                                     </div>
-                                    <div className="text-right">
+                                    <div className="flex items-center gap-4">
                                         <Badge variant="outline" className={status.className}>{status.label}</Badge>
-                                        <p className="text-xs text-muted-foreground mt-1">
-                                            {format(new Date(parcel.arrivedAt), "dd MMM, hh:mm a", { locale: es })}
-                                        </p>
+                                        <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1" />
                                     </div>
                                 </CardHeader>
                             </Card>

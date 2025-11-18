@@ -5,11 +5,11 @@ import React from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { MessageSquare, Wrench } from "lucide-react";
+import { Wrench, ArrowRight } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { tickets as mockTickets } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
@@ -60,59 +60,36 @@ export default function MantenimientoPageContent() {
             </div>
             
             {isLoading ? (
-                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {[...Array(3)].map((_, i) => (
-                        <Card key={i} className="flex flex-col">
-                            <CardHeader>
-                               <Skeleton className="h-5 w-3/4" />
-                               <Skeleton className="h-4 w-1/2 mt-2" />
-                            </CardHeader>
-                            <CardContent className="flex-1">
-                                <div className="space-y-2">
-                                  <Skeleton className="h-4 w-full" />
-                                  <Skeleton className="h-4 w-full" />
-                                  <Skeleton className="h-4 w-5/6" />
-                                </div>
-                            </CardContent>
-                            <div className="p-4 pt-0">
-                                <Skeleton className="h-9 w-full" />
-                            </div>
-                        </Card>
-                    ))}
+                 <div className="space-y-2">
+                    {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
                  </div>
             ) : tickets.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="space-y-2">
                     {tickets.map((ticket, i) => {
                         const status = statusMap[ticket.status];
                         return (
-                            <Card 
-                                key={ticket.id} 
-                                className="flex flex-col transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade"
-                                style={{animationDelay: `${i * 100}ms`}}
-                            >
-                                <CardHeader>
-                                    <div className="flex items-start justify-between">
-                                        <CardTitle className="text-base">{ticket.title}</CardTitle>
-                                        <Badge variant="outline" className={status.className}>{status.label}</Badge>
-                                    </div>
-                                    <CardDescription>
-                                        #{ticket.id.split('_')[1]} &bull; Creado {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="flex-1">
-                                    <p className="text-sm text-muted-foreground line-clamp-3">
-                                        {ticket.description}
-                                    </p>
-                                </CardContent>
-                                <div className="p-4 pt-0">
-                                    <Button variant="outline" className="w-full" asChild>
-                                        <Link href={`/mantenimiento/${ticket.id}`}>
-                                            <MessageSquare className="mr-2 h-4 w-4" />
-                                            Ver detalles
-                                        </Link>
-                                    </Button>
-                                </div>
-                            </Card>
+                             <Link href={`/mantenimiento/${ticket.id}`} key={ticket.id} className="block group">
+                                <Card 
+                                    className="transition-all duration-300 ease-in-out group-hover:scale-[1.02] group-hover:shadow-lg group-hover:border-primary/20 animate-slide-up-and-fade"
+                                    style={{animationDelay: `${i * 100}ms`}}
+                                >
+                                    <CardHeader className="flex-row items-center gap-4 p-4">
+                                        <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
+                                            <Wrench className="h-5 w-5"/>
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="font-semibold text-sm line-clamp-1">{ticket.title}</p>
+                                            <CardDescription className="text-xs">
+                                                #{ticket.id.split('_')[1]} &bull; Creado {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}
+                                            </CardDescription>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                           <Badge variant="outline" className={status.className}>{status.label}</Badge>
+                                           <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1" />
+                                        </div>
+                                    </CardHeader>
+                                </Card>
+                            </Link>
                         )
                     })}
                 </div>
