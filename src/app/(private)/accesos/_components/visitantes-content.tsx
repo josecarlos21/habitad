@@ -14,6 +14,7 @@ import { visitorPasses as mockVisitorPasses } from "@/lib/mocks";
 import type { VisitorPass } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GeneratePassSheet } from "./generate-pass-sheet";
+import { cn } from "@/lib/utils";
 
 export default function VisitantesPageContent() {
     const [visitorPasses, setVisitorPasses] = React.useState<VisitorPass[]>([]);
@@ -25,7 +26,7 @@ export default function VisitantesPageContent() {
         const timer = setTimeout(() => {
             setVisitorPasses(mockVisitorPasses);
             setIsLoading(false);
-        }, 300); // Reduced delay
+        }, 300);
         return () => clearTimeout(timer);
     }, []);
 
@@ -77,12 +78,15 @@ export default function VisitantesPageContent() {
                         return (
                             <Card 
                                 key={pass.id}
-                                className="transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade"
+                                className={cn(
+                                    "flex flex-col transition-all duration-300 ease-in-out hover:shadow-lg animate-slide-up-and-fade",
+                                    !isValid && "bg-muted/50 opacity-70"
+                                )}
                                 style={{animationDelay: `${i * 100}ms`}}
                             >
-                                <CardHeader className="flex-row items-start gap-4 space-y-0">
-                                    <div className="grid h-12 w-12 place-items-center rounded-lg border">
-                                      <QrCode className="h-8 w-8 text-muted-foreground" />
+                                <CardHeader className="flex-row items-center gap-4 space-y-0 pb-4">
+                                    <div className={cn("grid h-12 w-12 place-items-center rounded-lg border", isValid ? "border-primary/50 bg-primary/10 text-primary" : "border-muted-foreground/20 bg-muted-foreground/10 text-muted-foreground")}>
+                                      <QrCode className="h-8 w-8" />
                                     </div>
                                     <div className="flex-1">
                                       <h3 className="font-semibold">{pass.visitorName}</h3>
@@ -90,16 +94,16 @@ export default function VisitantesPageContent() {
                                           Válido hasta {format(new Date(pass.validTo), "hh:mm a", { locale: es })}
                                       </p>
                                     </div>
-                                    <Badge variant={isValid ? "secondary" : "outline"}>
+                                    <Badge variant={isValid ? "secondary" : "outline"} className={isValid ? "bg-green-100 text-green-800" : ""}>
                                         {isValid ? "Activo" : "Expirado"}
                                     </Badge>
                                 </CardHeader>
-                                <CardContent className="flex justify-end gap-2">
-                                    <Button variant="outline" size="sm">
+                                <CardContent className="flex justify-end gap-2 pt-2 border-t">
+                                    <Button variant="outline" size="sm" disabled={!isValid}>
                                         <Share2 className="mr-2 h-3.5 w-3.5"/>
                                         Compartir
                                     </Button>
-                                    <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                                    <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" disabled={!isValid}>
                                          <Trash2 className="mr-2 h-3.5 w-3.5"/>
                                         Cancelar
                                     </Button>
