@@ -79,13 +79,13 @@ export default function VisitantesPageContent() {
                             <Card 
                                 key={pass.id}
                                 className={cn(
-                                    "flex flex-col transition-all duration-300 ease-in-out hover:shadow-lg animate-slide-up-and-fade",
-                                    !isValid && "bg-muted/50 opacity-70"
+                                    "flex flex-col transition-all duration-300 ease-in-out",
+                                    !isValid && "opacity-60"
                                 )}
                                 style={{animationDelay: `${i * 100}ms`}}
                             >
                                 <CardHeader className="flex-row items-center gap-4 space-y-0 pb-4">
-                                    <div className={cn("grid h-12 w-12 place-items-center rounded-lg border", isValid ? "border-primary/50 bg-primary/10 text-primary" : "border-muted-foreground/20 bg-muted-foreground/10 text-muted-foreground")}>
+                                    <div className={cn("grid h-12 w-12 place-items-center rounded-lg border-2 border-border-strong", isValid ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground")}>
                                       <QrCode className="h-8 w-8" />
                                     </div>
                                     <div className="flex-1">
@@ -98,7 +98,7 @@ export default function VisitantesPageContent() {
                                         {isValid ? "Activo" : "Expirado"}
                                     </Badge>
                                 </CardHeader>
-                                <CardContent className="flex justify-end gap-2 pt-2 border-t">
+                                <CardContent className="flex justify-end gap-2 pt-2 border-t-2 border-border-strong">
                                     <Button variant="outline" size="sm" disabled={!isValid}>
                                         <Share2 className="mr-2 h-3.5 w-3.5"/>
                                         Compartir
