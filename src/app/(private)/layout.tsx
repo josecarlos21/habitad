@@ -10,7 +10,7 @@ export default function PrivateLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <AppHeader />
-      <main className="flex-1 overflow-y-auto pb-24">{children}</main>
+      <main className="flex-1 overflow-y-auto pb-28">{children}</main>
       <BottomNavBar />
     </div>
   );
