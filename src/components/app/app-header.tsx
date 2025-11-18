@@ -43,7 +43,7 @@ function MobileNav() {
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="md:hidden">
+                <Button variant="outline" size="icon">
                     <Menu className="h-5 w-5" />
                     <span className="sr-only">Abrir Menú</span>
                 </Button>
@@ -72,13 +72,6 @@ function MobileNav() {
 
 export function AppHeader() {
   const { user } = useUser();
-  const pathname = usePathname();
-  const isActive = (path: string) => {
-    if (path === '/dashboard') {
-        return pathname === path;
-    }
-    return pathname.startsWith(path);
-  };
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur-sm md:px-6">
@@ -92,21 +85,6 @@ export function AppHeader() {
         </Link>
       </div>
       
-      <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-        {navItems.map((item) => (
-            <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                    "text-muted-foreground transition-colors hover:text-foreground",
-                    isActive(item.href) && "text-foreground font-semibold"
-                )}
-            >
-                {item.label}
-            </Link>
-        ))}
-      </nav>
-
       <div className="flex w-full items-center justify-end gap-2 md:ml-auto md:gap-4">
         <div className="hidden items-center gap-2 md:flex">
           <LiveClock />
