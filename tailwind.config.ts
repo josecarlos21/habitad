@@ -69,6 +69,9 @@ export default {
         md: 'calc(var(--radius) - 4px)',
         sm: 'calc(var(--radius) - 6px)',
       },
+      boxShadow: {
+        lg: '0 10px 30px -15px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      },
       keyframes: {
         'accordion-down': {
           from: {
@@ -99,7 +102,7 @@ export default {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in': 'fade-in 0.3s ease-out forwards',
-        'slide-up-and-fade': 'slide-up-and-fade 0.3s ease-out forwards',
+        'slide-up-and-fade': 'slide-up-and-fade 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
       },
     },
   },
