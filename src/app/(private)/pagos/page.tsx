@@ -14,11 +14,13 @@ import { useToast } from "@/hooks/use-toast";
 import { invoices as mockInvoices } from "@/lib/mocks";
 import type { Invoice } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
-const statusMap: Record<Invoice['status'], { label: string; icon: React.ElementType; className: string }> = {
-    paid: { label: "Pagado", icon: CheckCircle, className: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300" },
-    pending: { label: "Pendiente", icon: Clock, className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300" },
-    overdue: { label: "Vencido", icon: Clock, className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300" },
+const statusMap: Record<Invoice['status'], { label: string; icon: React.ElementType; variant: "success" | "warning" | "destructive" }> = {
+    paid: { label: "Pagado", icon: CheckCircle, variant: "success" },
+    pending: { label: "Pendiente", icon: Clock, variant: "warning" },
+    overdue: { label: "Vencido", icon: Clock, variant: "destructive" },
 };
 
 export default function PagosPage() {
@@ -46,77 +48,50 @@ export default function PagosPage() {
                     <TabsTrigger value="history">Historial</TabsTrigger>
                 </TabsList>
                 <TabsContent value="due" className="animate-fade-in">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Adeudos Pendientes</CardTitle>
-                            <CardDescription>Aquí puedes ver y pagar tus cuotas pendientes.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            {isLoading ? (
-                                <InvoiceTableSkeleton />
-                            ) : dueInvoices.length > 0 ? (
-                                <InvoiceTable invoices={dueInvoices} />
-                            ) : (
-                                <p className="text-center text-muted-foreground p-8">¡Felicidades! No tienes adeudos pendientes.</p>
-                            )}
-                        </CardContent>
-                    </Card>
+                     {isLoading ? (
+                        <div className="space-y-2 mt-4">
+                            {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
+                        </div>
+                    ) : dueInvoices.length > 0 ? (
+                         <div className="space-y-2 mt-4">
+                            {dueInvoices.map((invoice, i) => <InvoiceCard key={invoice.id} invoice={invoice} animationDelay={i * 100}/>)}
+                        </div>
+                    ) : (
+                        <Card className="mt-4">
+                            <CardHeader>
+                               <CardTitle>¡Felicidades!</CardTitle>
+                                <CardDescription>No tienes adeudos pendientes.</CardDescription>
+                            </CardHeader>
+                        </Card>
+                    )}
                 </TabsContent>
                 <TabsContent value="history" className="animate-fade-in">
-                    <Card>
-                         <CardHeader>
-                            <CardTitle>Historial de Pagos</CardTitle>
-                            <CardDescription>Consulta tus pagos realizados anteriormente.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                             {isLoading ? (
-                                <InvoiceTableSkeleton />
-                            ) : paidInvoices.length > 0 ? (
-                                <InvoiceTable invoices={paidInvoices} />
-                            ) : (
-                                <p className="text-center text-muted-foreground p-8">Aún no has realizado ningún pago.</p>
-                            )}
-                        </CardContent>
-                    </Card>
+                    {isLoading ? (
+                         <div className="space-y-2 mt-4">
+                            {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
+                        </div>
+                    ) : paidInvoices.length > 0 ? (
+                         <div className="space-y-2 mt-4">
+                            {paidInvoices.map((invoice, i) => <InvoiceCard key={invoice.id} invoice={invoice} animationDelay={i * 100} />)}
+                        </div>
+                    ) : (
+                        <Card className="mt-4">
+                            <CardHeader>
+                               <CardTitle>Sin historial</CardTitle>
+                                <CardDescription>Aún no has realizado ningún pago.</CardDescription>
+                            </CardHeader>
+                        </Card>
+                    )}
                 </TabsContent>
             </Tabs>
         </main>
     );
 }
 
-function InvoiceTableSkeleton() {
-    return (
-        <div className="overflow-x-auto">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Concepto</TableHead>
-                        <TableHead>Estado</TableHead>
-                        <TableHead>Vencimiento</TableHead>
-                        <TableHead className="text-right">Monto</TableHead>
-                        <TableHead><span className="sr-only">Acciones</span></TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {[...Array(3)].map((_, i) => (
-                        <TableRow key={i}>
-                            <TableCell><Skeleton className="h-5 w-48" /></TableCell>
-                            <TableCell><Skeleton className="h-6 w-24 rounded-full" /></TableCell>
-                            <TableCell><Skeleton className="h-5 w-20" /></TableCell>
-                            <TableCell className="text-right"><Skeleton className="h-5 w-16 ml-auto" /></TableCell>
-                            <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </div>
-    )
-}
 
-function InvoiceTable({ invoices }: { invoices: Invoice[]}) {
+function InvoiceCard({ invoice, animationDelay }: { invoice: Invoice, animationDelay: number }) {
     const { toast } = useToast();
-
-    if (invoices.length === 0) return null;
+    const status = statusMap[invoice.status];
 
     const handleActionClick = (invoice: Invoice) => {
         if(invoice.status === 'paid') {
@@ -126,49 +101,39 @@ function InvoiceTable({ invoices }: { invoices: Invoice[]}) {
         }
     }
 
-    return (
-        <div className="overflow-x-auto">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Concepto</TableHead>
-                        <TableHead>Estado</TableHead>
-                        <TableHead>Vencimiento</TableHead>
-                        <TableHead className="text-right">Monto</TableHead>
-                        <TableHead><span className="sr-only">Acciones</span></TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {invoices.map((invoice, i) => {
-                        const status = statusMap[invoice.status];
-                        return (
-                            <TableRow key={invoice.id} className="animate-slide-up-and-fade" style={{animationDelay: `${i * 100}ms`}}>
-                                <TableCell className="font-medium">{invoice.concept}</TableCell>
-                                <TableCell>
-                                    <Badge variant="outline" className={status.className}>
-                                        <status.icon className="mr-2 h-3 w-3"/>
-                                        {status.label}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>{format(new Date(invoice.dueDate), "dd MMM, yyyy", { locale: es })}</TableCell>
-                                <TableCell className="text-right">${invoice.amount.toLocaleString('es-MX')}</TableCell>
-                                <TableCell className="text-right">
-                                    {(invoice.status === 'pending' || invoice.status === 'overdue') && (
-                                        <Button variant="ghost" size="sm" onClick={() => handleActionClick(invoice)}>
-                                            Pagar <ArrowRight className="ml-2 h-4 w-4" />
-                                        </Button>
-                                    )}
-                                    {invoice.status === 'paid' && (
-                                        <Button variant="link" size="sm" onClick={() => handleActionClick(invoice)}>
-                                            Ver Recibo
-                                        </Button>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        );
-                    })}
-                </TableBody>
-            </Table>
-        </div>
+    const component = (
+        <Card 
+            className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg hover:border-primary/20 animate-slide-up-and-fade group"
+            style={{animationDelay: `${animationDelay}ms`}}
+        >
+            <CardHeader className="flex-row items-center gap-4 p-4">
+                <div className={cn("grid h-10 w-10 place-items-center rounded-lg", 
+                    status.variant === 'success' && 'bg-green-500/10 text-green-500',
+                    status.variant === 'warning' && 'bg-yellow-500/10 text-yellow-500',
+                    status.variant === 'destructive' && 'bg-red-500/10 text-red-500',
+                    )}>
+                    <status.icon className="h-5 w-5"/>
+                </div>
+                <div className="flex-1">
+                    <p className="font-semibold text-sm">{invoice.concept}</p>
+                    <p className="text-xs text-muted-foreground">
+                        Vence el {format(new Date(invoice.dueDate), "dd MMM, yyyy", { locale: es })}
+                    </p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                    <p className="font-semibold text-lg">${invoice.amount.toLocaleString('es-MX')}</p>
+                     <Badge variant={status.variant}>
+                        {status.label}
+                    </Badge>
+                </div>
+                <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1" />
+            </CardHeader>
+        </Card>
     );
+
+    return (
+        <button onClick={() => handleActionClick(invoice)} className="w-full text-left">
+            {component}
+        </button>
+    )
 }

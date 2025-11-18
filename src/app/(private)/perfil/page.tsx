@@ -3,7 +3,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUser } from "@/hooks/use-user";
@@ -40,7 +40,7 @@ export default function PerfilPage() {
     }
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
             <h1 className="text-2xl font-bold">Mi Perfil</h1>
             <div className="grid gap-8 md:grid-cols-3">
                 <div className="md:col-span-2">
@@ -64,9 +64,9 @@ export default function PerfilPage() {
                                     <Input id="phone" type="tel" defaultValue={user.phone} />
                                 </div>
                             </CardContent>
-                            <div className="p-6 pt-0">
-                            <Button type="submit">Guardar Cambios</Button>
-                            </div>
+                            <CardFooter>
+                                <Button type="submit">Guardar Cambios</Button>
+                            </CardFooter>
                         </Card>
                     </form>
                 </div>
@@ -94,6 +94,7 @@ export default function PerfilPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Zona de Peligro</CardTitle>
+                             <CardDescription>Esta acción cerrará tu sesión en este dispositivo.</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Button variant="destructive" className="w-full" asChild>
@@ -135,9 +136,9 @@ function ProfileSkeleton() {
                                 <Skeleton className="h-10 w-full" />
                             </div>
                         </CardContent>
-                        <div className="p-6 pt-0">
+                        <CardFooter>
                            <Button disabled>Guardar Cambios</Button>
-                        </div>
+                        </CardFooter>
                     </Card>
                 </div>
                 <div className="space-y-6">

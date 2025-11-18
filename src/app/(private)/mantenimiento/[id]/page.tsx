@@ -17,12 +17,13 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
-const statusMap: Record<Ticket['status'], { label: string; className: string }> = {
-    open: { label: "Abierto", className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-300/50" },
-    in_progress: { label: "En Progreso", className: "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 border-blue-300/50" },
-    resolved: { label: "Resuelto", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 border-yellow-300/50" },
-    closed: { label: "Cerrado", className: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border-green-300/50" },
+const statusMap: Record<Ticket['status'], { label: string; variant: "destructive" | "info" | "warning" | "success" }> = {
+    open: { label: "Abierto", variant: "destructive" },
+    in_progress: { label: "En Progreso", variant: "info" },
+    resolved: { label: "Resuelto", variant: "warning" },
+    closed: { label: "Cerrado", variant: "success" },
 };
 
 const mockComments = [
@@ -92,7 +93,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
     const status = statusMap[ticket.status];
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
             <div className="flex items-center gap-4">
                 <Button variant="outline" size="icon" asChild>
                     <Link href="/servicios?tab=mantenimiento">
@@ -108,7 +109,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                         <CardHeader>
                             <div className="flex items-start justify-between">
                                 <div>
-                                    <Badge variant="outline" className={status.className}>{status.label}</Badge>
+                                    <Badge variant={status.variant}>{status.label}</Badge>
                                     <CardTitle className="mt-2 text-2xl sr-only">{ticket.title}</CardTitle>
                                     <CardDescription className="mt-2">
                                         Ticket #{ticket.id.split('_')[1]} &bull; Creado {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}

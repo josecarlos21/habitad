@@ -41,7 +41,7 @@ function VotingCard({ vote, assemblyTitle }: { vote: any, assemblyTitle: string 
     return (
         <Card className="transition-all duration-300">
              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-lg">
                     {isVoted ? <CheckCircle className="text-green-500"/> : <VoteIcon />}
                      {isVoted ? "¡Gracias por votar!" : "Votación en Curso"}
                 </CardTitle>
@@ -109,7 +109,7 @@ export default function AsambleasPageContent() {
                             <CardHeader>
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <Badge>Asamblea Activa</Badge>
+                                        <Badge variant="success">Asamblea Activa</Badge>
                                         <CardTitle className="mt-2 text-xl">{activeAssembly.title}</CardTitle>
                                         <CardDescription>{format(new Date(activeAssembly.date), "EEEE dd 'de' MMMM, yyyy 'a las' HH:mm 'hrs'", { locale: es })}</CardDescription>
                                     </div>
@@ -155,12 +155,11 @@ export default function AsambleasPageContent() {
                                 <AccordionItem 
                                     value={assembly.id} 
                                     key={assembly.id} 
-                                    className="animate-slide-up-and-fade border-none" 
-                                    style={{animationDelay: `${i * 100 + 400}ms`}}
+                                    className="border-none" 
                                 >
-                                     <Card className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg hover:border-primary/20">
-                                        <AccordionTrigger className="p-4 hover:no-underline group">
-                                            <div className="flex items-center gap-4 w-full">
+                                     <Card className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade" style={{animationDelay: `${i * 100 + 400}ms`}}>
+                                        <AccordionTrigger className="p-0 hover:no-underline group">
+                                            <CardHeader className="flex-row items-center gap-4 w-full">
                                                 <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
                                                     <FileText className="h-5 w-5"/>
                                                 </div>
@@ -168,8 +167,8 @@ export default function AsambleasPageContent() {
                                                     <p className="font-semibold text-sm">{assembly.title}</p>
                                                     <p className="text-xs text-muted-foreground">{format(new Date(assembly.date), "dd 'de' MMMM, yyyy", { locale: es })}</p>
                                                 </div>
-                                                <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1" />
-                                            </div>
+                                                <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-90 mr-4" />
+                                            </CardHeader>
                                         </AccordionTrigger>
                                         <AccordionContent>
                                             <div className="p-4 pt-0">
