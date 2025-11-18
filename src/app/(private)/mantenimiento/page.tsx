@@ -5,7 +5,7 @@ import React from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { MessageSquare, PlusCircle, Wrench } from "lucide-react";
+import { MessageSquare, Wrench } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
