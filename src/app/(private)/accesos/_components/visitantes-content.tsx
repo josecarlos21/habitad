@@ -80,12 +80,12 @@ export default function VisitantesPageContent() {
                                 key={pass.id}
                                 className={cn(
                                     "flex flex-col transition-all duration-300 ease-in-out",
-                                    !isValid && "opacity-60"
+                                    !isValid && "opacity-50"
                                 )}
                                 style={{animationDelay: `${i * 100}ms`}}
                             >
                                 <CardHeader className="flex-row items-center gap-4 space-y-0 pb-4">
-                                    <div className={cn("grid h-12 w-12 place-items-center rounded-lg border-2 border-border-strong", isValid ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground")}>
+                                    <div className={cn("grid h-12 w-12 place-items-center rounded-lg", isValid ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground")}>
                                       <QrCode className="h-8 w-8" />
                                     </div>
                                     <div className="flex-1">
@@ -98,7 +98,7 @@ export default function VisitantesPageContent() {
                                         {isValid ? "Activo" : "Expirado"}
                                     </Badge>
                                 </CardHeader>
-                                <CardContent className="flex justify-end gap-2 pt-2 border-t-2 border-border-strong">
+                                <CardContent className="flex justify-end gap-2 pt-4 border-t">
                                     <Button variant="outline" size="sm" disabled={!isValid}>
                                         <Share2 className="mr-2 h-3.5 w-3.5"/>
                                         Compartir
