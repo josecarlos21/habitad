@@ -17,7 +17,7 @@ const statusMap: Record<Parcel['status'], { label: string; icon: React.ElementTy
     picked_up: { label: "Recogido", icon: PackageCheck, className: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300" },
 };
 
-export default function PaqueteriaPage() {
+export default function PaqueteriaPageContent() {
     const [parcels, setParcels] = React.useState<Parcel[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -31,9 +31,9 @@ export default function PaqueteriaPage() {
     }, []);
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
-            <h1 className="text-2xl font-bold tracking-tight">Paquetería</h1>
-            
+        <div className="pt-4 animate-fade-in">
+            <p className="text-muted-foreground mb-4">Paquetes recibidos en conserjería.</p>
+
             {isLoading ? (
                  <div className="space-y-4">
                     {[...Array(3)].map((_, i) => (
@@ -88,6 +88,6 @@ export default function PaqueteriaPage() {
                     description="No tienes paquetes pendientes de recoger."
                 />
             )}
-        </main>
+        </div>
     );
 }

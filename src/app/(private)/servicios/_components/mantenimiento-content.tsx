@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { tickets as mockTickets } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CreateTicketSheet } from "./_components/create-ticket-sheet";
+import { CreateTicketSheet } from "../../mantenimiento/_components/create-ticket-sheet";
 
 const statusMap: Record<Ticket['status'], { label: string; className: string }> = {
     open: { label: "Abierto", className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-300/50" },
@@ -23,7 +23,7 @@ const statusMap: Record<Ticket['status'], { label: string; className: string }> 
     closed: { label: "Cerrado", className: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border-green-300/50" },
 };
 
-export default function MantenimientoPage() {
+export default function MantenimientoPageContent() {
     const [tickets, setTickets] = React.useState<Ticket[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const { toast } = useToast();
@@ -53,9 +53,9 @@ export default function MantenimientoPage() {
     }
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
-             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold tracking-tight">Mantenimiento</h1>
+        <div className="pt-4 animate-fade-in">
+             <div className="flex items-center justify-between mb-4">
+                <p className="text-muted-foreground">Reporta problemas y da seguimiento.</p>
                 <CreateTicketSheet onTicketCreated={handleTicketCreated} />
             </div>
             
@@ -124,6 +124,6 @@ export default function MantenimientoPage() {
                     action={<CreateTicketSheet onTicketCreated={handleTicketCreated} />}
                 />
             )}
-        </main>
+        </div>
     )
 }

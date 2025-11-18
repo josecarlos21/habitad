@@ -1,14 +1,14 @@
 
 "use client";
 
+import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { announcements as mockAnnouncements } from "@/lib/mocks";
 import type { Announcement } from "@/lib/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Bell, Calendar, Tag } from "lucide-react";
-import React from "react";
 import { EmptyState } from "@/components/app/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -19,7 +19,7 @@ const categoryMap: Record<Announcement['category'], { label: string; className: 
     event: { label: "Evento", className: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300" },
 };
 
-export default function AvisosPage() {
+export default function AvisosPageContent() {
     const [announcementList, setAnnouncementList] = React.useState<Announcement[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -33,10 +33,8 @@ export default function AvisosPage() {
     }, []);
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
-            <h1 className="text-2xl font-bold tracking-tight">Avisos</h1>
-            
-            {isLoading ? (
+        <div className="pt-4 animate-fade-in">
+             {isLoading ? (
                  <div className="space-y-6">
                     {[...Array(3)].map((_, i) => (
                         <Card key={i}>
@@ -68,7 +66,7 @@ export default function AvisosPage() {
                             >
                                 <CardHeader>
                                     <div className="flex flex-wrap items-start justify-between gap-2">
-                                        <CardTitle>{announcement.title}</CardTitle>
+                                        <CardTitle className="text-lg">{announcement.title}</CardTitle>
                                         {announcement.pinned && <Badge>Fijado</Badge>}
                                     </div>
                                     <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
@@ -90,6 +88,6 @@ export default function AvisosPage() {
                     description="Todo está tranquilo. Vuelve más tarde."
                 />
             )}
-        </main>
+        </div>
     )
 }

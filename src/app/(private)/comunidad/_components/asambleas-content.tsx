@@ -70,7 +70,7 @@ function VotingCard({ vote, assemblyTitle }: { vote: any, assemblyTitle: string 
     )
 }
 
-export default function AsambleasPage() {
+export default function AsambleasPageContent() {
     const [assemblies, setAssemblies] = React.useState<Assembly[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -87,9 +87,7 @@ export default function AsambleasPage() {
     const pastAssemblies = assemblies.filter(a => a.status === 'past');
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
-            <h1 className="text-2xl font-bold tracking-tight">Asambleas y Votaciones</h1>
-
+        <div className="pt-4 animate-fade-in">
             {isLoading ? (
                 <div className="space-y-6">
                     <Card>
@@ -112,7 +110,7 @@ export default function AsambleasPage() {
                                 <div className="flex justify-between items-start">
                                     <div>
                                         <Badge>Asamblea Activa</Badge>
-                                        <CardTitle className="mt-2">{activeAssembly.title}</CardTitle>
+                                        <CardTitle className="mt-2 text-xl">{activeAssembly.title}</CardTitle>
                                         <CardDescription>{format(new Date(activeAssembly.date), "EEEE dd 'de' MMMM, yyyy 'a las' HH:mm 'hrs'", { locale: es })}</CardDescription>
                                     </div>
                                     <Users className="h-8 w-8 text-muted-foreground" />
@@ -178,6 +176,6 @@ export default function AsambleasPage() {
                     )}
                 </div>
             )}
-        </main>
+        </div>
     );
 }

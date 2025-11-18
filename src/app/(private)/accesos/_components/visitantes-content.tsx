@@ -13,9 +13,9 @@ import { useToast } from "@/hooks/use-toast";
 import { visitorPasses as mockVisitorPasses } from "@/lib/mocks";
 import type { VisitorPass } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GeneratePassSheet } from "./_components/generate-pass-sheet";
+import { GeneratePassSheet } from "./generate-pass-sheet";
 
-export default function VisitantesPage() {
+export default function VisitantesPageContent() {
     const [visitorPasses, setVisitorPasses] = React.useState<VisitorPass[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const { toast } = useToast();
@@ -45,9 +45,9 @@ export default function VisitantesPage() {
     }
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
-            <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold tracking-tight">Visitantes</h1>
+        <div className="pt-4 animate-fade-in">
+            <div className="flex items-center justify-between mb-4">
+                <p className="text-muted-foreground">Pases de acceso para tus visitas.</p>
                 <GeneratePassSheet onPassGenerated={handlePassGenerated} />
             </div>
             
@@ -116,6 +116,6 @@ export default function VisitantesPage() {
                     action={<GeneratePassSheet onPassGenerated={handlePassGenerated} />}
                  />
             )}
-        </main>
+        </div>
     )
 }

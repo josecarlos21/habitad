@@ -92,7 +92,7 @@ function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
     )
 }
 
-export default function ReservasPage() {
+export default function ReservasPageContent() {
     const [amenityList, setAmenityList] = React.useState<Amenity[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -106,8 +106,8 @@ export default function ReservasPage() {
     }, []);
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
-            <h1 className="text-2xl font-bold tracking-tight">Reservar Amenidades</h1>
+        <div className="pt-4 animate-fade-in">
+            <p className="text-muted-foreground mb-4">Reserva los espacios comunes para tus eventos y actividades.</p>
             
             {isLoading ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -162,6 +162,6 @@ export default function ReservasPage() {
                     description="Contacta a la administración para más información."
                 />
             )}
-        </main>
+        </div>
     );
 }

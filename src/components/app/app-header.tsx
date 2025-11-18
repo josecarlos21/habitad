@@ -1,6 +1,5 @@
 "use client";
 
-import { useSidebar } from "../ui/sidebar";
 import { Button } from "../ui/button";
 import { Menu, Moon, Sun } from "lucide-react";
 import Link from "next/link";
@@ -22,22 +21,12 @@ import { Separator } from "../ui/separator";
 
 
 export function AppHeader() {
-  const { toggleSidebar } = useSidebar();
   const { user, isLoading } = useUser();
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur-sm md:px-6">
       <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="icon"
-          className="shrink-0 md:hidden"
-          onClick={toggleSidebar}
-        >
-          <Menu className="h-5 w-5" />
-          <span className="sr-only">Toggle navigation menu</span>
-        </Button>
-        <Link href="/dashboard" className="hidden items-center gap-2 md:flex">
+        <Link href="/dashboard" className="flex items-center gap-2">
           <Icons.logo className="h-6 w-6 text-primary" />
           <span className="text-lg font-semibold">
             Habitat <span className="font-light text-muted-foreground">Conectado</span>
@@ -56,7 +45,7 @@ export function AppHeader() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                <Avatar className="h-10 w-10">
+                <Avatar className="h-10 w-10 border-2 border-primary/50">
                   <AvatarImage src={user.imageUrl} alt={user.name} />
                   <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
