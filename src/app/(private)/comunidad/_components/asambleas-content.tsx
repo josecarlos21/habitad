@@ -159,7 +159,7 @@ export default function AsambleasPageContent() {
                                     style={{animationDelay: `${i * 100 + 400}ms`}}
                                 >
                                      <Card className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg hover:border-primary/20">
-                                        <AccordionTrigger className="p-4 hover:no-underline">
+                                        <AccordionTrigger className="p-4 hover:no-underline group">
                                             <div className="flex items-center gap-4 w-full">
                                                 <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
                                                     <FileText className="h-5 w-5"/>
@@ -168,7 +168,7 @@ export default function AsambleasPageContent() {
                                                     <p className="font-semibold text-sm">{assembly.title}</p>
                                                     <p className="text-xs text-muted-foreground">{format(new Date(assembly.date), "dd 'de' MMMM, yyyy", { locale: es })}</p>
                                                 </div>
-                                                <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 accordion-arrow" />
+                                                <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1" />
                                             </div>
                                         </AccordionTrigger>
                                         <AccordionContent>
