@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from "react";
@@ -27,11 +28,13 @@ import {
   } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Spinner } from "@/components/ui/spinner";
+import { useToast } from "@/hooks/use-toast";
 
 
 const ticketSchema = z.object({
   title: z.string().min(5, "El título debe tener al menos 5 caracteres"),
-  category: z.enum(["plumbing", "electrical", "common_area", "other"]),
+  category: z.enum(["plumbing", "electrical", "common_area", "other"], { required_error: "Debes seleccionar una categoría."}),
   description: z.string().min(10, "La descripción debe tener al menos 10 caracteres"),
 });
 
@@ -39,28 +42,54 @@ type TicketFormValues = z.infer<typeof ticketSchema>;
 
 
 interface CreateTicketSheetProps {
-  onTicketCreated: (newTicket: Omit<Ticket, 'id' | 'createdAt' | 'status' | 'unitId'>) => void;
+  onTicketCreated: (newTicket: Omit<Ticket, 'id' | 'createdAt' | 'status' | 'unitId'>) => Promise<void>;
 }
 
 export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
     const [open, setOpen] = React.useState(false);
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const { toast } = useToast();
+    
     const form = useForm<TicketFormValues>({
         resolver: zodResolver(ticketSchema),
         defaultValues: {
             title: "",
-            category: "other",
             description: "",
         },
     });
 
-  const onSubmit = (data: TicketFormValues) => {
-    onTicketCreated(data);
-    form.reset();
-    setOpen(false);
+  const onSubmit = async (data: TicketFormValues) => {
+    setIsSubmitting(true);
+    try {
+        await onTicketCreated(data);
+        toast({
+            title: "Ticket Enviado",
+            description: "Tu solicitud de mantenimiento ha sido creada con éxito.",
+        });
+        form.reset();
+        setOpen(false);
+    } catch(error) {
+         toast({
+            variant: "destructive",
+            title: "Error al crear ticket",
+            description: "No se pudo crear el ticket. Inténtalo de nuevo.",
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isSubmitting) {
+        setOpen(isOpen);
+        if(!isOpen) {
+            form.reset();
+        }
+    }
+  }
+
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
         <Button>
           <PlusCircle className="mr-2 h-4 w-4" />
@@ -84,7 +113,7 @@ export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
                             <FormItem>
                                 <FormLabel>Título</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Ej: Fuga de agua en la cocina" {...field} />
+                                    <Input placeholder="Ej: Fuga de agua en la cocina" {...field} disabled={isSubmitting} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -96,7 +125,7 @@ export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Categoría</FormLabel>
-                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                 <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Selecciona una categoría" />
@@ -120,7 +149,7 @@ export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
                             <FormItem>
                                 <FormLabel>Descripción</FormLabel>
                                 <FormControl>
-                                    <Textarea placeholder="Describe detalladamente el problema..." {...field} />
+                                    <Textarea placeholder="Describe detalladamente el problema..." {...field} disabled={isSubmitting} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -129,9 +158,12 @@ export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
                 </div>
                 <SheetFooter>
                     <SheetClose asChild>
-                    <Button variant="outline">Cancelar</Button>
+                        <Button variant="outline" disabled={isSubmitting}>Cancelar</Button>
                     </SheetClose>
-                    <Button type="submit">Crear Ticket</Button>
+                    <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting && <Spinner size="sm" className="mr-2" />}
+                        {isSubmitting ? "Creando..." : "Crear Ticket"}
+                    </Button>
                 </SheetFooter>
             </form>
         </Form>

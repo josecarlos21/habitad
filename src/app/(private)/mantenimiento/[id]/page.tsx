@@ -8,7 +8,7 @@ import type { Ticket } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import { ArrowLeft, Paperclip, Send, User, Wrench } from "lucide-react";
+import { ArrowLeft, Paperclip, Send, Wrench } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Spinner } from "@/components/ui/spinner";
-import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const statusMap: Record<Ticket['status'], { label: string; variant: "destructive" | "info" | "warning" | "success" }> = {
     open: { label: "Abierto", variant: "destructive" },
@@ -31,16 +31,72 @@ const mockComments = [
     { id: 'c2', author: 'Administración', avatar: 'https://i.pravatar.cc/150?u=admin', text: 'Recibido. Hemos asignado al personal de mantenimiento. Deberían pasar a revisar el día de mañana.', createdAt: new Date().toISOString() },
 ];
 
+function TicketDetailSkeleton() {
+    return (
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+            <div className="flex items-center gap-4">
+                <Skeleton className="h-10 w-10" />
+                <Skeleton className="h-8 w-48" />
+            </div>
+            <div className="grid gap-6 lg:grid-cols-3">
+                <div className="lg:col-span-2 space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <Skeleton className="h-6 w-24" />
+                            <Skeleton className="h-4 w-40 mt-2" />
+                        </CardHeader>
+                        <CardContent>
+                             <Skeleton className="h-12 w-full" />
+                        </CardContent>
+                    </Card>
+                     <Card>
+                        <CardHeader>
+                            <Skeleton className="h-6 w-32" />
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {[...Array(2)].map((_, i) => (
+                                <div key={i} className="flex items-start gap-4">
+                                    <Skeleton className="h-10 w-10 rounded-full" />
+                                    <div className="flex-1 space-y-2">
+                                        <Skeleton className="h-4 w-1/4" />
+                                        <Skeleton className="h-8 w-full" />
+                                    </div>
+                                </div>
+                            ))}
+                        </CardContent>
+                    </Card>
+                </div>
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                           <Skeleton className="h-6 w-24" />
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <Skeleton className="h-5 w-full" />
+                            <Skeleton className="h-5 w-full" />
+                            <Skeleton className="h-5 w-full" />
+                            <Separator />
+                            <Skeleton className="h-10 w-full" />
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </main>
+    )
+}
+
+
 export default function TicketDetailPage({ params }: { params: { id: string } }) {
     const { toast } = useToast();
     const [ticket, setTicket] = React.useState<Ticket | null | undefined>(undefined);
     const [isResolving, setIsResolving] = React.useState(false);
 
     React.useEffect(() => {
+        setTicket(undefined);
         const timer = setTimeout(() => {
             const foundTicket = mockTickets.find((t) => t.id === params.id);
             setTicket(foundTicket || null);
-        }, 500);
+        }, 1000);
         return () => clearTimeout(timer);
     }, [params.id]);
 
@@ -61,7 +117,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
     const handleResolveTicket = async () => {
         if (ticket) {
             setIsResolving(true);
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1500));
             setTicket(prev => prev ? { ...prev, status: 'resolved' } : null);
             toast({
                 title: "Ticket Actualizado",
@@ -72,11 +128,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
     };
     
     if (ticket === undefined) {
-        return (
-             <main className="flex flex-1 items-center justify-center p-4 md:p-8">
-                <Spinner size="lg" />
-            </main>
-        )
+        return <TicketDetailSkeleton />;
     }
 
     if (ticket === null) {

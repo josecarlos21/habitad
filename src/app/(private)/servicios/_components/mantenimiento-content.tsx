@@ -8,13 +8,11 @@ import { es } from 'date-fns/locale';
 import { Wrench, ArrowRight } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
 import { tickets as mockTickets } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CreateTicketSheet } from "../../servicios/_components/create-ticket-sheet";
+import { CreateTicketSheet } from "../../mantenimiento/_components/create-ticket-sheet";
 
 const statusMap: Record<Ticket['status'], { label: string; className: string }> = {
     open: { label: "Abierto", className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-300/50" },
@@ -26,18 +24,20 @@ const statusMap: Record<Ticket['status'], { label: string; className: string }> 
 export default function MantenimientoPageContent() {
     const [tickets, setTickets] = React.useState<Ticket[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
-    const { toast } = useToast();
 
     React.useEffect(() => {
         setIsLoading(true);
         const timer = setTimeout(() => {
             setTickets(mockTickets);
             setIsLoading(false);
-        }, 500);
+        }, 1000);
         return () => clearTimeout(timer);
     }, []);
 
-    const handleTicketCreated = (newTicket: Omit<Ticket, 'id' | 'createdAt' | 'status' | 'unitId'>) => {
+    const handleTicketCreated = async (newTicket: Omit<Ticket, 'id' | 'createdAt' | 'status' | 'unitId'>) => {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
         const ticket: Ticket = {
             id: `t_${Date.now()}`,
             createdAt: new Date().toISOString(),
@@ -46,10 +46,6 @@ export default function MantenimientoPageContent() {
             ...newTicket
         }
         setTickets(prev => [ticket, ...prev]);
-        toast({
-            title: "Ticket Enviado",
-            description: "Tu solicitud de mantenimiento ha sido creada con éxito.",
-        });
     }
 
     return (
