@@ -16,14 +16,20 @@ import { EmptyState } from "@/components/app/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { mockAssemblies } from "@/lib/mocks";
 import type { Assembly } from "@/lib/types";
+import { Spinner } from "@/components/ui/spinner";
 
 function VotingCard({ vote, assemblyTitle }: { vote: any, assemblyTitle: string }) {
     const { toast } = useToast();
     const [selectedOption, setSelectedOption] = React.useState<string | null>(null);
     const [isVoted, setIsVoted] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
-    const handleSubmitVote = () => {
+    const handleSubmitVote = async () => {
         if (selectedOption) {
+            setIsLoading(true);
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            setIsLoading(false);
             setIsVoted(true);
             toast({
                 title: "Voto Emitido",
@@ -52,7 +58,7 @@ function VotingCard({ vote, assemblyTitle }: { vote: any, assemblyTitle: string 
             {!isVoted && (
                 <>
                     <CardContent>
-                        <RadioGroup onValueChange={setSelectedOption} className="gap-4">
+                        <RadioGroup onValueChange={setSelectedOption} className="gap-4" disabled={isLoading}>
                             {vote.options.map((option: string) => (
                                 <div key={option} className="flex items-center space-x-2">
                                     <RadioGroupItem value={option} id={option} />
@@ -62,7 +68,10 @@ function VotingCard({ vote, assemblyTitle }: { vote: any, assemblyTitle: string 
                         </RadioGroup>
                     </CardContent>
                     <CardContent>
-                        <Button onClick={handleSubmitVote} className="w-full">Emitir Voto</Button>
+                        <Button onClick={handleSubmitVote} className="w-full" disabled={!selectedOption || isLoading}>
+                            {isLoading && <Spinner size="sm" className="mr-2" />}
+                            {isLoading ? 'Enviando voto...' : 'Emitir Voto'}
+                        </Button>
                     </CardContent>
                 </>
             )}
@@ -79,7 +88,7 @@ export default function AsambleasPageContent() {
         const timer = setTimeout(() => {
             setAssemblies(mockAssemblies);
             setIsLoading(false);
-        }, 300); // Reduced delay
+        }, 500);
         return () => clearTimeout(timer);
     }, []);
 

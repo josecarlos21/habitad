@@ -26,11 +26,14 @@ export default function VisitantesPageContent() {
         const timer = setTimeout(() => {
             setVisitorPasses(mockVisitorPasses);
             setIsLoading(false);
-        }, 300);
+        }, 500);
         return () => clearTimeout(timer);
     }, []);
 
-    const handlePassGenerated = (newPass: Omit<VisitorPass, 'id' | 'qrToken' | 'userId' | 'validFrom'>) => {
+    const handlePassGenerated = async (newPass: Omit<VisitorPass, 'id' | 'qrToken' | 'userId' | 'validFrom'>) => {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         const pass: VisitorPass = {
             id: `vp_${Date.now()}`,
             qrToken: `qr_${Date.now()}`,
@@ -39,10 +42,7 @@ export default function VisitantesPageContent() {
             ...newPass,
         };
         setVisitorPasses(prev => [pass, ...prev]);
-        toast({
-            title: "Pase Generado",
-            description: "El pase para tu visitante ha sido creado con éxito.",
-        });
+        // Toast is now handled inside the sheet for better feedback
     }
 
     return (
@@ -79,8 +79,8 @@ export default function VisitantesPageContent() {
                             <Card 
                                 key={pass.id}
                                 className={cn(
-                                    "flex flex-col transition-all duration-300 ease-in-out animate-slide-up-and-fade",
-                                    !isValid && "opacity-50 grayscale"
+                                    "flex flex-col transition-all duration-300 ease-in-out animate-slide-up-and-fade hover:shadow-lg hover:scale-[1.02]",
+                                    !isValid && "opacity-60 grayscale"
                                 )}
                                 style={{animationDelay: `${i * 100}ms`}}
                             >
