@@ -71,6 +71,7 @@ function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
                             onSelect={setDate}
                             className="rounded-md border"
                             disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1)) || isSubmitting}
+                            locale={es}
                         />
                     </div>
                     <SheetFooter>
@@ -126,7 +127,7 @@ export default function ReservasPageContent() {
                     {amenityList.map((amenity: Amenity, i) => (
                         <Card 
                             key={amenity.id} 
-                            className="overflow-hidden flex flex-col transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-soft animate-slide-up-and-fade"
+                            className="overflow-hidden flex flex-col transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-soft animate-slide-up-and-fade"
                             style={{animationDelay: `${i * 100}ms`}}
                         >
                             <CardHeader className="p-0">
