@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -11,17 +12,22 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import React from "react";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle the registration logic
-    // For now, we'll just redirect to the dashboard
-    router.push("/dashboard");
+    setIsLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+        router.push("/dashboard");
+    }, 1500);
   };
 
   return (
@@ -42,6 +48,7 @@ export default function RegisterPage() {
                 placeholder="Juan Pérez"
                 required
                 autoFocus
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -51,6 +58,7 @@ export default function RegisterPage() {
                 type="email"
                 placeholder="tu@email.com"
                 required
+                disabled={isLoading}
               />
             </div>
              <div className="space-y-2">
@@ -59,12 +67,16 @@ export default function RegisterPage() {
                 id="unit-code"
                 placeholder="Ej: A-101"
                 required
+                disabled={isLoading}
               />
             </div>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <Button className="w-full" type="submit">Registrarme</Button>
+          <Button className="w-full" type="submit" disabled={isLoading}>
+            {isLoading && <Spinner size="sm" className="mr-2" />}
+            {isLoading ? "Registrando..." : "Registrarme"}
+          </Button>
            <Button variant="link" size="sm" className="text-muted-foreground" asChild>
             <Link href="/auth">Volver a opciones</Link>
           </Button>
