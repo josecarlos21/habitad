@@ -15,6 +15,7 @@ import type { VisitorPass } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GeneratePassSheet } from "./generate-pass-sheet";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export default function VisitantesPageContent() {
     const [visitorPasses, setVisitorPasses] = React.useState<VisitorPass[]>([]);
@@ -99,13 +100,17 @@ export default function VisitantesPageContent() {
                                     </Badge>
                                 </CardHeader>
                                 <CardContent className="flex justify-end gap-2 pt-4 border-t mt-auto">
-                                    <Button variant="outline" size="sm" disabled={!isValid}>
-                                        <Share2 className="mr-2 h-3.5 w-3.5"/>
-                                        Compartir
+                                    <Button variant="outline" size="sm" asChild>
+                                        <Link href="/maintenance">
+                                            <Share2 className="mr-2 h-3.5 w-3.5"/>
+                                            Compartir
+                                        </Link>
                                     </Button>
-                                    <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" disabled={!isValid}>
-                                         <Trash2 className="mr-2 h-3.5 w-3.5"/>
-                                        Cancelar
+                                    <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" asChild>
+                                        <Link href="/maintenance">
+                                             <Trash2 className="mr-2 h-3.5 w-3.5"/>
+                                            Cancelar
+                                        </Link>
                                     </Button>
                                 </CardContent>
                             </Card>
