@@ -27,7 +27,6 @@ import {
   SheetHeader
 } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Separator } from "../ui/separator";
 
 const mainNavItems = [
   { href: "/dashboard", icon: Home, label: "Inicio" },
