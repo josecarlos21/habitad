@@ -10,9 +10,9 @@ import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { announcements, bookings, invoices, tickets, amenities, visitorPasses, parcels, mockAssemblies } from "@/lib/mocks";
 import type { Invoice, Ticket, Booking, Announcement, VisitorPass, Parcel, Assembly } from "@/lib/types";
+import { Spinner } from "@/components/ui/spinner";
 
 // Helper to combine and sort all relevant items into a single feed
 const createActivityFeed = ({ announcements, tickets, bookings, visitorPasses, parcels, assemblies }: { announcements: Announcement[], tickets: Ticket[], bookings: Booking[], visitorPasses: VisitorPass[], parcels: Parcel[], assemblies: Assembly[] }) => {
@@ -33,12 +33,12 @@ const createActivityFeed = ({ announcements, tickets, bookings, visitorPasses, p
 // Map item types to their respective icons and links
 const itemTypeDetails: Record<string, { icon: React.ElementType, link: string | ((id: string) => string), tab?: string, badge?: (item: any) => React.ReactNode }> = {
     announcement: { icon: Bell, link: "/comunidad", tab: "avisos" },
-    ticket: { icon: Wrench, link: (id: string) => `/mantenimiento/${id}`, badge: (item) => <Badge variant="outline">{item.status === 'open' ? 'Abierto' : 'En Progreso'}</Badge> },
+    ticket: { icon: Wrench, link: (id: string) => `/mantenimiento/${id}`, badge: (item) => <Badge variant={item.status === 'open' ? 'destructive' : 'info'}>{item.status === 'open' ? 'Abierto' : 'En Progreso'}</Badge> },
     booking: { icon: Calendar, link: "/servicios", tab: "reservas", badge: () => <Badge variant="secondary">Confirmada</Badge> },
     payment: { icon: CreditCard, link: "/pagos" },
-    visitor_pass: { icon: QrCode, link: "/accesos", tab: "visitantes", badge: () => <Badge variant="secondary">Activo</Badge> },
-    parcel: { icon: Package, link: "/accesos", tab: "paqueteria", badge: () => <Badge variant="outline" className="border-blue-300/50 bg-blue-100 text-blue-800">En conserjería</Badge> },
-    assembly: { icon: Users, link: "/comunidad", tab: "asambleas", badge: () => <Badge variant="outline">Activa</Badge> },
+    visitor_pass: { icon: QrCode, link: "/accesos", tab: "visitantes", badge: () => <Badge variant="success">Activo</Badge> },
+    parcel: { icon: Package, link: "/accesos", tab: "paqueteria", badge: () => <Badge variant="info">En conserjería</Badge> },
+    assembly: { icon: Users, link: "/comunidad", tab: "asambleas", badge: () => <Badge variant="warning">Activa</Badge> },
 };
 
 
@@ -46,7 +46,11 @@ function PrimaryAction({ invoice, ticket, isLoading }: { invoice?: Invoice, tick
     const { user } = useUser();
 
     if (isLoading) {
-        return <Skeleton className="h-24 w-full" />;
+        return (
+            <Card className="flex items-center justify-center h-28">
+                <Spinner />
+            </Card>
+        );
     }
 
     // Priority: Overdue/Pending payment > Open ticket
@@ -116,13 +120,12 @@ export default function DashboardPage() {
     setIsLoading(true);
     const timer = setTimeout(() => {
         setIsLoading(false);
-    }, 300);
+    }, 500);
     return () => clearTimeout(timer);
   }, []);
 
   const nextPayment = invoices.find(inv => inv.status === 'pending' || inv.status === 'overdue');
   const activeTicket = tickets.find(t => t.status === 'open' || t.status === 'in_progress');
-  const activeAssembly = mockAssemblies.find(a => a.status === 'active');
   const activityFeed = createActivityFeed({announcements, tickets, bookings, visitorPasses, parcels, assemblies: mockAssemblies});
 
   return (
@@ -141,8 +144,8 @@ export default function DashboardPage() {
             </div>
             
             {isLoading ? (
-                <div className="space-y-4">
-                    {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
+                <div className="flex justify-center items-center h-40">
+                  <Spinner size="lg" />
                 </div>
             ) : (
                  <div className="space-y-2">

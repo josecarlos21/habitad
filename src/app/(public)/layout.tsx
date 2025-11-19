@@ -15,7 +15,7 @@ export default function PublicLayout({
             </h1>
           </div>
       </div>
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md animate-fade-in">
         {children}
       </div>
     </div>

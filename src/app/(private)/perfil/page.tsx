@@ -9,10 +9,10 @@ import { Label } from "@/components/ui/label";
 import { useUser } from "@/hooks/use-user";
 import { LogOut, User as UserIcon } from "lucide-react";
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/app/empty-state";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function PerfilPage() {
     const { user, isLoading } = useUser();
@@ -27,7 +27,11 @@ export default function PerfilPage() {
     }
 
     if (isLoading) {
-        return <ProfileSkeleton />
+        return (
+            <main className="flex flex-1 items-center justify-center p-4 md:p-8">
+                <Spinner size="lg" />
+            </main>
+        )
     }
 
     if (!user) {
@@ -109,67 +113,4 @@ export default function PerfilPage() {
             </div>
         </main>
     );
-}
-
-function ProfileSkeleton() {
-    return (
-         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            <h1 className="text-2xl font-bold tracking-tight mb-4">Mi Perfil</h1>
-            <div className="grid gap-8 md:grid-cols-3">
-                <div className="md:col-span-2">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Información Personal</CardTitle>
-                            <CardDescription>Estos son tus datos personales. Mantenlos actualizados.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="name">Nombre completo</Label>
-                                <Skeleton className="h-10 w-full" />
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="email">Correo electrónico</Label>
-                                <Skeleton className="h-10 w-full" />
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="phone">Teléfono</Label>
-                                <Skeleton className="h-10 w-full" />
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                           <Button disabled>Guardar Cambios</Button>
-                        </CardFooter>
-                    </Card>
-                </div>
-                <div className="space-y-6">
-                    <Card>
-                        <CardHeader className="pb-4">
-                            <div className="flex items-center gap-4">
-                                <Skeleton className="h-16 w-16 rounded-full" />
-                                <div className="space-y-2">
-                                    <Skeleton className="h-6 w-32" />
-                                    <Skeleton className="h-4 w-20" />
-                                 </div>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <Skeleton className="h-4 w-24" />
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Zona de Peligro</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <Button variant="destructive" className="w-full" disabled>
-                                <LogOut className="mr-2 h-4 w-4" />
-                                Cerrar sesión
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
-        </main>
-    )
 }

@@ -11,17 +11,21 @@ export default function SplashPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.replace('/auth');
-    }, 1500); // Reduced delay
+    }, 2000); 
 
     return () => clearTimeout(timer);
   }, [router]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full animate-pulse">
-        <Icons.logo className="h-16 w-16 text-primary" />
-        <h1 className="text-4xl font-bold mt-4">
-            Habitat <span className="font-light text-muted-foreground">Conectado</span>
-        </h1>
+    <div className="flex flex-col items-center justify-center h-full">
+        <div className="animate-fade-in">
+          <Icons.logo className="h-16 w-16 text-primary" />
+        </div>
+        <div className="relative mt-4 overflow-hidden">
+          <h1 className="text-4xl font-bold animate-slide-up-and-fade">
+              Habitat <span className="font-light text-muted-foreground">Conectado</span>
+          </h1>
+        </div>
     </div>
   );
 }

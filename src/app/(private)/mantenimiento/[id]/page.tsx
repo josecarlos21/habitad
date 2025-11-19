@@ -16,7 +16,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
 const statusMap: Record<Ticket['status'], { label: string; variant: "destructive" | "info" | "warning" | "success" }> = {
@@ -69,19 +69,8 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
     
     if (ticket === undefined) {
         return (
-             <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-                 <div className="flex items-center gap-4">
-                    <Skeleton className="h-9 w-24" />
-                </div>
-                <div className="grid gap-6 lg:grid-cols-3">
-                    <div className="lg:col-span-2 space-y-6">
-                        <Skeleton className="h-[200px] w-full" />
-                        <Skeleton className="h-[300px] w-full" />
-                    </div>
-                     <div>
-                        <Skeleton className="h-[250px] w-full" />
-                    </div>
-                </div>
+             <main className="flex flex-1 items-center justify-center p-4 md:p-8">
+                <Spinner size="lg" />
             </main>
         )
     }
