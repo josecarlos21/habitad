@@ -104,43 +104,43 @@ function NavLink({
   );
 }
 
-function SidebarContent() {
-    const { isCollapsed } = useSidebar();
-    return (
-        <div className="flex h-full flex-col">
-          <SheetHeader className="h-16 flex-shrink-0 items-center px-4">
-              <Link href="/dashboard" className="flex items-center gap-2">
-                <Icons.logo className="h-6 w-6 text-primary" />
-                <span className={cn("text-lg font-semibold transition-opacity duration-300", isCollapsed ? "opacity-0" : "opacity-100")}>
-                    Habitat
-                </span>
-              </Link>
-              <SheetTitle className="sr-only">Menú principal</SheetTitle>
-          </SheetHeader>
-          <nav className="flex-1 space-y-2 px-4 py-4">
-            {mainNavItems.map((item) => (
-              <NavLink key={item.href} item={item} isCollapsed={isCollapsed} />
-            ))}
-          </nav>
-          <div className="border-t p-4 space-y-2">
-             {helpNavItems.map((item) => (
-              <NavLink key={item.href} item={item} isCollapsed={isCollapsed} />
-            ))}
-          </div>
-        </div>
-    )
+function NavLinks({ isCollapsed }: { isCollapsed: boolean }) {
+  return (
+    <>
+      <nav className="flex-1 space-y-2 px-4 py-4">
+        {mainNavItems.map((item) => (
+          <NavLink key={item.href} item={item} isCollapsed={isCollapsed} />
+        ))}
+      </nav>
+      <div className="border-t p-4 space-y-2">
+        {helpNavItems.map((item) => (
+          <NavLink key={item.href} item={item} isCollapsed={isCollapsed} />
+        ))}
+      </div>
+    </>
+  );
 }
 
-
 export function AppSidebar() {
-  const { isSidebarOpen, setSidebarOpen } = useSidebar();
+  const { isSidebarOpen, setSidebarOpen, isCollapsed } = useSidebar();
   const isMobile = useIsMobile();
 
   if (isMobile) {
     return (
       <Sheet open={isSidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetContent side="left" className="p-0">
-          <SidebarContent />
+          <div className="flex h-full flex-col">
+            <SheetHeader className="h-16 flex-shrink-0 items-center border-b px-4">
+                <Link href="/dashboard" className="flex items-center gap-2">
+                  <Icons.logo className="h-6 w-6 text-primary" />
+                  <span className="text-lg font-semibold">
+                      Habitat
+                  </span>
+                </Link>
+                <SheetTitle className="sr-only">Menú principal</SheetTitle>
+            </SheetHeader>
+            <NavLinks isCollapsed={false} />
+          </div>
         </SheetContent>
       </Sheet>
     );
@@ -148,7 +148,17 @@ export function AppSidebar() {
 
   return (
     <aside className="sticky top-0 hidden h-screen w-64 flex-shrink-0 border-r md:block">
-        <SidebarContent />
+        <div className="flex h-full flex-col">
+          <div className="flex h-16 items-center border-b px-4">
+            <Link href="/dashboard" className="flex items-center gap-2">
+                <Icons.logo className="h-6 w-6 text-primary" />
+                <span className={cn("text-lg font-semibold transition-opacity duration-300", isCollapsed ? "opacity-0" : "opacity-100")}>
+                    Habitat
+                </span>
+              </Link>
+          </div>
+          <NavLinks isCollapsed={isCollapsed} />
+        </div>
     </aside>
   );
 }
