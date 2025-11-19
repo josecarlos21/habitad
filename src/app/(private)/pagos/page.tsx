@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React from "react";
@@ -8,12 +9,12 @@ import { ArrowRight, CheckCircle, Clock, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
 import { invoices as mockInvoices } from "@/lib/mocks";
 import type { Invoice } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/app/empty-state";
+import Link from "next/link";
 
 const statusMap: Record<Invoice['status'], { label: string; icon: React.ElementType; variant: "success" | "warning" | "destructive" }> = {
     paid: { label: "Pagado", icon: CheckCircle, variant: "success" },
@@ -98,51 +99,38 @@ export default function PagosPage() {
 
 
 function InvoiceCard({ invoice, animationDelay }: { invoice: Invoice, animationDelay: number }) {
-    const { toast } = useToast();
     const status = statusMap[invoice.status];
 
-    const handleActionClick = (invoice: Invoice) => {
-        if(invoice.status === 'paid') {
-            toast({ title: "Función no disponible", description: "La visualización de recibos estará disponible próximamente." });
-        } else {
-             toast({ title: "Procesando Pago...", description: `Se procesará el pago para ${invoice.concept}.` });
-        }
-    }
-
-    const component = (
-        <Card 
-            className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg hover:border-primary/20 animate-slide-up-and-fade group"
-            style={{animationDelay: `${animationDelay}ms`}}
-        >
-            <CardHeader className="flex-row items-center gap-4 p-4">
-                <div className={cn("grid h-10 w-10 place-items-center rounded-lg", 
-                    status.variant === 'success' && 'bg-green-500/10 text-green-500',
-                    status.variant === 'warning' && 'bg-yellow-500/10 text-yellow-500',
-                    status.variant === 'destructive' && 'bg-red-500/10 text-red-500',
-                    )}>
-                    <status.icon className="h-5 w-5"/>
-                </div>
-                <div className="flex-1">
-                    <p className="font-semibold text-sm">{invoice.concept}</p>
-                    <p className="text-xs text-muted-foreground">
-                        {status.variant === 'paid' ? 'Pagado el ' : 'Vence el '} 
-                        {format(new Date(invoice.dueDate), "dd MMM, yyyy", { locale: es })}
-                    </p>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                    <p className="font-semibold text-lg">${invoice.amount.toLocaleString('es-MX')}</p>
-                     <Badge variant={status.variant}>
-                        {status.label}
-                    </Badge>
-                </div>
-                <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1" />
-            </CardHeader>
-        </Card>
-    );
-
     return (
-        <button onClick={() => handleActionClick(invoice)} className="w-full text-left">
-            {component}
-        </button>
+        <Link href={`/pagos/${invoice.id}`} className="w-full text-left group">
+             <Card 
+                className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg hover:border-primary/20 animate-slide-up-and-fade"
+                style={{animationDelay: `${animationDelay}ms`}}
+            >
+                <CardHeader className="flex-row items-center gap-4 p-4">
+                    <div className={cn("grid h-10 w-10 place-items-center rounded-lg", 
+                        status.variant === 'success' && 'bg-green-500/10 text-green-500',
+                        status.variant === 'warning' && 'bg-yellow-500/10 text-yellow-500',
+                        status.variant === 'destructive' && 'bg-red-500/10 text-red-500',
+                        )}>
+                        <status.icon className="h-5 w-5"/>
+                    </div>
+                    <div className="flex-1">
+                        <p className="font-semibold text-sm">{invoice.concept}</p>
+                        <p className="text-xs text-muted-foreground">
+                            {status.variant === 'paid' ? 'Pagado el ' : 'Vence el '} 
+                            {format(new Date(invoice.dueDate), "dd MMM, yyyy", { locale: es })}
+                        </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                        <p className="font-semibold text-lg">${invoice.amount.toLocaleString('es-MX')}</p>
+                         <Badge variant={status.variant}>
+                            {status.label}
+                        </Badge>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1" />
+                </CardHeader>
+            </Card>
+        </Link>
     )
 }

@@ -6,7 +6,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { amenities as mockAmenities } from "@/lib/mocks";
-import { Calendar as CalendarIcon, CheckCircle } from "lucide-react";
+import { Calendar as CalendarIcon, CheckCircle, Wrench } from "lucide-react";
 import type { Amenity } from "@/lib/types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { Calendar } from "@/components/ui/calendar";
@@ -15,23 +15,32 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/app/empty-state";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { Spinner } from "@/components/ui/spinner";
 
 function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
     const { toast } = useToast();
     const [open, setOpen] = React.useState(false);
     const [date, setDate] = React.useState<Date | undefined>(new Date());
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [isBooked, setIsBooked] = React.useState(false);
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        if(!date) return;
+        
+        setIsSubmitting(true);
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setIsSubmitting(false);
         setIsBooked(true);
         toast({
-            title: "Reserva Confirmada",
-            description: `Tu reserva para ${amenity.name} ha sido realizada con éxito.`,
+            title: "Solicitud de Reserva Enviada",
+            description: `Tu solicitud para ${amenity.name} ha sido recibida.`,
         });
     };
     
     const handleOpenChange = (isOpen: boolean) => {
+        if(isSubmitting) return;
         setOpen(isOpen);
         if (!isOpen) {
             // Reset state when closing
@@ -62,11 +71,13 @@ function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
                 {isBooked ? (
                     <div className="flex flex-col items-center justify-center h-full text-center p-4 animate-fade-in">
                         <CheckCircle className="w-20 h-20 text-green-500 mb-4" />
-                        <h3 className="text-xl font-semibold">¡Reserva Exitosa!</h3>
-                        <p className="text-muted-foreground mt-2">
-                           Has reservado la amenidad <span className="font-semibold text-foreground">{amenity.name}</span> para el <span className="font-semibold text-foreground">{date ? format(date, "dd 'de' MMMM, yyyy", { locale: es }) : ''}</span>.
-                        </p>
-                        <Button className="mt-6 w-full" onClick={() => handleOpenChange(false)}>Cerrar</Button>
+                        <h3 className="text-xl font-semibold">¡Solicitud Recibida!</h3>
+                         <EmptyState 
+                            icon={Wrench}
+                            title="Sistema de Reservas en Construcción"
+                            description="Gracias por tu interés. El calendario de disponibilidad en tiempo real y la confirmación automática estarán disponibles próximamente."
+                        />
+                        <Button className="mt-6 w-full" onClick={() => handleOpenChange(false)}>Entendido</Button>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="flex flex-col h-full">
@@ -76,14 +87,17 @@ function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
                                 selected={date}
                                 onSelect={setDate}
                                 className="rounded-md border"
-                                disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))}
+                                disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1)) || isSubmitting}
                             />
                         </div>
                         <SheetFooter>
                              <SheetClose asChild>
-                                <Button variant="outline">Cancelar</Button>
+                                <Button variant="outline" disabled={isSubmitting}>Cancelar</Button>
                             </SheetClose>
-                            <Button type="submit" disabled={!date}>Confirmar Reserva</Button>
+                            <Button type="submit" disabled={!date || isSubmitting}>
+                                {isSubmitting && <Spinner size="sm" className="mr-2"/>}
+                                {isSubmitting ? 'Enviando...' : 'Confirmar Reserva'}
+                            </Button>
                         </SheetFooter>
                     </form>
                 )}
