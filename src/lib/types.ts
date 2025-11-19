@@ -122,3 +122,19 @@ export interface NotificationPref {
     community: boolean;
   };
 }
+
+export interface Notification {
+    id: ID;
+    userId: ID;
+    category: 'announcement' | 'maintenance' | 'community' | 'parcels';
+    title: string;
+    description: string;
+    createdAt: string; // ISO
+    read: boolean;
+    link?: string;
+}
+
+export interface FaqItem {
+    question: string;
+    answer: string;
+}

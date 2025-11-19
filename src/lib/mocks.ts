@@ -1,4 +1,4 @@
-import type { User, Unit, Invoice, Ticket, Amenity, Booking, Parcel, Announcement, VisitorPass, Assembly } from './types';
+import type { User, Unit, Invoice, Ticket, Amenity, Booking, Parcel, Announcement, VisitorPass, Assembly, Notification, FaqItem } from './types';
 
 export const units: Unit[] = [
     { id: 'u_101', tower: 'A', number: '101' },
@@ -88,5 +88,36 @@ export const mockAssemblies: Assembly[] = [
         status: 'past',
         topics: ['Reporte financiero del trimestre', 'Asuntos generales'],
         docs: [{ name: 'Minuta Asamblea Septiembre 2025.pdf', url: '#' }],
+    }
+];
+
+export const mockNotifications: Notification[] = [
+    { id: 'n_1', userId: 'user_1_live', category: 'parcels', title: '¡Ha llegado un paquete!', description: 'Recibiste un paquete de Amazon.', createdAt: new Date(new Date().setHours(new Date().getHours() - 1)).toISOString(), read: false, link: '/accesos?tab=paqueteria' },
+    { id: 'n_2', userId: 'user_1_live', category: 'announcement', title: 'Corte de Agua Programado', description: 'El suministro de agua será suspendido el próximo viernes.', createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), read: false, link: '/comunidad?tab=avisos' },
+    { id: 'n_3', userId: 'user_1_live', category: 'maintenance', title: 'Tu ticket fue actualizado', description: 'El ticket "Fuga de agua" ahora está "En Progreso".', createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(), read: true, link: '/mantenimiento/t_1' },
+    { id: 'n_4', userId: 'user_1_live', category: 'community', title: 'Asamblea General Ordinaria', description: 'Se ha convocado una nueva asamblea para el próximo mes.', createdAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), read: true, link: '/comunidad?tab=asambleas' },
+    { id: 'n_5', userId: 'user_1_live', category: 'parcels', title: 'Recogiste tu paquete', description: 'El paquete de Mercado Libre ha sido entregado.', createdAt: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(), read: true, link: '/accesos?tab=paqueteria' },
+];
+
+export const mockFaqs: FaqItem[] = [
+    {
+        question: '¿Cuáles son los métodos de pago aceptados?',
+        answer: 'Puedes pagar tu mantenimiento y otras cuotas a través de tarjeta de crédito/débito, transferencia SPEI o en tiendas de conveniencia. Todos los pagos se realizan a través de la sección "Pagos" de la app.'
+    },
+    {
+        question: '¿Cómo puedo reservar un área común?',
+        answer: 'Ve a la sección "Servicios", selecciona "Reservas" y elige el área común que deseas. Podrás ver la disponibilidad y seleccionar la fecha y hora para tu evento. Algunas áreas pueden requerir un depósito de seguridad.'
+    },
+    {
+        question: '¿Qué hago si tengo una emergencia de mantenimiento?',
+        answer: 'Para emergencias como fugas de agua mayores o fallas eléctricas generales, contacta directamente al personal de seguridad en la caseta. Para problemas no urgentes, puedes levantar un ticket en la sección "Servicios" > "Mantenimiento".'
+    },
+    {
+        question: '¿Cómo funciona el acceso para visitantes?',
+        answer: 'En la sección "Accesos", puedes generar un pase de visitante con código QR. Simplemente ingresa el nombre de tu visita y la validez del pase. Tu visitante deberá mostrar el código QR en la entrada para poder acceder.'
+    },
+    {
+        question: '¿Dónde puedo consultar los avisos importantes?',
+        answer: 'Todos los comunicados de la administración se publican en la sección "Comunidad" > "Avisos". También recibirás notificaciones push para los anuncios más importantes.'
     }
 ];

@@ -16,8 +16,7 @@ import {
 import { Icons } from "../icons";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageToggle } from "./language-toggle";
-import { Separator } from "../ui/separator";
-import { Menu } from "lucide-react";
+import { Menu, Bell } from "lucide-react";
 import { useSidebar } from "../providers/sidebar-provider";
 
 export function AppHeader() {
@@ -48,7 +47,16 @@ export function AppHeader() {
         <div className="hidden items-center gap-2 md:flex">
           <LanguageToggle />
         </div>
+
+        <Button variant="ghost" size="icon" asChild>
+            <Link href="/notificaciones">
+              <Bell className="h-5 w-5" />
+              <span className="sr-only">Notificaciones</span>
+            </Link>
+        </Button>
+
         <ThemeToggle />
+
         {user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

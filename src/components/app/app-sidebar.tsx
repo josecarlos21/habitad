@@ -8,6 +8,8 @@ import {
   ShieldCheck,
   Building2,
   Settings,
+  Bell,
+  HelpCircle
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -25,20 +27,27 @@ import {
   SheetHeader
 } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Separator } from "../ui/separator";
 
-const navItems = [
+const mainNavItems = [
   { href: "/dashboard", icon: Home, label: "Inicio" },
+  { href: "/notificaciones", icon: Bell, label: "Notificaciones" },
   { href: "/comunidad", icon: Building2, label: "Comunidad" },
   { href: "/servicios", icon: Wrench, label: "Servicios" },
   { href: "/pagos", icon: CreditCard, label: "Pagos" },
   { href: "/accesos", icon: ShieldCheck, label: "Accesos" },
 ];
 
+const helpNavItems = [
+  { href: "/faq", icon: HelpCircle, label: "FAQ" },
+  { href: "/settings", icon: Settings, label: "Ajustes" },
+];
+
 function NavLink({
   item,
   isCollapsed,
 }: {
-  item: (typeof navItems)[0];
+  item: (typeof mainNavItems)[0];
   isCollapsed: boolean;
 }) {
   const pathname = usePathname();
@@ -106,15 +115,14 @@ function SidebarContent() {
               </Link>
           </SheetHeader>
           <nav className="flex-1 space-y-2 px-4 py-4">
-            {navItems.map((item) => (
+            {mainNavItems.map((item) => (
               <NavLink key={item.href} item={item} isCollapsed={isCollapsed} />
             ))}
           </nav>
-          <div className="border-t p-4">
-             <NavLink 
-                item={{ href: "/settings", icon: Settings, label: "Ajustes" }} 
-                isCollapsed={isCollapsed} 
-            />
+          <div className="border-t p-4 space-y-2">
+             {helpNavItems.map((item) => (
+              <NavLink key={item.href} item={item} isCollapsed={isCollapsed} />
+            ))}
           </div>
         </div>
     )
