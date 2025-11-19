@@ -63,7 +63,7 @@ export default function AvisosPageContent() {
                             <Card 
                                 key={announcement.id} 
                                 className={cn(
-                                    "transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-soft animate-slide-up-and-fade",
+                                    "transition-all duration-300 ease-in-out hover:scale-[1.01] hover:shadow-soft animate-slide-up-and-fade",
                                     announcement.pinned && "border-primary/50"
                                 )}
                                 style={{animationDelay: `${i * 100}ms`}}
@@ -73,13 +73,13 @@ export default function AvisosPageContent() {
                                         <CardTitle className="text-lg">{announcement.title}</CardTitle>
                                         {announcement.pinned && <Badge>Fijado</Badge>}
                                     </div>
-                                    <CardDescription className="flex flex-wrap items-center gap-4 text-xs">
+                                    <CardDescription className="flex flex-wrap items-center gap-4 pt-1 text-xs">
                                         <span className="flex items-center gap-1.5"><Calendar className="h-3 w-3" /> {format(new Date(announcement.createdAt), "dd 'de' MMMM, yyyy", { locale: es })}</span>
                                         <Badge variant={category.variant}><Tag className="mr-1.5 h-3 w-3" />{category.label}</Badge>
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="text-sm text-foreground/80 whitespace-pre-wrap">{announcement.body}</p>
+                                    <p className="text-foreground/80 whitespace-pre-wrap">{announcement.body}</p>
                                 </CardContent>
                             </Card>
                         )
