@@ -104,7 +104,7 @@ function InvoiceCard({ invoice, animationDelay }: { invoice: Invoice, animationD
     return (
         <Link href={`/pagos/${invoice.id}`} className="w-full text-left group">
              <Card 
-                className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg hover:border-primary/20 animate-slide-up-and-fade"
+                className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-soft hover:border-primary/20 animate-slide-up-and-fade"
                 style={{animationDelay: `${animationDelay}ms`}}
             >
                 <CardHeader className="flex-row items-center gap-4 p-4">

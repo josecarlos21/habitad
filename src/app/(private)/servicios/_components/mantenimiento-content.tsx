@@ -66,7 +66,7 @@ export default function MantenimientoPageContent() {
                         return (
                              <Link href={`/mantenimiento/${ticket.id}`} key={ticket.id} className="block group">
                                 <Card 
-                                    className="transition-all duration-300 ease-in-out group-hover:scale-[1.02] group-hover:shadow-lg group-hover:border-primary/20 animate-slide-up-and-fade"
+                                    className="transition-all duration-300 ease-in-out group-hover:scale-[1.02] group-hover:shadow-soft group-hover:border-primary/20 animate-slide-up-and-fade"
                                     style={{animationDelay: `${i * 100}ms`}}
                                 >
                                     <CardHeader className="flex-row items-center gap-4 p-4">

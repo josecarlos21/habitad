@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from "react";
@@ -59,7 +60,7 @@ export default function NotificacionesPage() {
                                 key={notification.id}
                                 onClick={() => handleMarkAsRead(notification.id)}
                                 className={cn(
-                                    "transition-all duration-300 ease-in-out hover:shadow-lg animate-slide-up-and-fade cursor-pointer group",
+                                    "transition-all duration-300 ease-in-out hover:shadow-soft animate-slide-up-and-fade cursor-pointer group",
                                     !notification.read && "border-primary/50 bg-primary/5"
                                 )}
                                 style={{ animationDelay: `${i * 100}ms` }}

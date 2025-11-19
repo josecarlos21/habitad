@@ -63,7 +63,7 @@ export default function AvisosPageContent() {
                             <Card 
                                 key={announcement.id} 
                                 className={cn(
-                                    "transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade",
+                                    "transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-soft animate-slide-up-and-fade",
                                     announcement.pinned && "border-primary/50"
                                 )}
                                 style={{animationDelay: `${i * 100}ms`}}

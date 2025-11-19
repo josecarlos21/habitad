@@ -80,7 +80,7 @@ export default function VisitantesPageContent() {
                             <Card 
                                 key={pass.id}
                                 className={cn(
-                                    "flex flex-col transition-all duration-300 ease-in-out animate-slide-up-and-fade hover:shadow-lg hover:scale-[1.02]",
+                                    "flex flex-col transition-all duration-300 ease-in-out animate-slide-up-and-fade hover:shadow-soft hover:scale-[1.02]",
                                     !isValid && "opacity-60 grayscale"
                                 )}
                                 style={{animationDelay: `${i * 100}ms`}}

@@ -69,7 +69,7 @@ export default function PerfilPage() {
     if (!user) {
         return (
             <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-                 <h1 className="text-2xl font-bold">Mi Perfil</h1>
+                 <h1 className="text-2xl font-bold tracking-tight">Mi Perfil</h1>
                  <EmptyState icon={UserIcon} title="No se pudo cargar tu perfil" description="Hubo un problema al recuperar tus datos. Por favor, intenta de nuevo."/>
             </main>
         )

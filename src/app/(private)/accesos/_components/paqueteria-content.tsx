@@ -47,7 +47,7 @@ export default function PaqueteriaPageContent() {
                         return (
                              <Card 
                                 key={parcel.id} 
-                                className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade hover:border-primary/20 group"
+                                className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-soft animate-slide-up-and-fade hover:border-primary/20 group"
                                 style={{animationDelay: `${i * 100}ms`}}
                              >
                                 <CardHeader className="flex-row items-center gap-4 p-4">

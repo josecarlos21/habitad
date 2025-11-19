@@ -93,7 +93,7 @@ function PrimaryAction({ invoice, ticket, isLoading }: { invoice?: Invoice, tick
             <h2 className="text-xl font-semibold tracking-tight mb-4">Hola, {user?.name.split(' ')[0]}</h2>
             {item ? (
                  <Link href={item.link} className="block group">
-                     <Card className="bg-gradient-to-tr from-primary/10 via-card to-card text-foreground transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:border-primary/40 group-hover:scale-[1.02]">
+                     <Card className="bg-gradient-to-tr from-primary/10 via-card to-card text-foreground transition-all duration-300 ease-in-out group-hover:shadow-soft group-hover:border-primary/40 group-hover:scale-[1.02]">
                         <CardHeader className="flex-row items-center gap-4">
                             <div className="grid h-12 w-12 place-items-center rounded-lg bg-primary/10 text-primary">
                                 <item.Icon className="h-6 w-6"/>
@@ -169,7 +169,7 @@ export default function DashboardPage() {
                          return (
                              <Link href={link} key={`${item.type}-${item.id}`} className="block group">
                                 <Card 
-                                    className="transition-all duration-300 ease-in-out group-hover:scale-[1.02] group-hover:shadow-lg group-hover:border-primary/20 animate-slide-up-and-fade" 
+                                    className="transition-all duration-300 ease-in-out group-hover:scale-[1.02] group-hover:shadow-soft group-hover:border-primary/20 animate-slide-up-and-fade" 
                                     style={{animationDelay: `${i * 100}ms`}}
                                 >
                                     <CardHeader className="flex-row items-center gap-4 p-4">

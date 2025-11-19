@@ -166,7 +166,7 @@ export default function AsambleasPageContent() {
                                     key={assembly.id} 
                                     className="border-none" 
                                 >
-                                     <Card className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade" style={{animationDelay: `${i * 100 + 400}ms`}}>
+                                     <Card className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-soft animate-slide-up-and-fade" style={{animationDelay: `${i * 100 + 400}ms`}}>
                                         <AccordionTrigger className="p-0 hover:no-underline group">
                                             <CardHeader className="flex-row items-center gap-4 w-full">
                                                 <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">

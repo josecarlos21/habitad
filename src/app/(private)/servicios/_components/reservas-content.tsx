@@ -126,7 +126,7 @@ export default function ReservasPageContent() {
                     {amenityList.map((amenity: Amenity, i) => (
                         <Card 
                             key={amenity.id} 
-                            className="overflow-hidden flex flex-col transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade"
+                            className="overflow-hidden flex flex-col transition-transform duration-300 ease-in-out hover:scale-[1.02] hover:shadow-soft animate-slide-up-and-fade"
                             style={{animationDelay: `${i * 100}ms`}}
                         >
                             <CardHeader className="p-0">

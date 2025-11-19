@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -22,7 +23,7 @@ export default function FaqPage() {
                         <AccordionItem 
                             value={`item-${i}`} 
                             key={i}
-                            className="border rounded-lg bg-card transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-lg animate-slide-up-and-fade"
+                            className="border rounded-lg bg-card transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-soft animate-slide-up-and-fade"
                             style={{animationDelay: `${i * 100}ms`}}
                         >
                             <AccordionTrigger className="p-6 text-left hover:no-underline">
