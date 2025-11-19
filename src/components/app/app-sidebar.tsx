@@ -9,7 +9,8 @@ import {
   Building2,
   Settings,
   Bell,
-  HelpCircle
+  HelpCircle,
+  MessageCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -38,6 +39,7 @@ const mainNavItems = [
 ];
 
 const helpNavItems = [
+  { href: "/whatsapp-guide", icon: MessageCircle, label: "Guía WhatsApp" },
   { href: "/faq", icon: HelpCircle, label: "FAQ" },
   { href: "/settings", icon: Settings, label: "Ajustes" },
 ];
