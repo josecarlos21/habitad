@@ -101,7 +101,7 @@ export default function ReservasPageContent() {
         const timer = setTimeout(() => {
             setAmenityList(mockAmenities);
             setIsLoading(false);
-        }, 300); // Reduced delay
+        }, 500);
         return () => clearTimeout(timer);
     }, []);
 

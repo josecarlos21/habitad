@@ -30,7 +30,7 @@ export default function PagosPage() {
         const timer = setTimeout(() => {
             setInvoiceList(mockInvoices);
             setIsLoading(false);
-        }, 300); // Reduced delay
+        }, 500);
         return () => clearTimeout(timer);
     }, []);
 
@@ -42,10 +42,20 @@ export default function PagosPage() {
             <h1 className="text-2xl font-bold tracking-tight">Pagos y Adeudos</h1>
 
             {isLoading ? (
-                <div className="space-y-4">
-                    <Skeleton className="h-8 w-48" />
-                    <Skeleton className="h-24 w-full" />
-                    <Skeleton className="h-24 w-full" />
+                <div className="space-y-8">
+                    <div>
+                        <Skeleton className="h-8 w-48 mb-3" />
+                        <div className="space-y-2">
+                            <Skeleton className="h-24 w-full" />
+                            <Skeleton className="h-24 w-full" />
+                        </div>
+                    </div>
+                     <div>
+                        <Skeleton className="h-8 w-48 mb-3" />
+                        <div className="space-y-2">
+                            <Skeleton className="h-24 w-full" />
+                        </div>
+                    </div>
                 </div>
             ) : (
                 <>

@@ -34,6 +34,7 @@ const mockComments = [
 export default function TicketDetailPage({ params }: { params: { id: string } }) {
     const { toast } = useToast();
     const [ticket, setTicket] = React.useState<Ticket | null | undefined>(undefined);
+    const [isResolving, setIsResolving] = React.useState(false);
 
     React.useEffect(() => {
         const timer = setTimeout(() => {
@@ -57,13 +58,16 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
         }
     };
 
-    const handleResolveTicket = () => {
+    const handleResolveTicket = async () => {
         if (ticket) {
+            setIsResolving(true);
+            await new Promise(resolve => setTimeout(resolve, 1000));
             setTicket(prev => prev ? { ...prev, status: 'resolved' } : null);
             toast({
                 title: "Ticket Actualizado",
                 description: "Has marcado el ticket como 'Resuelto'. Administración verificará la solución.",
             });
+            setIsResolving(false);
         }
     };
     
@@ -169,7 +173,15 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                                 <span>{mockUser.units[0].tower}-{mockUser.units[0].number}</span>
                             </div>
                              <Separator />
-                             <Button variant="secondary" className="w-full" onClick={handleResolveTicket} disabled={ticket.status === 'resolved' || ticket.status === 'closed'}>Marcar como Resuelto</Button>
+                             <Button 
+                                variant="secondary" 
+                                className="w-full" 
+                                onClick={handleResolveTicket} 
+                                disabled={isResolving || ticket.status === 'resolved' || ticket.status === 'closed'}
+                            >
+                                {isResolving && <Spinner size="sm" className="mr-2" />}
+                                {isResolving ? 'Actualizando...' : 'Marcar como Resuelto'}
+                             </Button>
                         </CardContent>
                     </Card>
                  </div>

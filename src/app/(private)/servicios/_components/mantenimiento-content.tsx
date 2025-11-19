@@ -33,7 +33,7 @@ export default function MantenimientoPageContent() {
         const timer = setTimeout(() => {
             setTickets(mockTickets);
             setIsLoading(false);
-        }, 300); // Reduced delay
+        }, 500);
         return () => clearTimeout(timer);
     }, []);
 

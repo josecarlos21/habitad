@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { announcements, bookings, invoices, tickets, amenities, visitorPasses, parcels, mockAssemblies } from "@/lib/mocks";
 import type { Invoice, Ticket, Booking, Announcement, VisitorPass, Parcel, Assembly } from "@/lib/types";
 import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Helper to combine and sort all relevant items into a single feed
 const createActivityFeed = ({ announcements, tickets, bookings, visitorPasses, parcels, assemblies }: { announcements: Announcement[], tickets: Ticket[], bookings: Booking[], visitorPasses: VisitorPass[], parcels: Parcel[], assemblies: Assembly[] }) => {
@@ -47,8 +48,14 @@ function PrimaryAction({ invoice, ticket, isLoading }: { invoice?: Invoice, tick
 
     if (isLoading) {
         return (
-            <Card className="flex items-center justify-center h-28">
-                <Spinner />
+            <Card>
+                <CardHeader className="flex-row items-center gap-4">
+                    <Skeleton className="h-12 w-12 rounded-lg" />
+                    <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-1/2" />
+                        <Skeleton className="h-4 w-3/4" />
+                    </div>
+                </CardHeader>
             </Card>
         );
     }
@@ -144,8 +151,8 @@ export default function DashboardPage() {
             </div>
             
             {isLoading ? (
-                <div className="flex justify-center items-center h-40">
-                  <Spinner size="lg" />
+                <div className="space-y-2 pt-2">
+                    {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
                 </div>
             ) : (
                  <div className="space-y-2">

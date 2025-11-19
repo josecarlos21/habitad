@@ -13,6 +13,7 @@ import { EmptyState } from "@/components/app/empty-state";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PerfilPage() {
     const { user, isLoading } = useUser();
@@ -28,8 +29,39 @@ export default function PerfilPage() {
 
     if (isLoading) {
         return (
-            <main className="flex flex-1 items-center justify-center p-4 md:p-8">
-                <Spinner size="lg" />
+            <main className="flex-1 p-4 md:p-8 animate-fade-in">
+                <Skeleton className="h-8 w-40 mb-8" />
+                <div className="grid gap-8 md:grid-cols-3">
+                    <div className="md:col-span-2">
+                        <Card>
+                            <CardHeader>
+                                <Skeleton className="h-6 w-1/3" />
+                                <Skeleton className="h-4 w-2/3" />
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-24" />
+                                    <Skeleton className="h-10 w-full" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-24" />
+                                    <Skeleton className="h-10 w-full" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-24" />
+                                    <Skeleton className="h-10 w-full" />
+                                </div>
+                            </CardContent>
+                            <CardFooter>
+                                <Skeleton className="h-10 w-32" />
+                            </CardFooter>
+                        </Card>
+                    </div>
+                    <div className="space-y-6">
+                        <Skeleton className="h-40 w-full" />
+                        <Skeleton className="h-32 w-full" />
+                    </div>
+                </div>
             </main>
         )
     }
