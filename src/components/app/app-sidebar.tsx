@@ -25,7 +25,8 @@ import { useSidebar } from "@/components/providers/sidebar-provider";
 import {
   Sheet,
   SheetContent,
-  SheetHeader
+  SheetHeader,
+  SheetTitle,
 } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -107,13 +108,14 @@ function SidebarContent() {
     const { isCollapsed } = useSidebar();
     return (
         <div className="flex h-full flex-col">
-          <SheetHeader className="h-16 flex-shrink-0 px-4">
+          <SheetHeader className="h-16 flex-shrink-0 items-center px-4">
               <Link href="/dashboard" className="flex items-center gap-2">
                 <Icons.logo className="h-6 w-6 text-primary" />
                 <span className={cn("text-lg font-semibold transition-opacity duration-300", isCollapsed ? "opacity-0" : "opacity-100")}>
                     Habitat
                 </span>
               </Link>
+              <SheetTitle className="sr-only">Menú principal</SheetTitle>
           </SheetHeader>
           <nav className="flex-1 space-y-2 px-4 py-4">
             {mainNavItems.map((item) => (
