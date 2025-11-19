@@ -351,7 +351,7 @@ async function enviarMensaje(telefono, mensaje) {
       to: telefono,
       text: { body: mensaje }
     }, {
-      headers: { 'Authorization': \`Bearer $\{token}\` }
+      headers: { 'Authorization': \`Bearer \${token}\` }
     });
   } catch (error) {
     console.error('Error:', error.response.data);
