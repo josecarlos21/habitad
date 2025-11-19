@@ -5,7 +5,7 @@ import React from "react";
 import Link from "next/link";
 import { tickets as mockTickets, user as mockUser } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { ArrowLeft, Paperclip, Send, Wrench } from "lucide-react";
@@ -34,52 +34,8 @@ const mockComments = [
 function TicketDetailSkeleton() {
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            <div className="flex items-center gap-4">
-                <Skeleton className="h-10 w-10" />
-                <Skeleton className="h-8 w-48" />
-            </div>
-            <div className="grid gap-6 lg:grid-cols-3">
-                <div className="lg:col-span-2 space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <Skeleton className="h-6 w-24" />
-                            <Skeleton className="h-4 w-40 mt-2" />
-                        </CardHeader>
-                        <CardContent>
-                             <Skeleton className="h-12 w-full" />
-                        </CardContent>
-                    </Card>
-                     <Card>
-                        <CardHeader>
-                            <Skeleton className="h-6 w-32" />
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            {[...Array(2)].map((_, i) => (
-                                <div key={i} className="flex items-start gap-4">
-                                    <Skeleton className="h-10 w-10 rounded-full" />
-                                    <div className="flex-1 space-y-2">
-                                        <Skeleton className="h-4 w-1/4" />
-                                        <Skeleton className="h-8 w-full" />
-                                    </div>
-                                </div>
-                            ))}
-                        </CardContent>
-                    </Card>
-                </div>
-                <div className="space-y-6">
-                    <Card>
-                        <CardHeader>
-                           <Skeleton className="h-6 w-24" />
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <Skeleton className="h-5 w-full" />
-                            <Skeleton className="h-5 w-full" />
-                            <Skeleton className="h-5 w-full" />
-                            <Separator />
-                            <Skeleton className="h-10 w-full" />
-                        </CardContent>
-                    </Card>
-                </div>
+            <div className="flex items-center justify-center h-full">
+                <Spinner size="lg" />
             </div>
         </main>
     )
@@ -88,6 +44,7 @@ function TicketDetailSkeleton() {
 
 export default function TicketDetailPage({ params }: { params: { id: string } }) {
     const { toast } = useToast();
+    const router = useRouter();
     const [ticket, setTicket] = React.useState<Ticket | null | undefined>(undefined);
     const [isResolving, setIsResolving] = React.useState(false);
 
@@ -196,7 +153,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                         <CardFooter>
                             <form onSubmit={handleCommentSubmit} className="flex w-full items-center gap-2">
                                 <Input name="comment" placeholder="Escribe un comentario..." />
-                                 <Button variant="ghost" size="icon" type="button" aria-label="Adjuntar archivo">
+                                 <Button variant="ghost" size="icon" type="button" aria-label="Adjuntar archivo" onClick={() => router.push('/maintenance')}>
                                     <Paperclip className="h-5 w-5"/>
                                 </Button>
                                 <Button size="icon" type="submit" aria-label="Enviar comentario">
