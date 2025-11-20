@@ -14,26 +14,83 @@ import type { VisitorPass } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GeneratePassSheet } from "./generate-pass-sheet";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 import { useCollection, useFirestore } from "@/firebase";
 import { useCondoUser } from "@/hooks/use-condo-user";
 import { collection, query, where, orderBy } from "firebase/firestore";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { deleteVisitorPass } from "../_services/delete-visitor-pass-service";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function VisitantesPageContent() {
     const { toast } = useToast();
     const firestore = useFirestore();
     const { user } = useCondoUser();
+    const [isDeleting, setIsDeleting] = React.useState<string | null>(null);
 
     const passesQuery = React.useMemo(() => {
         if (!firestore || !user) return null;
         return query(
           collection(firestore, `condos/${user.condoId}/visitor-passes`),
           where("userId", "==", user.userId),
-          orderBy("validFrom", "desc")
+          orderBy("createdAt", "desc")
         );
     }, [firestore, user]);
 
     const { data: visitorPasses, isLoading } = useCollection<VisitorPass>(passesQuery);
+
+    const handleShare = async (pass: VisitorPass) => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: `Acceso para ${pass.visitorName}`,
+                    text: `¡Hola! Te comparto el acceso para tu visita al condominio. Es válido hasta ${format(new Date(pass.validTo), "dd/MMM hh:mm a", { locale: es })}.`,
+                    url: window.location.href, // En una app real, sería una URL pública para el pase
+                });
+            } catch (error) {
+                console.error("Error al compartir", error);
+                toast({
+                    variant: "destructive",
+                    title: "Error al compartir",
+                    description: "No se pudo compartir el pase. Inténtalo de nuevo.",
+                });
+            }
+        } else {
+             toast({
+                title: "Función no soportada",
+                description: "Tu navegador no soporta la función de compartir.",
+            });
+        }
+    };
+
+    const handleDelete = async (passId: string) => {
+        setIsDeleting(passId);
+        try {
+            await deleteVisitorPass(passId);
+            toast({
+                title: "Pase Cancelado",
+                description: "El pase de visitante ha sido eliminado.",
+            });
+        } catch (error) {
+            console.error("Error al eliminar el pase", error);
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "No se pudo cancelar el pase. Inténtalo de nuevo.",
+            });
+        } finally {
+            setIsDeleting(null);
+        }
+    };
 
     return (
         <div className="pt-4 animate-fade-in">
@@ -89,18 +146,32 @@ export default function VisitantesPageContent() {
                                     </Badge>
                                 </CardHeader>
                                 <CardContent className="flex justify-end gap-2 pt-4 border-t mt-auto">
-                                    <Button variant="outline" size="sm" asChild>
-                                        <Link href="#">
-                                            <Share2 className="mr-2 h-3.5 w-3.5"/>
-                                            Compartir
-                                        </Link>
+                                    <Button variant="outline" size="sm" onClick={() => handleShare(pass)} disabled={!isValid}>
+                                        <Share2 className="mr-2 h-3.5 w-3.5"/>
+                                        Compartir
                                     </Button>
-                                    <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" asChild>
-                                        <Link href="#">
-                                             <Trash2 className="mr-2 h-3.5 w-3.5"/>
-                                            Cancelar
-                                        </Link>
-                                    </Button>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button variant="destructive" size="sm" disabled={!isValid || isDeleting === pass.id}>
+                                                 {isDeleting === pass.id ? <Spinner size="sm" className="mr-2"/> : <Trash2 className="mr-2 h-3.5 w-3.5"/>}
+                                                Cancelar
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Esta acción no se puede deshacer. Se cancelará permanentemente el pase de acceso para <span className="font-bold">{pass.visitorName}</span>.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Volver</AlertDialogCancel>
+                                                <AlertDialogAction onClick={() => handleDelete(pass.id)} className={cn(buttonVariants({variant: "destructive"}))}>
+                                                    Sí, cancelar pase
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 </CardContent>
                             </Card>
                         )
