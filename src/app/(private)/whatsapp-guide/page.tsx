@@ -309,31 +309,31 @@ const app = express();
 
 app.use(express.json());
 
-// Verificación webhook (GET)
+// Verifica el webhook para la suscripción de Facebook
 app.get('/webhook/whatsapp', (req, res) => {
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
   
-  if (mode === 'subscribe' && token === 'token_secreto_random') {
+  if (mode === 'subscribe' && token === process.env.VERIFY_TOKEN) {
     res.status(200).send(challenge);
   } else {
     res.sendStatus(403);
   }
 });
 
-// Recibir mensajes (POST)
+// Recibe notificaciones de mensajes entrantes
 app.post('/webhook/whatsapp', (req, res) => {
   const body = req.body;
   if (body.object === 'whatsapp_business_account') {
-    // ... procesar mensaje
+    // ... procesar el mensaje aquí
     res.sendStatus(200);
   } else {
     res.sendStatus(404);
   }
 });
 
-app.listen(3000, () => console.log('Webhook escuchando'));
+app.listen(process.env.PORT || 3000, () => console.log('Webhook escuchando...'));
 `} />
                     </div>
                      <div>
@@ -341,20 +341,24 @@ app.listen(3000, () => console.log('Webhook escuchando'));
                          <CodeBlock code={`
 const axios = require('axios');
 
-async function enviarMensaje(telefono, mensaje) {
-  const url = 'https://graph.facebook.com/v18.0/TU_PHONE_NUMBER_ID/messages';
-  const token = 'TU_TOKEN_PERMANENTE';
+async function sendMessage(phoneNumber, message) {
+  const API_VERSION = 'v18.0';
+  const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
+  const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
+
+  const url = \`https://graph.facebook.com/\${API_VERSION}/\${PHONE_NUMBER_ID}/messages\`;
   
   try {
     await axios.post(url, {
       messaging_product: 'whatsapp',
-      to: telefono,
-      text: { body: mensaje }
+      to: phoneNumber,
+      text: { body: message }
     }, {
-      headers: { 'Authorization': \`Bearer \${token}\` }
+      headers: { 'Authorization': \`Bearer \${WHATSAPP_TOKEN}\` }
     });
+    console.log('¡Mensaje enviado con éxito!');
   } catch (error) {
-    console.error('Error:', error.response.data);
+    console.error('Error al enviar mensaje:', error.response ? error.response.data : error.message);
   }
 }
 `} />
