@@ -10,22 +10,22 @@ import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { mockAnnouncements, mockBookings, mockInvoices, mockTickets, mockAmenities, mockVisitorPasses, mockParcels, mockAssemblies } from "@/lib/mocks";
-import type { Invoice, Ticket, Booking, Announcement, VisitorPass, Parcel, Assembly } from "@/lib/types";
+import { mockAnnouncements, mockBookings, mockCharges, mockIncidents, mockAmenities, mockVisitorPasses, mockParcels, mockAssemblies } from "@/lib/mocks";
+import type { Charge, Incident, AmenityBooking, Announcement, VisitorPass, Parcel, Assembly } from "@/lib/types";
 import { Spinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Helper to combine and sort all relevant items into a single feed
-const createActivityFeed = ({ announcements, tickets, bookings, visitorPasses, parcels, assemblies }: { announcements: Announcement[], tickets: Ticket[], bookings: Booking[], visitorPasses: VisitorPass[], parcels: Parcel[], assemblies: Assembly[] }) => {
+const createActivityFeed = ({ announcements, incidents, bookings, visitorPasses, parcels, assemblies }: { announcements: Announcement[], incidents: Incident[], bookings: AmenityBooking[], visitorPasses: VisitorPass[], parcels: Parcel[], assemblies: Assembly[] }) => {
     const announcementItems = announcements.map(item => ({ ...item, type: 'announcement', date: item.createdAt, title: item.title, description: `Publicado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` }));
-    const ticketItems = tickets.map(item => ({ ...item, type: 'ticket', date: item.createdAt, title: item.title, description: `Creado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` }));
+    const incidentItems = incidents.map(item => ({ ...item, type: 'incident', date: item.createdAt, title: item.title, description: `Creado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` }));
     const bookingItems = bookings.map(item => ({ ...item, type: 'booking', date: item.slot.start, title: `Reserva: ${mockAmenities.find(a => a.id === item.amenityId)?.name}`, description: format(new Date(item.slot.start), "eeee dd 'a las' h:mm a", { locale: es }) }));
     const visitorPassItems = visitorPasses.map(item => ({ ...item, type: 'visitor_pass', date: item.validFrom, title: `Pase para: ${item.visitorName}`, description: `Generado ${formatDistanceToNow(new Date(item.validFrom), { locale: es, addSuffix: true })}` }));
     const parcelItems = parcels.filter(p => p.status === 'at_guard').map(item => ({ ...item, type: 'parcel', date: item.arrivedAt, title: `Paquete de ${item.carrier}`, description: `Recibido ${formatDistanceToNow(new Date(item.arrivedAt), { locale: es, addSuffix: true })}` }));
-    const assemblyItems = assemblies.filter(a => a.status === 'active').map(item => ({ ...item, type: 'assembly', date: item.date, title: item.title, description: `Próximo ${format(new Date(item.date), "eeee dd 'de' MMMM", { locale: es })}` }));
+    const assemblyItems = assemblies.filter(a => a.status === 'OPEN').map(item => ({ ...item, type: 'assembly', date: item.date, title: item.title, description: `Próximo ${format(new Date(item.date), "eeee dd 'de' MMMM", { locale: es })}` }));
 
 
-    const allItems = [...announcementItems, ...ticketItems, ...bookingItems, ...visitorPassItems, ...parcelItems, ...assemblyItems];
+    const allItems = [...announcementItems, ...incidentItems, ...bookingItems, ...visitorPassItems, ...parcelItems, ...assemblyItems];
     
     // Sort by date, most recent first
     return allItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -34,7 +34,7 @@ const createActivityFeed = ({ announcements, tickets, bookings, visitorPasses, p
 // Map item types to their respective icons and links
 const itemTypeDetails: Record<string, { icon: React.ElementType, link: string | ((id: string) => string), tab?: string, badge?: (item: any) => React.ReactNode }> = {
     announcement: { icon: Bell, link: "/comunidad", tab: "avisos" },
-    ticket: { icon: Wrench, link: (id: string) => `/mantenimiento/${id}`, badge: (item) => <Badge variant={item.status === 'open' ? 'destructive' : 'info'}>{item.status === 'open' ? 'Abierto' : 'En Progreso'}</Badge> },
+    incident: { icon: Wrench, link: (id: string) => `/mantenimiento/${id}`, badge: (item) => <Badge variant={item.status === 'OPEN' ? 'destructive' : 'info'}>{item.status === 'OPEN' ? 'Abierto' : 'En Progreso'}</Badge> },
     booking: { icon: Calendar, link: "/servicios", tab: "reservas", badge: () => <Badge variant="secondary">Confirmada</Badge> },
     payment: { icon: CreditCard, link: "/pagos" },
     visitor_pass: { icon: QrCode, link: "/accesos", tab: "visitantes", badge: () => <Badge variant="success">Activo</Badge> },
@@ -43,7 +43,7 @@ const itemTypeDetails: Record<string, { icon: React.ElementType, link: string | 
 };
 
 
-function PrimaryAction({ invoice, ticket, isLoading }: { invoice?: Invoice, ticket?: Ticket, isLoading: boolean }) {
+function PrimaryAction({ charge, incident, isLoading }: { charge?: Charge, incident?: Incident, isLoading: boolean }) {
     const { user } = useUser();
 
     if (isLoading) {
@@ -60,30 +60,31 @@ function PrimaryAction({ invoice, ticket, isLoading }: { invoice?: Invoice, tick
         );
     }
 
-    // Priority: Overdue/Pending payment > Open ticket
+    // Priority: Overdue/Pending payment > Open incident
     let item: {
-        type: 'payment' | 'ticket',
+        type: 'payment' | 'incident',
         title: string,
         description: string,
         link: string,
         Icon: React.ElementType,
     } | null = null;
     
-    if (invoice) {
+    if (charge) {
+        const isOverdue = new Date(charge.dueDate) < new Date();
         item = {
             type: 'payment',
-            title: invoice.concept,
-            description: `Vence el ${format(new Date(invoice.dueDate), "dd 'de' MMMM", { locale: es })} - $${invoice.amount.toLocaleString('es-MX')}`,
+            title: charge.description,
+            description: `Vence el ${format(new Date(charge.dueDate), "dd 'de' MMMM", { locale: es })} - $${charge.amount.toLocaleString('es-MX')}`,
             link: itemTypeDetails.payment.link as string,
             Icon: itemTypeDetails.payment.icon,
         }
-    } else if (ticket) {
+    } else if (incident) {
          item = {
-            type: 'ticket',
-            title: ticket.title,
-            description: `Abierto ${formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}`,
-            link: (itemTypeDetails.ticket.link as (id: string) => string)(ticket.id),
-            Icon: itemTypeDetails.ticket.icon,
+            type: 'incident',
+            title: incident.title,
+            description: `Abierto ${formatDistanceToNow(new Date(incident.createdAt), { locale: es, addSuffix: true })}`,
+            link: (itemTypeDetails.incident.link as (id: string) => string)(incident.id),
+            Icon: itemTypeDetails.incident.icon,
         }
     }
 
@@ -131,13 +132,13 @@ export default function DashboardPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const nextPayment = mockInvoices.find(inv => inv.status === 'pending' || inv.status === 'overdue');
-  const activeTicket = mockTickets.find(t => t.status === 'open' || t.status === 'in_progress');
-  const activityFeed = createActivityFeed({announcements: mockAnnouncements, tickets: mockTickets, bookings: mockBookings, visitorPasses: mockVisitorPasses, parcels: mockParcels, assemblies: mockAssemblies});
+  const nextPayment = mockCharges.find(inv => inv.status === 'OPEN');
+  const activeIncident = mockIncidents.find(t => t.status === 'OPEN' || t.status === 'IN_PROGRESS');
+  const activityFeed = createActivityFeed({announcements: mockAnnouncements, incidents: mockIncidents, bookings: mockBookings, visitorPasses: mockVisitorPasses, parcels: mockParcels, assemblies: mockAssemblies});
 
   return (
     <main className="flex flex-1 flex-col p-4 md:p-6 animate-fade-in">
-       <PrimaryAction invoice={nextPayment} ticket={activeTicket} isLoading={isLoading} />
+       <PrimaryAction charge={nextPayment} incident={activeIncident} isLoading={isLoading} />
        
         <section className="space-y-2">
             <div className="flex items-center justify-between">

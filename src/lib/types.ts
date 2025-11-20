@@ -1,118 +1,316 @@
+export type Role =
+  | 'SUPER_ADMIN'
+  | 'ADMIN_EXT'
+  | 'ADMIN_INT'
+  | 'COMMITTEE'
+  | 'SECURITY'
+  | 'MAINT'
+  | 'RESIDENT';
 
-export type ID = string;
-export type Currency = "MXN";
+// --- Base Entities ---
 
 export interface User {
-  id: ID;
+  id: string;
   name: string;
   email?: string;
   phone?: string;
-  role: "resident" | "admin" | "guard";
-  units: Unit[];
-  imageUrl?: string;
+  avatarUrl?: string;
+  language: string;
+  isVerified: boolean;
+}
+
+export interface UserCondoProfile {
+  userId: string;
+  condoId: string;
+  role: Role;
+  unitIds: string[];
+  occupantType: 'OWNER' | 'TENANT' | 'FAMILY' | 'GUEST_REGISTERED';
+  isVotingMember: boolean;
+  imageUrl?: string; // Kept for UI consistency from old mock
+  name: string; // Kept for UI consistency from old mock
+  email: string; // Kept for UI consistency from old mock
+  units: Unit[]; // Kept for UI consistency
+}
+
+export interface Condo {
+  id: string;
+  name: string;
+  legalName?: string;
+  address: string;
+  city: string;
+  country: string;
+  timeZone: string;
+  currency: string;
+  settings: CondoSettings;
 }
 
 export interface Unit {
-  id: ID;
-  tower: string;
-  number: string;
+  id: string;
+  condoId: string;
+  code: string;
+  type: 'APARTMENT' | 'HOUSE' | 'PARKING' | 'STORAGE';
+  areaM2?: number;
+  isActive: boolean;
+  tower: string; // Kept for UI consistency
+  number: string; // Kept for UI consistency
 }
 
-export interface Invoice {
-  id: ID;
-  unitId: ID;
-  concept: string;
-  amount: number;
-  currency: Currency;
-  dueDate: string; // ISO
-  status: "pending" | "paid" | "overdue";
+export interface CondoSettings {
+  allowTenantsToVote: boolean;
+  lateFeePolicy?: unknown; // Define LateFeePolicy if needed
+  allowsOnlinePayments: boolean;
+  offlineFirstEnabled: boolean;
 }
+
+// --- Finance Module ---
+
+export type ChargeType = 'MAINTENANCE' | 'EXTRAORDINARY' | 'AMENITY' | 'FINE';
+export type ChargeStatus = 'OPEN' | 'PARTIALLY_PAID' | 'SETTLED' | 'CANCELLED';
+
+export interface Charge {
+  id: string;
+  condoId: string;
+  unitId: string;
+  type: ChargeType;
+  description: string;
+  amount: number;
+  currency: string;
+  dueDate: string;
+  status: ChargeStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type PaymentStatus = 'PENDING_VERIFICATION' | 'PAID' | 'REJECTED';
+export type PaymentMethod = 'CARD' | 'CASH' | 'MANUAL_TRANSFER';
 
 export interface Payment {
-  id: ID;
-  invoiceId: ID;
-  method: "card" | "spei" | "cash" | "applepay" | "webpay";
+  id: string;
+  condoId: string;
+  chargeId: string;
+  userId: string;
+  method: PaymentMethod;
+  status: PaymentStatus;
   amount: number;
-  createdAt: string; // ISO
-  status: "succeeded" | "failed" | "processing";
-  receiptUrl?: string;
+  paidAt?: string;
+  evidenceUrl?: string;
+  reference?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface Ticket {
-    id: string;
-    title: string;
-    description: string;
-    status: 'open' | 'in_progress' | 'resolved' | 'closed';
-    category: 'plumbing' | 'electrical' | 'common_area' | 'amenity' | 'other';
-    unitId: string;
-    createdAt: string; // ISO
-}
+// --- Incidents/Maintenance Module ---
 
-export interface Amenity {
-  id: ID;
-  name: string;
+export type IncidentPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type IncidentStatus = 'OPEN' | 'IN_PROGRESS' | 'WAITING_EXTERNAL' | 'RESOLVED' | 'CANCELLED';
+
+export interface Incident {
+  id: string;
+  condoId: string;
+  unitId?: string;
+  createdBy: string;
+  title: string;
   description: string;
-  image: string;
-  rules?: string;
-  requiresDeposit: boolean;
-  depositAmount?: number;
+  priority: IncidentPriority;
+  status: IncidentStatus;
+  category: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface Booking {
-  id: ID;
-  amenityId: ID;
-  userId: ID;
-  slot: { start: string; end: string }; // ISO
-  status: "confirmed" | "cancelled";
+export type WorkOrderStatus = 'PENDING' | 'ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+
+export interface WorkOrder {
+  id: string;
+  condoId: string;
+  incidentId?: string;
+  assignedToUserId?: string;
+  title: string;
+  description: string;
+  status: WorkOrderStatus;
+  scheduledAt?: string;
+  completedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// --- Security & Access ---
+
+export type AccessResult = 'GRANTED' | 'DENIED';
+
+export interface Visitor {
+  id: string;
+  condoId: string;
+  name: string;
+  idNumber?: string;
+  plateNumber?: string;
+  hostUserId: string;
+  unitId: string;
+  expectedAt?: string;
 }
 
 export interface VisitorPass {
-  id: ID;
-  userId: ID;
+  id: string;
+  userId: string;
   visitorName: string;
-  validFrom: string; // ISO
-  validTo: string; // ISO
+  validFrom: string;
+  validTo: string;
   qrToken: string;
 }
 
-export interface Parcel {
-  id: ID;
-  unitId: ID;
-  carrier: string;
-  trackingNumber: string;
-  arrivedAt: string; // ISO
-  status: "at_guard" | "picked_up";
+export interface AccessLog {
+  id: string;
+  condoId: string;
+  visitorId?: string;
+  userId?: string;
+  gateId?: string;
+  direction: 'IN' | 'OUT';
+  result: AccessResult;
+  recordedAt: string;
 }
 
-export interface Announcement {
-  id: ID;
-  title: string;
-  body: string;
-  category: "admin" | "security" | "maintenance" | "event";
-  createdAt: string; // ISO
-  pinned: boolean;
+export interface Parcel {
+    id: string;
+    unitId: string;
+    carrier: string;
+    trackingNumber: string;
+    arrivedAt: string;
+    status: "at_guard" | "picked_up";
 }
+
+
+// --- Amenities ---
+
+export type AmenityBookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'REJECTED' | 'NO_SHOW';
+
+export interface Amenity {
+  id: string;
+  condoId: string;
+  name: string;
+  description?: string;
+  requiresApproval: boolean;
+  maxPeople?: number;
+  rules?: string;
+  image: string; // from old type
+  requiresDeposit: boolean; // from old type
+  depositAmount?: number; // from old type
+}
+
+export interface AmenityBooking {
+  id: string;
+  condoId: string;
+  amenityId: string;
+  userId: string;
+  unitId: string;
+  slot: { start: string, end: string };
+  status: AmenityBookingStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// --- Governance ---
+
+export type AssemblyStatus = 'DRAFT' | 'OPEN' | 'CLOSED' | 'ARCHIVED';
+export type VoteValue = 'YES' | 'NO' | 'ABSTAIN';
 
 export interface Assembly {
-  id: ID;
+  id: string;
+  condoId: string;
   title: string;
-  date: string; // ISO
-  status: "active" | "past";
-  topics: string[];
-  docs: { name: string; url: string }[];
-  vote?: Vote;
+  description?: string;
+  scheduledAt: string;
+  status: AssemblyStatus;
+  date: string; // from old type
+  topics: string[]; // from old type
+  docs: {name: string, url: string}[]; // from old type
+  vote?: {
+      id: string;
+      assemblyId: string;
+      question: string;
+      options: string[];
+      status: 'open' | 'closed';
+  } // from old type
+}
+
+export interface Motion {
+  id: string;
+  assemblyId: string;
+  title: string;
+  description?: string;
+  requiresQuorum: boolean;
 }
 
 export interface Vote {
-  id: ID;
-  assemblyId: ID;
-  question: string;
-  options: string[];
-  status: "open" | "closed";
+  id: string;
+  motionId: string;
+  userId: string;
+  value: VoteValue;
+  castAt: string;
+}
+
+// --- Communication & Docs ---
+
+export interface Announcement {
+  id: string;
+  condoId: string;
+  title: string;
+  body: string;
+  createdBy: string; // userId
+  createdAt: string;
+  visibleToRoles: Role[];
+  pinned: boolean; // from old type
+  category: string; // from old type
+}
+
+export interface Document {
+  id: string;
+  condoId: string;
+  name: string;
+  url: string;
+  category: 'BYLAWS' | 'MINUTES' | 'FINANCIAL' | 'OTHER';
+  uploadedBy: string;
+  uploadedAt: string;
+}
+
+// --- Notifications & Audit ---
+
+export type NotificationChannel = 'PUSH' | 'EMAIL' | 'SMS' | 'IN_APP';
+
+export interface Notification {
+  id: string;
+  condoId: string;
+  userId: string;
+  title: string;
+  body: string;
+  channel: NotificationChannel;
+  sentAt: string;
+  readAt?: string;
+  category: 'announcement' | 'maintenance' | 'community' | 'parcels'; // from old type
+  description: string; // from old type
+  createdAt: string; // from old type
+  read: boolean; // from old type
+}
+
+export interface AuditLog {
+  id: string;
+  condoId: string;
+  entityType: string;
+  entityId: string;
+  action: string;
+  userId: string;
+  createdAt: string;
+  data?: Record<string, unknown>;
+}
+
+
+// --- Misc ---
+export interface FaqItem {
+    question: string;
+    answer: string;
 }
 
 export interface NotificationPref {
-  userId: ID;
+  userId: string;
   channels: { push: boolean; email: boolean };
   categories: {
     finance: boolean;
@@ -122,21 +320,3 @@ export interface NotificationPref {
     community: boolean;
   };
 }
-
-export interface Notification {
-    id: ID;
-    userId: ID;
-    category: 'announcement' | 'maintenance' | 'community' | 'parcels';
-    title: string;
-    description: string;
-    createdAt: string; // ISO
-    read: boolean;
-    link?: string;
-}
-
-export interface FaqItem {
-    question: string;
-    answer: string;
-}
-
-    

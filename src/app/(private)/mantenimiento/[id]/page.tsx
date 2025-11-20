@@ -3,8 +3,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { mockTickets, mockUser } from "@/lib/mocks";
-import type { Ticket } from "@/lib/types";
+import { mockIncidents, mockUser } from "@/lib/mocks";
+import type { Incident } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -19,11 +19,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Spinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const statusMap: Record<Ticket['status'], { label: string; variant: "destructive" | "info" | "warning" | "success" }> = {
-    open: { label: "Abierto", variant: "destructive" },
-    in_progress: { label: "En Progreso", variant: "info" },
-    resolved: { label: "Resuelto", variant: "warning" },
-    closed: { label: "Cerrado", variant: "success" },
+const statusMap: Record<Incident['status'], { label: string; variant: "destructive" | "info" | "warning" | "success" }> = {
+    OPEN: { label: "Abierto", variant: "destructive" },
+    IN_PROGRESS: { label: "En Progreso", variant: "info" },
+    WAITING_EXTERNAL: { label: "En Espera", variant: "info" },
+    RESOLVED: { label: "Resuelto", variant: "warning" },
+    CANCELLED: { label: "Cancelado", variant: "success" },
 };
 
 const mockComments = [
@@ -31,7 +32,7 @@ const mockComments = [
     { id: 'c2', author: 'Administración', avatar: 'https://i.pravatar.cc/150?u=admin', text: 'Recibido. Hemos asignado al personal de mantenimiento. Deberían pasar a revisar el día de mañana.', createdAt: new Date().toISOString() },
 ];
 
-function TicketDetailSkeleton() {
+function IncidentDetailSkeleton() {
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="flex items-center gap-4">
@@ -68,17 +69,17 @@ function TicketDetailSkeleton() {
     )
 }
 
-export default function TicketDetailPage({ params }: { params: { id: string } }) {
+export default function IncidentDetailPage({ params }: { params: { id: string } }) {
     const { toast } = useToast();
-    const [ticket, setTicket] = React.useState<Ticket | null | undefined>(undefined);
+    const [incident, setIncident] = React.useState<Incident | null | undefined>(undefined);
     const [isResolving, setIsResolving] = React.useState(false);
 
     React.useEffect(() => {
         setIsResolving(false);
-        const foundTicket = mockTickets.find((t) => t.id === params.id);
+        const foundIncident = mockIncidents.find((t) => t.id === params.id);
         // Simulate loading
         const timer = setTimeout(() => {
-            setTicket(foundTicket || null);
+            setIncident(foundIncident || null);
         }, 500);
         return () => clearTimeout(timer);
     }, [params.id]);
@@ -91,34 +92,34 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
         if (input && input.value) {
             toast({
                 title: "Comentario enviado",
-                description: "Tu mensaje ha sido añadido al ticket.",
+                description: "Tu mensaje ha sido añadido al incidente.",
             });
             input.value = "";
         }
     };
 
-    const handleResolveTicket = async () => {
-        if (ticket) {
+    const handleResolveIncident = async () => {
+        if (incident) {
             setIsResolving(true);
             await new Promise(resolve => setTimeout(resolve, 1500));
-            setTicket(prev => prev ? { ...prev, status: 'resolved' } : null);
+            setIncident(prev => prev ? { ...prev, status: 'RESOLVED' } : null);
             toast({
-                title: "Ticket Actualizado",
-                description: "Has marcado el ticket como 'Resuelto'. Administración verificará la solución.",
+                title: "Incidente Actualizado",
+                description: "Has marcado el incidente como 'Resuelto'. Administración verificará la solución.",
             });
             setIsResolving(false);
         }
     };
     
-    if (ticket === undefined) {
-        return <TicketDetailSkeleton />;
+    if (incident === undefined) {
+        return <IncidentDetailSkeleton />;
     }
 
-    if (ticket === null) {
+    if (incident === null) {
         notFound();
     }
 
-    const status = statusMap[ticket.status];
+    const status = statusMap[incident.status];
 
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
@@ -129,7 +130,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                         <span className="sr-only">Volver</span>
                     </Link>
                 </Button>
-                 <h1 className="text-xl font-semibold md:text-2xl">{ticket.title}</h1>
+                 <h1 className="text-xl font-semibold md:text-2xl">{incident.title}</h1>
             </div>
             <div className="grid gap-6 lg:grid-cols-3">
                 <div className="lg:col-span-2 space-y-6">
@@ -138,16 +139,16 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                             <div className="flex items-start justify-between">
                                 <div>
                                     <Badge variant={status.variant}>{status.label}</Badge>
-                                    <CardTitle className="mt-2 text-2xl sr-only">{ticket.title}</CardTitle>
+                                    <CardTitle className="mt-2 text-2xl sr-only">{incident.title}</CardTitle>
                                     <div className="mt-2 text-sm text-muted-foreground">
-                                        Ticket #{ticket.id.split('_')[1]} &bull; Creado {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}
+                                        Incidente #{incident.id.split('_')[1]} &bull; Creado {formatDistanceToNow(new Date(incident.createdAt), { locale: es, addSuffix: true })}
                                     </div>
                                 </div>
                                 <Wrench className="h-8 w-8 text-muted-foreground" />
                             </div>
                         </CardHeader>
                         <CardContent>
-                             <p className="text-foreground/80">{ticket.description}</p>
+                             <p className="text-foreground/80">{incident.description}</p>
                         </CardContent>
                     </Card>
 
@@ -197,7 +198,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                         <CardContent className="space-y-4 text-sm">
                              <div className="flex justify-between">
                                 <span className="text-muted-foreground">Categoría</span>
-                                <span>{ticket.category.charAt(0).toUpperCase() + ticket.category.slice(1)}</span>
+                                <span>{incident.category.charAt(0).toUpperCase() + incident.category.slice(1)}</span>
                             </div>
                              <div className="flex justify-between">
                                 <span className="text-muted-foreground">Creado por</span>
@@ -211,8 +212,8 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                              <Button 
                                 variant="secondary" 
                                 className="w-full" 
-                                onClick={handleResolveTicket} 
-                                disabled={isResolving || ticket.status === 'resolved' || ticket.status === 'closed'}
+                                onClick={handleResolveIncident} 
+                                disabled={isResolving || incident.status === 'RESOLVED' || incident.status === 'CANCELLED'}
                             >
                                 {isResolving && <Spinner size="sm" className="mr-2" />}
                                 {isResolving ? 'Actualizando...' : 'Marcar como Resuelto'}
@@ -224,5 +225,3 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
         </main>
     );
 }
-
-    

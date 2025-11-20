@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { PlusCircle } from "lucide-react";
-import type { Ticket } from "@/lib/types";
+import type { Incident } from "@/lib/types";
 import {
     Select,
     SelectContent,
@@ -32,25 +32,25 @@ import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/hooks/use-toast";
 
 
-const ticketSchema = z.object({
+const incidentSchema = z.object({
   title: z.string().min(5, { message: "El título debe tener al menos 5 caracteres." }),
   category: z.enum(["plumbing", "electrical", "common_area", "other"], { required_error: "Debes seleccionar una categoría."}),
   description: z.string().min(10, { message: "La descripción debe tener al menos 10 caracteres." }),
 });
 
-type TicketFormValues = z.infer<typeof ticketSchema>;
+type IncidentFormValues = z.infer<typeof incidentSchema>;
 
 
-interface CreateTicketSheetProps {
-  onTicketCreated: (newTicket: Omit<Ticket, 'id' | 'createdAt' | 'status' | 'unitId'>) => Promise<void>;
+interface CreateIncidentSheetProps {
+  onIncidentCreated: (newIncident: Omit<Incident, 'id' | 'createdAt' | 'updatedAt' | 'status' | 'condoId' | 'createdBy' | 'priority' | 'unitId' >) => Promise<void>;
 }
 
-export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
+export function CreateIncidentSheet({ onIncidentCreated }: CreateIncidentSheetProps) {
     const [open, setOpen] = React.useState(false);
     const { toast } = useToast();
     
-    const form = useForm<TicketFormValues>({
-        resolver: zodResolver(ticketSchema),
+    const form = useForm<IncidentFormValues>({
+        resolver: zodResolver(incidentSchema),
         defaultValues: {
             title: "",
             description: "",
@@ -60,11 +60,11 @@ export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
 
     const { isSubmitting } = form.formState;
 
-  const onSubmit = async (data: TicketFormValues) => {
+  const onSubmit = async (data: IncidentFormValues) => {
     try {
-        await onTicketCreated(data);
+        await onIncidentCreated(data);
         toast({
-            title: "Ticket Enviado",
+            title: "Incidente Enviado",
             description: "Tu solicitud de mantenimiento ha sido creada con éxito.",
         });
         form.reset();
@@ -72,8 +72,8 @@ export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
     } catch(error) {
          toast({
             variant: "destructive",
-            title: "Error al crear ticket",
-            description: "No se pudo crear el ticket. Inténtalo de nuevo.",
+            title: "Error al crear incidente",
+            description: "No se pudo crear el incidente. Inténtalo de nuevo.",
         });
     }
   };
@@ -92,14 +92,14 @@ export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
       <SheetTrigger asChild>
         <Button>
           <PlusCircle className="mr-2 h-4 w-4" />
-          Crear Ticket
+          Crear Reporte
         </Button>
       </SheetTrigger>
       <SheetContent>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col h-full">
                 <SheetHeader>
-                    <SheetTitle>Crear Nuevo Ticket</SheetTitle>
+                    <SheetTitle>Crear Nuevo Reporte</SheetTitle>
                     <SheetDescription>
                     Describe el problema que estás experimentando. Sé lo más detallado posible.
                     </SheetDescription>
@@ -161,7 +161,7 @@ export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
                     </SheetClose>
                     <Button type="submit" disabled={isSubmitting}>
                         {isSubmitting && <Spinner size="sm" className="mr-2" />}
-                        {isSubmitting ? "Creando..." : "Crear Ticket"}
+                        {isSubmitting ? "Creando..." : "Crear Reporte"}
                     </Button>
                 </SheetFooter>
             </form>

@@ -9,62 +9,67 @@ import { Wrench, ArrowRight } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader } from "@/components/ui/card";
-import { mockTickets } from "@/lib/mocks";
-import type { Ticket } from "@/lib/types";
+import { mockIncidents } from "@/lib/mocks";
+import type { Incident } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CreateTicketSheet } from "../../mantenimiento/_components/create-ticket-sheet";
+import { CreateIncidentSheet } from "../../mantenimiento/_components/create-ticket-sheet";
 
-const statusMap: Record<Ticket['status'], { label: string; className: string }> = {
-    open: { label: "Abierto", className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-300/50" },
-    in_progress: { label: "En Progreso", className: "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 border-blue-300/50" },
-    resolved: { label: "Resuelto", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 border-yellow-300/50" },
-    closed: { label: "Cerrado", className: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border-green-300/50" },
+const statusMap: Record<Incident['status'], { label: string; className: string }> = {
+    OPEN: { label: "Abierto", className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-300/50" },
+    IN_PROGRESS: { label: "En Progreso", className: "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 border-blue-300/50" },
+    WAITING_EXTERNAL: { label: "En Espera", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 border-yellow-300/50" },
+    RESOLVED: { label: "Resuelto", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 border-yellow-300/50" },
+    CANCELLED: { label: "Cerrado", className: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border-green-300/50" },
 };
 
 export default function MantenimientoPageContent() {
-    const [tickets, setTickets] = React.useState<Ticket[]>([]);
+    const [incidents, setIncidents] = React.useState<Incident[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
         setIsLoading(true);
         const timer = setTimeout(() => {
-            setTickets(mockTickets);
+            setIncidents(mockIncidents);
             setIsLoading(false);
         }, 1000);
         return () => clearTimeout(timer);
     }, []);
 
-    const handleTicketCreated = async (newTicket: Omit<Ticket, 'id' | 'createdAt' | 'status' | 'unitId'>) => {
+    const handleIncidentCreated = async (newIncident: Omit<Incident, 'id' | 'createdAt' | 'updatedAt' | 'status' | 'condoId' | 'createdBy' | 'priority' | 'unitId'>) => {
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        const ticket: Ticket = {
-            id: `t_${Date.now()}`,
+        const incident: Incident = {
+            id: `inc_${Date.now()}`,
+            condoId: 'condo_1',
+            createdBy: 'user_123',
             createdAt: new Date().toISOString(),
-            status: 'open',
+            updatedAt: new Date().toISOString(),
+            status: 'OPEN',
+            priority: 'MEDIUM',
             unitId: 'u_101',
-            ...newTicket
+            ...newIncident
         }
-        setTickets(prev => [ticket, ...prev]);
+        setIncidents(prev => [incident, ...prev]);
     }
 
     return (
         <div className="pt-4 animate-fade-in">
              <div className="flex items-center justify-between mb-4">
                 <p className="text-muted-foreground">Reporta problemas y da seguimiento.</p>
-                <CreateTicketSheet onTicketCreated={handleTicketCreated} />
+                <CreateIncidentSheet onIncidentCreated={handleIncidentCreated} />
             </div>
             
             {isLoading ? (
                  <div className="space-y-2">
                     {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
                  </div>
-            ) : tickets.length > 0 ? (
+            ) : incidents.length > 0 ? (
                 <div className="space-y-2">
-                    {tickets.map((ticket, i) => {
-                        const status = statusMap[ticket.status];
+                    {incidents.map((incident, i) => {
+                        const status = statusMap[incident.status];
                         return (
-                             <Link href={`/mantenimiento/${ticket.id}`} key={ticket.id} className="block group">
+                             <Link href={`/mantenimiento/${incident.id}`} key={incident.id} className="block group">
                                 <Card 
                                     className="transition-all duration-300 ease-in-out group-hover:scale-[1.02] group-hover:shadow-soft group-hover:border-primary/20 animate-slide-up-and-fade"
                                     style={{animationDelay: `${i * 100}ms`}}
@@ -74,9 +79,9 @@ export default function MantenimientoPageContent() {
                                             <Wrench className="h-5 w-5"/>
                                         </div>
                                         <div className="flex-1">
-                                            <p className="font-semibold text-sm line-clamp-1">{ticket.title}</p>
+                                            <p className="font-semibold text-sm line-clamp-1">{incident.title}</p>
                                             <div className="text-xs text-muted-foreground">
-                                                #{ticket.id.split('_')[1]} &bull; Creado {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}
+                                                #{incident.id.split('_')[1]} &bull; Creado {formatDistanceToNow(new Date(incident.createdAt), { locale: es, addSuffix: true })}
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-4">
@@ -92,13 +97,11 @@ export default function MantenimientoPageContent() {
             ) : (
                 <EmptyState
                     icon={Wrench}
-                    title="No tienes tickets"
-                    description="Crea un nuevo ticket para reportar un problema."
-                    action={<CreateTicketSheet onTicketCreated={handleTicketCreated} />}
+                    title="No tienes reportes"
+                    description="Crea un nuevo reporte para notificar un problema."
+                    action={<CreateIncidentSheet onIncidentCreated={handleIncidentCreated} />}
                 />
             )}
         </div>
     )
 }
-
-    
