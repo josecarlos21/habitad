@@ -1,35 +1,30 @@
 
-import { CreateTicketSheet } from "./_components/create-ticket-sheet";
-import { TicketList } from "./_components/ticket-list";
+import { CreateIncidentSheet } from "../mantenimiento/_components/create-ticket-sheet";
+import { IncidentList } from "../mantenimiento/_components/incident-list";
 
 export default function MaintenancePage() {
 
-    // En el futuro, este estado se manejaría con una llamada a la API
-    // y se pasaría a los componentes hijos.
-    // Por ahora, los datos mock se importan directamente en TicketList.
-
-    const handleTicketCreated = async (newTicket: any) => {
+    const handleIncidentCreated = async (newIncident: any) => {
         "use server";
-        // Lógica para simular la adición de un ticket
-        // En un escenario real, aquí se llamaría a la API para crear el ticket
+        // Lógica para simular la adición de un incidente
+        // En un escenario real, aquí se llamaría a la API para crear el incidente
         // y luego se revalidarían los datos para actualizar la lista.
-        console.log("New ticket created (simulated):", newTicket);
+        console.log("New incident created (simulated):", newIncident);
     };
 
     return (
-        <div className="space-y-6">
-            <header className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold">Mantenimiento</h1>
-                    <p className="text-muted-foreground">Historial de tus solicitudes de mantenimiento.</p>
-                </div>
-                <CreateTicketSheet onTicketCreated={handleTicketCreated} />
-            </header>
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+            <div className="flex items-center justify-between">
+                <h1 className="text-lg font-semibold md:text-2xl">Mantenimiento</h1>
+                 <CreateIncidentSheet onIncidentCreated={handleIncidentCreated} />
+            </div>
             
             <div className="animate-fade-in">
-                 <TicketList />
+                 <IncidentList />
             </div>
 
-        </div>
+        </main>
     );
 }
+
+    

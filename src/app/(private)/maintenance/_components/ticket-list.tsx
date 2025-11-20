@@ -3,8 +3,8 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { mockTickets } from "@/lib/mocks";
-import type { Ticket } from "@/lib/types";
+import { mockIncidents } from "@/lib/mocks";
+import type { Incident } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,12 +14,13 @@ import { es } from 'date-fns/locale';
 import { ArrowRight, Tag } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const TicketStatusBadge = ({ status }: { status: Ticket['status'] }) => {
-    const statusMap = {
-        closed: { label: 'Cerrado', className: 'bg-green-100 text-green-800 border-green-200' },
-        resolved: { label: 'Resuelto', className: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
-        in_progress: { label: 'En Progreso', className: 'bg-blue-100 text-blue-800 border-blue-200' },
-        open: { label: 'Abierto', className: 'bg-red-100 text-red-800 border-red-200' },
+const IncidentStatusBadge = ({ status }: { status: Incident['status'] }) => {
+    const statusMap: Record<Incident['status'], { label: string; className: string }> = {
+        OPEN: { label: 'Abierto', className: 'bg-red-100 text-red-800 border-red-200' },
+        IN_PROGRESS: { label: 'En Progreso', className: 'bg-blue-100 text-blue-800 border-blue-200' },
+        WAITING_EXTERNAL: { label: 'En Espera', className: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
+        RESOLVED: { label: 'Resuelto', className: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
+        CANCELLED: { label: 'Cancelado', className: 'bg-green-100 text-green-800 border-green-200' },
     };
     const currentStatus = statusMap[status] || { label: status, className: ''};
 
@@ -33,17 +34,17 @@ const TicketStatusBadge = ({ status }: { status: Ticket['status'] }) => {
     )
 };
 
-export function TicketList() {
-    const [tickets, setTickets] = React.useState<Ticket[]>([]);
+export function IncidentList() {
+    const [incidents, setIncidents] = React.useState<Incident[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
         setIsLoading(true);
         // Simula la carga de datos desde una API
         const timer = setTimeout(() => {
-            // Ordenamos los tickets para mostrar los más recientes primero
-            const sortedTickets = [...mockTickets].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-            setTickets(sortedTickets);
+            // Ordenamos los incidentes para mostrar los más recientes primero
+            const sortedIncidents = [...mockIncidents].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            setIncidents(sortedIncidents);
             setIsLoading(false);
         }, 500);
 
@@ -74,29 +75,29 @@ export function TicketList() {
 
     return (
         <div className="space-y-4">
-            {tickets.map((ticket) => (
-                <Card key={ticket.id}>
+            {incidents.map((incident) => (
+                <Card key={incident.id}>
                     <CardHeader>
                         <div className="flex justify-between items-start">
-                            <CardTitle className="text-lg leading-tight max-w-xs md:max-w-md">{ticket.title}</CardTitle>
-                            <TicketStatusBadge status={ticket.status} />
+                            <CardTitle className="text-lg leading-tight max-w-xs md:max-w-md">{incident.title}</CardTitle>
+                            <IncidentStatusBadge status={incident.status} />
                         </div>
                         <div className="text-sm pt-1 text-muted-foreground">
-                            {`#${ticket.id.split('_')[1]} • Creado ${formatDistanceToNow(new Date(ticket.createdAt), { addSuffix: true, locale: es })}`}
+                            {`#${incident.id.split('_')[1]} • Creado ${formatDistanceToNow(new Date(incident.createdAt), { addSuffix: true, locale: es })}`}
                         </div>
                     </CardHeader>
                     <CardContent>
                         <p className="text-muted-foreground truncate">
-                            {ticket.description}
+                            {incident.description}
                         </p>
                     </CardContent>
                     <CardFooter className="flex justify-between items-center">
                         <div className="flex items-center gap-2 text-muted-foreground text-sm">
                             <Tag className="w-4 h-4" />
-                            <span>{ticket.category}</span>
+                            <span>{incident.category}</span>
                         </div>
                         <Button asChild variant="secondary" size="sm">
-                            <Link href={`/mantenimiento/${ticket.id}`}>
+                            <Link href={`/mantenimiento/${incident.id}`}>
                                 Ver Detalles
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </Link>

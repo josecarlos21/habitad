@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import { ArrowRight, Calendar, CheckCircle, QrCode, Wrench, Bell, Ticket, CreditCard, Package, Users } from "lucide-react";
+import { ArrowRight, Calendar, CheckCircle, QrCode, Wrench, Bell, Users, CreditCard, Package } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
@@ -196,3 +196,5 @@ export default function DashboardPage() {
     </main>
   );
 }
+
+    

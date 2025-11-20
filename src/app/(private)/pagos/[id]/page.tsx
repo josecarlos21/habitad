@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import * as React from "react";
@@ -177,3 +178,5 @@ export default function PaymentDetailPage({ params }: { params: { id: string } }
         </div>
     );
 }
+
+    
