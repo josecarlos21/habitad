@@ -1,6 +1,5 @@
 
-import { PaymentsHistory } from "./_components/payments-history";
-import { PendingPayments } from "./_components/pending-payments";
+import { UnderConstruction } from "@/components/app/under-construction";
 
 export default function PagosPage() {
 
@@ -11,9 +10,8 @@ export default function PagosPage() {
                 <p className="text-muted-foreground">Consulta tu historial de pagos y gestiona tus cuotas pendientes.</p>
             </header>
 
-            <div className="space-y-8 animate-fade-in">
-                <PendingPayments />
-                <PaymentsHistory />
+            <div className="animate-fade-in">
+                <UnderConstruction pageName="Pagos" />
             </div>
 
         </main>
