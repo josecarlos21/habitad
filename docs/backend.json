@@ -199,7 +199,8 @@
         "description": { "type": "string" },
         "requiresApproval": { "type": "boolean" },
         "maxPeople": { "type": "integer" },
-        "rules": { "type": "string" }
+        "rules": { "type": "string" },
+        "image": { "type": "string", "format": "uri" }
       },
       "required": ["id", "condoId", "name", "requiresApproval"]
     },

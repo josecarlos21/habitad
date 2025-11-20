@@ -198,9 +198,9 @@ export interface Amenity {
   requiresApproval: boolean;
   maxPeople?: number;
   rules?: string;
-  image: string; // from old type
-  requiresDeposit: boolean; // from old type
-  depositAmount?: number; // from old type
+  image?: string;
+  requiresDeposit?: boolean;
+  depositAmount?: number;
 }
 
 export interface AmenityBooking {
@@ -256,8 +256,8 @@ export interface Announcement {
   createdBy: string; // userId
   createdAt: string;
   visibleToRoles: Role[];
-  pinned: boolean; // from old type
-  category: string; // from old type
+  pinned?: boolean;
+  category?: string;
 }
 
 export interface Document {
@@ -283,7 +283,7 @@ export interface Notification {
   channel: NotificationChannel;
   sentAt: string;
   readAt?: string;
-  category: 'announcement' | 'maintenance' | 'community' | 'parcels' | 'finance'; // from old type
+  category: 'announcement' | 'maintenance' | 'community' | 'parcels' | 'finance';
 }
 
 export interface AuditLog {
