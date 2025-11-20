@@ -88,6 +88,13 @@ export default function LoginPage() {
                 disabled={isLoading}
               />
             </div>
+             <div className="text-xs text-muted-foreground pt-2">
+                <p>Usuarios de prueba (pass: password):</p>
+                <ul className="list-disc pl-4">
+                    <li>residente@habitat.com (Rol: Residente)</li>
+                    <li>admin@habitat.com (Rol: Admin)</li>
+                </ul>
+            </div>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
@@ -103,3 +110,5 @@ export default function LoginPage() {
     </Card>
   );
 }
+
+    

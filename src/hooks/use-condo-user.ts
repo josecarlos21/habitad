@@ -1,6 +1,6 @@
 
 import { useUser as useFirebaseUser } from "@/firebase";
-import { mockUser } from '@/lib/mocks';
+import { mockUser, mockAdmin } from '@/lib/mocks';
 import { UserCondoProfile } from '@/lib/types';
 import { useEffect, useState } from 'react';
 
@@ -19,15 +19,20 @@ export const useCondoUser = () => {
         setIsLoading(true);
         if (user) {
             // In a real app, you would fetch the user's condo profile from Firestore
-            // using the user.uid. For now, we'll use the mock profile but enrich it
-            // with the real user's data from Firebase Auth.
+            // using the user.uid. For now, we'll use a mock profile based on the email
+            // to simulate a multi-user environment.
+            let baseProfile = mockUser; // Default to resident
+            if (user.email === 'admin@habitat.com') {
+                baseProfile = mockAdmin;
+            }
+
             setProfile({
-                ...mockUser,
+                ...baseProfile,
                 id: user.uid,
                 userId: user.uid,
-                email: user.email || mockUser.email,
-                name: user.displayName || mockUser.name,
-                imageUrl: user.photoURL || mockUser.imageUrl,
+                email: user.email || baseProfile.email,
+                name: user.displayName || baseProfile.name,
+                imageUrl: user.photoURL || baseProfile.imageUrl,
             });
             setIsLoading(false);
         } else if (!isAuthLoading) {
@@ -39,3 +44,5 @@ export const useCondoUser = () => {
 
     return { user: profile, isLoading, error };
 };
+
+    

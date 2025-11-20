@@ -1,6 +1,20 @@
 
 import type { Amenity, FaqItem, Incident, Charge, Announcement, UserCondoProfile, AmenityBooking, VisitorPass, Parcel, Assembly, Notification, NotificationPref, Role } from "./types";
 
+export const mockAdmin: UserCondoProfile = {
+    id: 'user_admin',
+    userId: 'user_admin',
+    condoId: 'condo_1',
+    name: 'Admin General',
+    email: 'admin@habitat.com',
+    role: 'ADMIN_INT',
+    units: [],
+    imageUrl: 'https://i.pravatar.cc/150?u=admin',
+    unitIds: [],
+    occupantType: 'OWNER',
+    isVotingMember: false,
+};
+
 export const mockUser: UserCondoProfile = {
     id: 'user_123',
     userId: 'user_123',
@@ -8,7 +22,7 @@ export const mockUser: UserCondoProfile = {
     name: 'Residente Conectado',
     email: 'residente@habitat.com',
     role: 'RESIDENT',
-    units: [{ id: 'unit_101', condoId: 'condo_1', tower: 'A', number: '101', type: 'APARTMENT', isActive: true }],
+    units: [{ id: 'unit_101', condoId: 'condo_1', code: 'A-101', tower: 'A', number: '101', type: 'APARTMENT', isActive: true }],
     imageUrl: 'https://i.pravatar.cc/150?u=residente',
     unitIds: ['unit_101'],
     occupantType: 'OWNER',
@@ -61,11 +75,11 @@ export const mockIncidents: Incident[] = [
     id: 'inc_001',
     condoId: 'condo_1',
     title: 'Foco quemado en pasillo Torre A, Piso 5',
-    status: 'CANCELLED',
-    category: 'common_area',
+    status: 'RESOLVED',
+    category: 'Áreas Comunes',
     createdAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
-    updatedAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
-    unitId: 'u_101',
+    updatedAt: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(),
+    unitId: 'unit_101',
     createdBy: 'user_123',
     description: 'Uno de los focos del pasillo principal del piso 5, cerca del elevador, está quemado y no enciende. Solicito su reemplazo.',
     priority: 'LOW'
@@ -75,10 +89,10 @@ export const mockIncidents: Incident[] = [
     condoId: 'condo_1',
     title: 'Falla en puerta de acceso vehicular',
     status: 'IN_PROGRESS',
-    category: 'common_area',
+    category: 'Accesos',
     createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
-    updatedAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
-    unitId: 'u_101',
+    updatedAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
+    unitId: 'unit_101',
     createdBy: 'user_123',
     description: 'La pluma de la puerta de acceso vehicular no está levantando completamente y los coches tienen que pasar con mucho cuidado. Representa un riesgo.',
     priority: 'HIGH'
@@ -88,10 +102,10 @@ export const mockIncidents: Incident[] = [
     condoId: 'condo_1',
     title: 'Limpieza requerida en zona de asadores',
     status: 'OPEN',
-    category: 'amenity',
+    category: 'Amenidades',
     createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
     updatedAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
-    unitId: 'u_101',
+    unitId: 'unit_101',
     createdBy: 'user_123',
     description: 'La zona de asadores quedó muy sucia después de un evento ayer. Los botes de basura están llenos y hay restos de comida en las mesas.',
     priority: 'MEDIUM'
@@ -109,7 +123,7 @@ export const mockFaqs: FaqItem[] = [
     },
     {
         question: '¿Qué hago si tengo una emergencia de mantenimiento?',
-        answer: 'Para emergencias como fugas de agua mayores o fallas eléctricas generales, contacta directamente al personal de seguridad en la caseta. Para problemas no urgentes, puedes levantar un ticket en la sección "Servicios" > "Tickets de Mantenimiento".'
+        answer: 'Para emergencias como fugas de agua mayores o fallas eléctricas generales, contacta directamente al personal de seguridad en la caseta. Para problemas no urgentes, puedes levantar un ticket en la sección "Servicios" > "Mantenimiento".'
     },
     {
         question: '¿Cómo funciona el acceso para visitantes?',
@@ -125,52 +139,52 @@ export const mockCharges: Charge[] = [
   {
     id: 'chg_1',
     condoId: 'condo_1',
-    unitId: 'u_101',
+    unitId: 'unit_101',
+    type: 'MAINTENANCE',
     description: 'Cuota de Mantenimiento - Mes Actual',
     amount: 2200,
     currency: 'MXN',
     dueDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 10).toISOString(),
     status: 'OPEN',
-    type: 'MAINTENANCE',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
   {
     id: 'chg_2',
     condoId: 'condo_1',
-    unitId: 'u_101',
+    unitId: 'unit_101',
+    type: 'MAINTENANCE',
     description: 'Cuota de Mantenimiento - Mes Anterior',
     amount: 2200,
     currency: 'MXN',
     dueDate: new Date(new Date().getFullYear(), new Date().getMonth(), 10).toISOString(),
-    status: 'OPEN', // Should be overdue, but OPEN is a valid ChargeStatus
-    type: 'MAINTENANCE',
+    status: 'OPEN',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
   {
     id: 'chg_3',
     condoId: 'condo_1',
-    unitId: 'u_101',
+    unitId: 'unit_101',
+    type: 'AMENITY',
     description: 'Depósito en garantía - Reserva de Asadores',
     amount: 500,
     currency: 'MXN',
     dueDate: new Date(new Date().setDate(new Date().getDate() + 5)).toISOString(),
     status: 'OPEN',
-    type: 'AMENITY',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
   {
     id: 'chg_4',
     condoId: 'condo_1',
-    unitId: 'u_101',
+    unitId: 'unit_101',
+    type: 'MAINTENANCE',
     description: 'Cuota de Mantenimiento - Hace dos meses',
     amount: 2200,
     currency: 'MXN',
     dueDate: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 10).toISOString(),
     status: 'SETTLED',
-    type: 'MAINTENANCE',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   }
@@ -182,33 +196,33 @@ export const mockAnnouncements: Announcement[] = [
         condoId: 'condo_1',
         title: 'Corte de Agua Programado',
         body: 'Se informa a todos los residentes que el próximo viernes se realizará un corte en el suministro de agua de 9:00 a 14:00 hrs por mantenimiento en la cisterna principal. Agradecemos su comprensión.',
-        category: 'maintenance',
-        createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
-        pinned: true,
         createdBy: 'admin_user',
-        visibleToRoles: ['RESIDENT', 'ADMIN_INT', 'ADMIN_EXT']
+        createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
+        visibleToRoles: ['RESIDENT', 'ADMIN_INT', 'ADMIN_EXT'],
+        pinned: true,
+        category: 'Mantenimiento'
     },
     {
         id: 'ann_2',
         condoId: 'condo_1',
         title: 'Recordatorio de Pago de Mantenimiento',
         body: 'Les recordamos que la fecha límite para el pago de la cuota de mantenimiento es el día 10 de cada mes. Evite recargos realizando su pago a tiempo a través de la app.',
-        category: 'admin',
-        createdAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(),
-        pinned: false,
         createdBy: 'admin_user',
-        visibleToRoles: ['RESIDENT', 'ADMIN_INT', 'ADMIN_EXT']
+        createdAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(),
+        visibleToRoles: ['RESIDENT', 'ADMIN_INT', 'ADMIN_EXT'],
+        pinned: false,
+        category: 'Administrativo'
     },
     {
         id: 'ann_3',
         condoId: 'condo_1',
         title: 'Clase de Yoga en el Jardín',
         body: '¡Este sábado tendremos una clase de yoga gratuita para todos los residentes en el jardín central a las 8:00 am! No olviden traer su tapete.',
-        category: 'event',
-        createdAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
-        pinned: false,
         createdBy: 'admin_user',
-        visibleToRoles: ['RESIDENT', 'ADMIN_INT', 'ADMIN_EXT']
+        createdAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
+        visibleToRoles: ['RESIDENT', 'ADMIN_INT', 'ADMIN_EXT'],
+        pinned: false,
+        category: 'Eventos'
     }
 ];
 
@@ -217,28 +231,17 @@ export const mockAssemblies: Assembly[] = [
         id: 'asm_1',
         condoId: 'condo_1',
         title: 'Asamblea General Ordinaria',
-        date: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString(),
+        description: 'Revisión de presupuesto anual, elección de nuevo comité y asuntos generales.',
         scheduledAt: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString(),
         status: 'OPEN',
-        topics: ['Revisión de presupuesto anual', 'Elección de nuevo comité', 'Asuntos generales'],
-        docs: [{ name: 'Convocatoria Oficial.pdf', url: '#' }],
-        vote: {
-            id: 'vote_1',
-            assemblyId: 'asm_1',
-            question: '¿Aprueba el presupuesto presentado para el próximo año?',
-            options: ['Sí, apruebo', 'No apruebo', 'Me abstengo'],
-            status: 'open'
-        }
     },
     {
         id: 'asm_2',
         condoId: 'condo_1',
         title: 'Asamblea Extraordinaria - Reparación Elevador',
-        date: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString(),
+        description: 'Análisis y aprobación de cotización para reparación mayor del elevador de la Torre B.',
         scheduledAt: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString(),
         status: 'ARCHIVED',
-        topics: ['Análisis y aprobación de cotización para reparación mayor del elevador de la Torre B.'],
-        docs: [{ name: 'Minuta de la Asamblea.pdf', url: '#' }],
     }
 ];
 
@@ -248,11 +251,9 @@ export const mockBookings: AmenityBooking[] = [
         condoId: 'condo_1',
         amenityId: 'sum',
         userId: 'user_123',
-        unitId: 'u_101',
-        slot: {
-            start: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString(),
-            end: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString()
-        },
+        unitId: 'unit_101',
+        start: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString(),
+        end: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString(),
         status: 'CONFIRMED',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -279,15 +280,15 @@ export const mockVisitorPasses: VisitorPass[] = [
 ];
 
 export const mockParcels: Parcel[] = [
-    { id: 'p_1', unitId: 'u_101', carrier: 'Mercado Libre', trackingNumber: 'ML12345', arrivedAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), status: 'at_guard' },
+    { id: 'p_1', unitId: 'unit_101', carrier: 'Mercado Libre', trackingNumber: 'ML12345', arrivedAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), status: 'at_guard' },
     { id: 'p_2', unitId: 'u_101', carrier: 'Amazon', trackingNumber: 'AMZ67890', arrivedAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), status: 'picked_up' },
 ];
 
 export const mockNotifications: Notification[] = [
-    { id: 'n1', condoId: 'condo_1', userId: 'user_123', category: 'parcels', title: 'Paquete Recibido', description: 'Tu paquete de Amazon ha llegado a conserjería.', createdAt: new Date().toISOString(), sentAt: new Date().toISOString(), read: false, channel: 'IN_APP', body: 'Tu paquete de Amazon ha llegado a conserjería.' },
-    { id: 'n2', condoId: 'condo_1', userId: 'user_123', category: 'announcement', title: 'Corte de Agua Programado', description: 'El próximo viernes se realizará un corte de 9:00 a 14:00.', createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), sentAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), read: false, channel: 'IN_APP', body: 'El próximo viernes se realizará un corte de 9:00 a 14:00.' },
-    { id: 'n3', condoId: 'condo_1', userId: 'user_123', category: 'maintenance', title: 'Ticket #inc_002 actualizado', description: 'Tu ticket "Falla en puerta de acceso vehicular" está ahora "En Progreso".', createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(), sentAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(), read: true, channel: 'IN_APP', body: 'Tu ticket "Falla en puerta de acceso vehicular" está ahora "En Progreso".' },
-    { id: 'n4', condoId: 'condo_1', userId: 'user_123', category: 'community', title: '¡Gracias por votar!', description: 'Tu voto en la asamblea ha sido registrado.', createdAt: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(), sentAt: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(), read: true, channel: 'IN_APP', body: 'Tu voto en la asamblea ha sido registrado.' },
+    { id: 'n1', condoId: 'condo_1', userId: 'user_123', title: 'Paquete Recibido', body: 'Tu paquete de Amazon ha llegado a conserjería.', channel: 'IN_APP', sentAt: new Date().toISOString() },
+    { id: 'n2', condoId: 'condo_1', userId: 'user_123', title: 'Corte de Agua Programado', body: 'El próximo viernes se realizará un corte de 9:00 a 14:00.', channel: 'IN_APP', sentAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString() },
+    { id: 'n3', condoId: 'condo_1', userId: 'user_123', title: 'Ticket #inc_002 actualizado', body: 'Tu ticket "Falla en puerta de acceso vehicular" está ahora "En Progreso".', channel: 'IN_APP', sentAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(), readAt: new Date().toISOString() },
+    { id: 'n4', condoId: 'condo_1', userId: 'user_123', title: '¡Gracias por votar!', body: 'Tu voto en la asamblea ha sido registrado.', channel: 'IN_APP', sentAt: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(), readAt: new Date().toISOString() },
 ];
 
 export const mockNotificationPrefs: NotificationPref = {
@@ -304,3 +305,5 @@ export const mockNotificationPrefs: NotificationPref = {
         community: true,
     }
 };
+
+    
