@@ -11,14 +11,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCollection, useFirestore } from "@/firebase";
 import { useCondoUser } from "@/hooks/use-condo-user";
 import { collection, query, where } from "firebase/firestore";
-import { EmptyState } from "@/components/app/empty-state";
 
 export function PendingPayments() {
     const firestore = useFirestore();
     const { user } = useCondoUser();
     
     const pendingChargesQuery = React.useMemo(() => {
-        if (!firestore || !user) return null;
+        if (!firestore || !user || user.units.length === 0) return null;
         // This query should get all charges for the user's units
         const userUnitIds = user.units.map(u => u.id);
         if (userUnitIds.length === 0) return null;

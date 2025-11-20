@@ -1,8 +1,9 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
-import type { Firestore, Query, DocumentData, onSnapshot, Unsubscribe, QuerySnapshot } from 'firebase/firestore';
+import { useState, useEffect, useMemo } from 'react';
+import type { Firestore, Query, DocumentData, Unsubscribe, QuerySnapshot } from 'firebase/firestore';
+import { onSnapshot } from 'firebase/firestore';
 import { useFirestore } from '../provider';
 
 interface UseCollectionState<T> {
@@ -19,18 +20,19 @@ export function useCollection<T>(query: Query<DocumentData> | null) {
     error: null,
   });
 
+  // Memoize the query to prevent re-renders from creating new query objects
+  const memoizedQuery = useMemo(() => query, [query]);
+
   useEffect(() => {
-    if (!firestore || !query) {
-      // Firestore or query is not ready yet.
-      // Set loading to false if query is explicitly null, but might be true if firestore is null
-      setState(prevState => ({...prevState, isLoading: !!firestore, data: null}));
+    if (!firestore || !memoizedQuery) {
+      setState(prevState => ({...prevState, isLoading: false, data: null}));
       return;
     }
 
     setState({ data: null, isLoading: true, error: null });
 
-    const unsubscribe: Unsubscribe = (onSnapshot as any)(
-      query,
+    const unsubscribe: Unsubscribe = onSnapshot(
+      memoizedQuery,
       (snapshot: QuerySnapshot<DocumentData>) => {
         const data: T[] = snapshot.docs.map(doc => ({
           id: doc.id,
@@ -45,7 +47,7 @@ export function useCollection<T>(query: Query<DocumentData> | null) {
     );
 
     return () => unsubscribe();
-  }, [firestore, query]); // Retrigger effect if firestore or query changes
+  }, [firestore, memoizedQuery]);
 
   return state;
 }

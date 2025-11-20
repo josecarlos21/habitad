@@ -11,14 +11,14 @@ export function useUser(auth: Auth | null) {
     isLoading: boolean;
     error: Error | null;
   }>({
-    data: null,
+    data: auth?.currentUser ?? null,
     isLoading: true,
     error: null,
   });
 
   useEffect(() => {
     if (!auth) {
-        // Auth object is not ready yet.
+        setUserState({ data: null, isLoading: false, error: new Error("Auth object is not available.") });
         return;
     }
 

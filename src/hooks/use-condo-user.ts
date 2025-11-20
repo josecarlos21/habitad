@@ -16,12 +16,8 @@ export const useCondoUser = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Start loading whenever the auth state changes.
         setIsLoading(true);
         if (user) {
-            // In a real app, you would fetch the user's condo profile from Firestore
-            // using the user.uid. For now, we'll use a mock profile based on the email
-            // to simulate a multi-user environment.
             let baseProfile = mockUser; // Default to resident
             if (user.email === 'admin@habitat.com') {
                 baseProfile = mockAdmin;
@@ -34,12 +30,10 @@ export const useCondoUser = () => {
                 email: user.email || baseProfile.email,
                 name: user.displayName || baseProfile.name,
                 imageUrl: user.photoURL || baseProfile.imageUrl,
-                // CRITICAL FIX: Ensure the units object structure matches the type
                 units: baseProfile.units, 
             });
             setIsLoading(false);
         } else if (!isAuthLoading) {
-            // If auth is not loading and there's no user, we can stop loading.
             setProfile(null);
             setIsLoading(false);
         }

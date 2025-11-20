@@ -7,7 +7,7 @@ import { es } from "date-fns/locale";
 import { UserPlus, QrCode, Share2, Trash2 } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import type { VisitorPass } from "@/lib/types";

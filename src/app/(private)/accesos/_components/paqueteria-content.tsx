@@ -24,7 +24,7 @@ export default function PaqueteriaPageContent() {
     const { user } = useCondoUser();
 
     const parcelsQuery = React.useMemo(() => {
-        if (!firestore || !user) return null;
+        if (!firestore || !user || user.units.length === 0) return null;
         // This should list all parcels for all units of the user
         const userUnitIds = user.units.map(u => u.id);
         if (userUnitIds.length === 0) return null;

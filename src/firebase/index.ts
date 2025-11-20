@@ -1,40 +1,26 @@
 
-"use client";
-
 import { initializeApp, getApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 import { firebaseConfig } from "./config";
-import { FirebaseProvider, useAuth, useFirebaseApp, useFirestore } from './provider';
-import { useUser } from './auth/use-user';
-import { useCollection } from './firestore/use-collection';
-import { useDoc } from './firestore/use-doc';
 
-function initializeFirebase(): {
-  firebaseApp: FirebaseApp;
-  auth: Auth;
-  firestore: Firestore;
-} {
-  if (getApps().length === 0) {
-    const firebaseApp = initializeApp(firebaseConfig);
-    const auth = getAuth(firebaseApp);
-    const firestore = getFirestore(firebaseApp);
-    return { firebaseApp, auth, firestore };
+let firebaseApp: FirebaseApp;
+let auth: Auth;
+let firestore: Firestore;
+
+function initializeFirebase() {
+  if (!getApps().length) {
+    firebaseApp = initializeApp(firebaseConfig);
+    auth = getAuth(firebaseApp);
+    firestore = getFirestore(firebaseApp);
   } else {
-    const firebaseApp = getApp();
-    const auth = getAuth(firebaseApp);
-    const firestore = getFirestore(firebaseApp);
-    return { firebaseApp, auth, firestore };
+    firebaseApp = getApp();
+    auth = getAuth(firebaseApp);
+    firestore = getFirestore(firebaseApp);
   }
+  return { firebaseApp, auth, firestore };
 }
 
 export {
   initializeFirebase,
-  FirebaseProvider,
-  useAuth,
-  useUser,
-  useFirebaseApp,
-  useFirestore,
-  useCollection,
-  useDoc,
 };

@@ -12,9 +12,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { ArrowRight, Tag } from "lucide-react";
+import { ArrowRight, Tag, Wrench } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCondoUser } from "@/hooks/use-condo-user";
+import { EmptyState } from "@/components/app/empty-state";
 
 const IncidentStatusBadge = ({ status }: { status: Incident['status'] }) => {
     const statusMap: Record<Incident['status'], { label: string; className: string }> = {
@@ -75,7 +76,11 @@ export function IncidentList() {
     }
 
     if (!incidents || incidents.length === 0) {
-        return <p className="text-muted-foreground text-center py-8">No hay incidentes reportados.</p>
+        return <EmptyState 
+            icon={Wrench} 
+            title="Sin Reportes" 
+            description="No hay reportes de mantenimiento activos. ¡Todo parece estar en orden!"
+        />
     }
 
     return (

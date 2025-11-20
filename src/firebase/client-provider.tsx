@@ -1,7 +1,8 @@
 
 "use client";
 
-import { initializeFirebase, FirebaseProvider } from ".";
+import { initializeFirebase } from "./index";
+import { FirebaseProvider } from "./provider";
 
 // This provider ensures that Firebase is initialized only once on the client
 // and shares the same instance across all children.
