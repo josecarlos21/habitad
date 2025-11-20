@@ -39,14 +39,19 @@ export interface Payment {
 }
 
 export interface Ticket {
-  id: ID;
-  unitId: ID;
-  category: "plumbing" | "electrical" | "common_area" | "other";
-  title: string;
-  description: string;
-  status: "open" | "in_progress" | "resolved" | "closed";
-  createdAt: string; // ISO
-  media?: string[];
+    id: string;
+    title: string;
+    status: 'Abierto' | 'En Progreso' | 'Resuelto';
+    priority: 'Baja' | 'Media' | 'Alta';
+    area: string;
+    createdAt: string; // ISO
+    updatedAt: string; // ISO
+    description: string;
+    history: {
+        status: 'Abierto' | 'En Progreso' | 'Resuelto';
+        date: string; // ISO
+        comments: string;
+    }[];
 }
 
 export interface Amenity {

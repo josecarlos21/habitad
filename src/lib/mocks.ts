@@ -1,5 +1,5 @@
 
-import type { Amenity, FaqItem, Ticket } from "./types";
+import type { Amenity, FaqItem, Ticket, Invoice } from "./types";
 
 export const amenities: Amenity[] = [
     {
@@ -100,4 +100,43 @@ export const mockFaqs: FaqItem[] = [
         question: '¿Dónde puedo consultar los avisos importantes?',
         answer: 'Todos los comunicados de la administración se publican en la sección "Comunidad" > "Avisos". También recibirás notificaciones push para los anuncios más importantes.'
     }
+];
+
+export const mockInvoices: Invoice[] = [
+  {
+    id: 'INV-2023-11',
+    unitId: 'A-101',
+    concept: 'Cuota de Mantenimiento - Noviembre 2023',
+    amount: 2200,
+    currency: 'MXN',
+    dueDate: '2023-11-10',
+    status: 'paid',
+  },
+  {
+    id: 'INV-2023-12',
+    unitId: 'A-101',
+    concept: 'Cuota de Mantenimiento - Diciembre 2023',
+    amount: 2200,
+    currency: 'MXN',
+    dueDate: '2023-12-10',
+    status: 'pending',
+  },
+  {
+    id: 'DEP-ASAD-01',
+    unitId: 'A-101',
+    concept: 'Depósito en garantía - Reserva de Asadores',
+    amount: 500,
+    currency: 'MXN',
+    dueDate: '2023-12-05',
+    status: 'pending',
+  },
+  {
+    id: 'INV-2023-10',
+    unitId: 'A-101',
+    concept: 'Cuota de Mantenimiento - Octubre 2023',
+    amount: 2200,
+    currency: 'MXN',
+    dueDate: '2023-10-10',
+    status: 'overdue',
+  }
 ];
