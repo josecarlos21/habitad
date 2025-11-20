@@ -16,16 +16,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CheckCircle, UserPlus } from "lucide-react";
-import type { VisitorPass } from "@/lib/types";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/hooks/use-toast";
+import { createVisitorPass } from "../_services/create-visitor-pass-service";
 
 
-interface GeneratePassSheetProps {
-  onPassGenerated: (newPass: Omit<VisitorPass, 'id' | 'qrToken' | 'userId' | 'validFrom'>) => Promise<void>;
-}
-
-export function GeneratePassSheet({ onPassGenerated }: GeneratePassSheetProps) {
+export function GeneratePassSheet() {
   const [visitorName, setVisitorName] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -39,11 +35,7 @@ export function GeneratePassSheet({ onPassGenerated }: GeneratePassSheetProps) {
     setIsLoading(true);
 
     try {
-      const validTo = new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toISOString();
-      await onPassGenerated({
-        visitorName,
-        validTo,
-      });
+      await createVisitorPass({ visitorName });
       setIsSuccess(true);
     } catch (error) {
        toast({

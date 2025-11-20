@@ -10,46 +10,36 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { mockVisitorPasses } from "@/lib/mocks";
 import type { VisitorPass } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GeneratePassSheet } from "./generate-pass-sheet";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useCollection, useFirestore } from "@/firebase";
+import { useCondoUser } from "@/hooks/use-condo-user";
+import { collection, query, where, orderBy } from "firebase/firestore";
 
 export default function VisitantesPageContent() {
-    const [visitorPasses, setVisitorPasses] = React.useState<VisitorPass[]>([]);
-    const [isLoading, setIsLoading] = React.useState(true);
     const { toast } = useToast();
+    const firestore = useFirestore();
+    const { user } = useCondoUser();
 
-    React.useEffect(() => {
-        setIsLoading(true);
-        const timer = setTimeout(() => {
-            setVisitorPasses(mockVisitorPasses);
-            setIsLoading(false);
-        }, 500);
-        return () => clearTimeout(timer);
-    }, []);
+    const passesQuery = React.useMemo(() => {
+        if (!firestore || !user) return null;
+        return query(
+          collection(firestore, `condos/${user.condoId}/visitor-passes`),
+          where("userId", "==", user.userId),
+          orderBy("validFrom", "desc")
+        );
+    }, [firestore, user]);
 
-    const handlePassGenerated = async (newPass: Omit<VisitorPass, 'id' | 'qrToken' | 'userId' | 'validFrom'>) => {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        const pass: VisitorPass = {
-            id: `vp_${Date.now()}`,
-            qrToken: `qr_${Date.now()}`,
-            userId: 'user_123',
-            validFrom: new Date().toISOString(),
-            ...newPass,
-        };
-        setVisitorPasses(prev => [pass, ...prev]);
-    }
+    const { data: visitorPasses, isLoading } = useCollection<VisitorPass>(passesQuery);
 
     return (
         <div className="pt-4 animate-fade-in">
             <div className="flex items-center justify-between mb-4">
                 <p className="text-muted-foreground">Pases de acceso para tus visitas.</p>
-                <GeneratePassSheet onPassGenerated={handlePassGenerated} />
+                <GeneratePassSheet />
             </div>
             
             {isLoading ? (
@@ -71,7 +61,7 @@ export default function VisitantesPageContent() {
                         </Card>
                     ))}
                 </div>
-            ) : visitorPasses.length > 0 ? (
+            ) : visitorPasses && visitorPasses.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {visitorPasses.map((pass, i) => {
                         const isValid = new Date(pass.validTo) > new Date();
@@ -121,7 +111,7 @@ export default function VisitantesPageContent() {
                     icon={UserPlus}
                     title="Sin pases de visitante"
                     description="Genera un pase para permitir el acceso a tus visitas."
-                    action={<GeneratePassSheet onPassGenerated={handlePassGenerated} />}
+                    action={<GeneratePassSheet />}
                  />
             )}
         </div>

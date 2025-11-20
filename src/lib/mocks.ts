@@ -70,47 +70,7 @@ export const mockAmenities: Amenity[] = [
     }
 ];
 
-export const mockIncidents: Incident[] = [
-  {
-    id: 'inc_001',
-    condoId: 'condo_1',
-    title: 'Foco quemado en pasillo Torre A, Piso 5',
-    status: 'RESOLVED',
-    category: 'Áreas Comunes',
-    createdAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
-    updatedAt: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(),
-    unitId: 'unit_101',
-    createdBy: 'user_123',
-    description: 'Uno de los focos del pasillo principal del piso 5, cerca del elevador, está quemado y no enciende. Solicito su reemplazo.',
-    priority: 'LOW'
-  },
-  {
-    id: 'inc_002',
-    condoId: 'condo_1',
-    title: 'Falla en puerta de acceso vehicular',
-    status: 'IN_PROGRESS',
-    category: 'Accesos',
-    createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
-    updatedAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
-    unitId: 'unit_101',
-    createdBy: 'user_123',
-    description: 'La pluma de la puerta de acceso vehicular no está levantando completamente y los coches tienen que pasar con mucho cuidado. Representa un riesgo.',
-    priority: 'HIGH'
-  },
-    {
-    id: 'inc_003',
-    condoId: 'condo_1',
-    title: 'Limpieza requerida en zona de asadores',
-    status: 'OPEN',
-    category: 'Amenidades',
-    createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
-    updatedAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
-    unitId: 'unit_101',
-    createdBy: 'user_123',
-    description: 'La zona de asadores quedó muy sucia después de un evento ayer. Los botes de basura están llenos y hay restos de comida en las mesas.',
-    priority: 'MEDIUM'
-  },
-];
+// No mock data for Incidents, will be read from Firestore
 
 export const mockFaqs: FaqItem[] = [
     {
@@ -260,35 +220,15 @@ export const mockBookings: AmenityBooking[] = [
     }
 ];
 
-export const mockVisitorPasses: VisitorPass[] = [
-    {
-        id: 'vp_1',
-        userId: 'user_123',
-        visitorName: 'Juan Pérez',
-        validFrom: new Date().toISOString(),
-        validTo: new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toISOString(), // 8 hours from now
-        qrToken: 'qr_token_123'
-    },
-     {
-        id: 'vp_2',
-        userId: 'user_123',
-        visitorName: 'Maria García',
-        validFrom: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
-        validTo: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), // Expired
-        qrToken: 'qr_token_456'
-    }
-];
+// No mock data for VisitorPasses, will be read from Firestore
+// No mock data for Parcels, will be read from Firestore
 
-export const mockParcels: Parcel[] = [
-    { id: 'p_1', unitId: 'unit_101', carrier: 'Mercado Libre', trackingNumber: 'ML12345', arrivedAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), status: 'at_guard' },
-    { id: 'p_2', unitId: 'u_101', carrier: 'Amazon', trackingNumber: 'AMZ67890', arrivedAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), status: 'picked_up' },
-];
 
 export const mockNotifications: Notification[] = [
-    { id: 'n1', condoId: 'condo_1', userId: 'user_123', title: 'Paquete Recibido', body: 'Tu paquete de Amazon ha llegado a conserjería.', channel: 'IN_APP', sentAt: new Date().toISOString() },
-    { id: 'n2', condoId: 'condo_1', userId: 'user_123', title: 'Corte de Agua Programado', body: 'El próximo viernes se realizará un corte de 9:00 a 14:00.', channel: 'IN_APP', sentAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString() },
-    { id: 'n3', condoId: 'condo_1', userId: 'user_123', title: 'Ticket #inc_002 actualizado', body: 'Tu ticket "Falla en puerta de acceso vehicular" está ahora "En Progreso".', channel: 'IN_APP', sentAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(), readAt: new Date().toISOString() },
-    { id: 'n4', condoId: 'condo_1', userId: 'user_123', title: '¡Gracias por votar!', body: 'Tu voto en la asamblea ha sido registrado.', channel: 'IN_APP', sentAt: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(), readAt: new Date().toISOString() },
+    { id: 'n1', condoId: 'condo_1', userId: 'user_123', title: 'Paquete Recibido', body: 'Tu paquete de Amazon ha llegado a conserjería.', channel: 'IN_APP', sentAt: new Date().toISOString(), category: 'parcels' },
+    { id: 'n2', condoId: 'condo_1', userId: 'user_123', title: 'Corte de Agua Programado', body: 'El próximo viernes se realizará un corte de 9:00 a 14:00.', channel: 'IN_APP', sentAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), category: 'announcement' },
+    { id: 'n3', condoId: 'condo_1', userId: 'user_123', title: 'Ticket #inc_002 actualizado', body: 'Tu ticket "Falla en puerta de acceso vehicular" está ahora "En Progreso".', channel: 'IN_APP', sentAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(), readAt: new Date().toISOString(), category: 'maintenance' },
+    { id: 'n4', condoId: 'condo_1', userId: 'user_123', title: '¡Gracias por votar!', body: 'Tu voto en la asamblea ha sido registrado.', channel: 'IN_APP', sentAt: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(), readAt: new Date().toISOString(), category: 'community' },
 ];
 
 export const mockNotificationPrefs: NotificationPref = {
@@ -305,5 +245,3 @@ export const mockNotificationPrefs: NotificationPref = {
         community: true,
     }
 };
-
-    

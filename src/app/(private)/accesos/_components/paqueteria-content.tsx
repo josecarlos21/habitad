@@ -9,8 +9,10 @@ import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { mockParcels } from "@/lib/mocks";
 import type { Parcel } from "@/lib/types";
+import { useCollection, useFirestore } from "@/firebase";
+import { useCondoUser } from "@/hooks/use-condo-user";
+import { collection, query, where, orderBy } from "firebase/firestore";
 
 const statusMap: Record<Parcel['status'], { label: string; icon: React.ElementType; className: string }> = {
     at_guard: { label: "En conserjería", icon: Package, className: "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300" },
@@ -18,17 +20,24 @@ const statusMap: Record<Parcel['status'], { label: string; icon: React.ElementTy
 };
 
 export default function PaqueteriaPageContent() {
-    const [parcels, setParcels] = React.useState<Parcel[]>([]);
-    const [isLoading, setIsLoading] = React.useState(true);
+    const firestore = useFirestore();
+    const { user } = useCondoUser();
 
-    React.useEffect(() => {
-        setIsLoading(true);
-        const timer = setTimeout(() => {
-            setParcels(mockParcels);
-            setIsLoading(false);
-        }, 300);
-        return () => clearTimeout(timer);
-    }, []);
+    const parcelsQuery = React.useMemo(() => {
+        if (!firestore || !user) return null;
+        // This should list all parcels for all units of the user
+        const userUnitIds = user.units.map(u => u.id);
+        if (userUnitIds.length === 0) return null;
+        
+        return query(
+          collection(firestore, `condos/${user.condoId}/parcels`),
+          where("unitId", "in", userUnitIds),
+          orderBy("arrivedAt", "desc")
+        );
+    }, [firestore, user]);
+
+    const { data: parcels, isLoading } = useCollection<Parcel>(parcelsQuery);
+
 
     return (
         <div className="pt-4 animate-fade-in">
@@ -40,7 +49,7 @@ export default function PaqueteriaPageContent() {
                         <Skeleton key={i} className="h-20 w-full" />
                     ))}
                  </div>
-            ) : parcels.length > 0 ? (
+            ) : parcels && parcels.length > 0 ? (
                 <div className="space-y-2">
                     {parcels.map((parcel, i) => {
                         const status = statusMap[parcel.status];
@@ -77,5 +86,3 @@ export default function PaqueteriaPageContent() {
         </div>
     );
 }
-
-    

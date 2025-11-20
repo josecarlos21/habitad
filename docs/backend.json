@@ -143,20 +143,20 @@
       },
       "required": ["id", "condoId", "title", "description", "status", "createdAt", "updatedAt"]
     },
-    "Visitor": {
-      "title": "Visitor",
+    "VisitorPass": {
+      "title": "VisitorPass",
       "type": "object",
       "properties": {
         "id": { "type": "string" },
         "condoId": { "type": "string" },
-        "name": { "type": "string" },
-        "idNumber": { "type": "string" },
-        "plateNumber": { "type": "string" },
-        "hostUserId": { "type": "string" },
-        "unitId": { "type": "string" },
-        "expectedAt": { "type": "string", "format": "date-time" }
+        "userId": { "type": "string" },
+        "visitorName": { "type": "string" },
+        "validFrom": { "type": "string", "format": "date-time" },
+        "validTo": { "type": "string", "format": "date-time" },
+        "qrToken": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["id", "condoId", "name", "hostUserId", "unitId"]
+      "required": ["id", "condoId", "userId", "visitorName", "validFrom", "validTo", "qrToken", "createdAt"]
     },
     "AccessLog": {
       "title": "AccessLog",
@@ -172,6 +172,22 @@
         "recordedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["id", "condoId", "direction", "result", "recordedAt"]
+    },
+    "Parcel": {
+        "title": "Parcel",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "condoId": { "type": "string" },
+            "unitId": { "type": "string" },
+            "carrier": { "type": "string" },
+            "trackingNumber": { "type": "string" },
+            "arrivedAt": { "type": "string", "format": "date-time" },
+            "status": { "type": "string", "enum": ["at_guard", "picked_up"] },
+            "pickedUpAt": { "type": "string", "format": "date-time" },
+            "pickedUpBy": { "type": "string" }
+        },
+        "required": ["id", "condoId", "unitId", "carrier", "arrivedAt", "status"]
     },
     "Amenity": {
       "title": "Amenity",
@@ -340,13 +356,17 @@
       "schema": { "$ref": "#/entities/Assembly" },
       "description": "Stores all assemblies for a condo."
     },
-    "/condos/{condoId}/visitors/{visitorId}": {
-      "schema": { "$ref": "#/entities/Visitor" },
-      "description": "Stores information about registered visitors for a condo."
+    "/condos/{condoId}/visitor-passes/{passId}": {
+      "schema": { "$ref": "#/entities/VisitorPass" },
+      "description": "Stores information about generated visitor passes for a condo."
     },
     "/condos/{condoId}/access-logs/{logId}": {
       "schema": { "$ref": "#/entities/AccessLog" },
       "description": "Stores a log of all access events for a condo."
+    },
+     "/condos/{condoId}/parcels/{parcelId}": {
+      "schema": { "$ref": "#/entities/Parcel" },
+      "description": "Stores a log of all parcels received for a condo."
     },
     "/users/{userId}": {
       "schema": { "$ref": "#/entities/User" },
@@ -358,5 +378,3 @@
     }
   }
 }
-
-    

@@ -1,3 +1,4 @@
+
 export type Role =
   | 'SUPER_ADMIN'
   | 'ADMIN_EXT'
@@ -20,6 +21,7 @@ export interface User {
 }
 
 export interface UserCondoProfile {
+  id: string; // From document id
   userId: string;
   condoId: string;
   role: Role;
@@ -151,11 +153,13 @@ export interface Visitor {
 
 export interface VisitorPass {
   id: string;
+  condoId: string;
   userId: string;
   visitorName: string;
   validFrom: string;
   validTo: string;
   qrToken: string;
+  createdAt: string;
 }
 
 export interface AccessLog {
@@ -171,11 +175,14 @@ export interface AccessLog {
 
 export interface Parcel {
     id: string;
+    condoId: string;
     unitId: string;
     carrier: string;
-    trackingNumber: string;
+    trackingNumber?: string;
     arrivedAt: string;
     status: "at_guard" | "picked_up";
+    pickedUpAt?: string;
+    pickedUpBy?: string;
 }
 
 
@@ -202,7 +209,8 @@ export interface AmenityBooking {
   amenityId: string;
   userId: string;
   unitId: string;
-  slot: { start: string, end: string };
+  start: string; 
+  end: string;
   status: AmenityBookingStatus;
   createdAt: string;
   updatedAt: string;
@@ -220,16 +228,6 @@ export interface Assembly {
   description?: string;
   scheduledAt: string;
   status: AssemblyStatus;
-  date: string; // from old type
-  topics: string[]; // from old type
-  docs: {name: string, url: string}[]; // from old type
-  vote?: {
-      id: string;
-      assemblyId: string;
-      question: string;
-      options: string[];
-      status: 'open' | 'closed';
-  } // from old type
 }
 
 export interface Motion {
@@ -285,10 +283,7 @@ export interface Notification {
   channel: NotificationChannel;
   sentAt: string;
   readAt?: string;
-  category: 'announcement' | 'maintenance' | 'community' | 'parcels'; // from old type
-  description: string; // from old type
-  createdAt: string; // from old type
-  read: boolean; // from old type
+  category: 'announcement' | 'maintenance' | 'community' | 'parcels' | 'finance'; // from old type
 }
 
 export interface AuditLog {
