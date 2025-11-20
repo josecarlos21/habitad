@@ -5,17 +5,17 @@ import { PendingPayments } from "./_components/pending-payments";
 export default function PagosPage() {
 
     return (
-        <div className="space-y-8">
+        <main className="flex flex-1 flex-col p-4 md:p-6 space-y-8">
             <header>
                 <h1 className="text-2xl font-bold">Pagos</h1>
                 <p className="text-muted-foreground">Consulta tu historial de pagos y gestiona tus cuotas pendientes.</p>
             </header>
 
-            <main className="space-y-8 animate-fade-in">
+            <div className="space-y-8 animate-fade-in">
                 <PendingPayments />
                 <PaymentsHistory />
-            </main>
+            </div>
 
-        </div>
+        </main>
     );
 }

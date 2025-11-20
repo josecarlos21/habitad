@@ -89,12 +89,14 @@ export default function PaymentDetailPage({ params }: { params: { id: string } }
     }
 
     return (
-        <div className="space-y-6 animate-fade-in">
-             <Button asChild variant="outline" size="sm">
-                <Link href="/pagos"><ArrowLeft className="mr-2 h-4 w-4"/>Volver</Link>
-            </Button>
+        <main className="flex flex-1 flex-col p-4 md:p-6 gap-6">
+             <div className="flex items-start">
+                <Button asChild variant="outline" size="sm">
+                    <Link href="/pagos"><ArrowLeft className="mr-2 h-4 w-4"/>Volver</Link>
+                </Button>
+            </div>
 
-            <div className="grid gap-8 md:grid-cols-3">
+            <div className="grid gap-8 md:grid-cols-3 animate-fade-in">
 
                 <section className="md:col-span-2">
                     <Card>
@@ -152,7 +154,7 @@ export default function PaymentDetailPage({ params }: { params: { id: string } }
                 </section>
 
                 <aside className="md:col-span-1">
-                    <Card className="bg-slate-50 border-slate-200">
+                    <Card className="bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800">
                         <CardHeader>
                             <CardTitle>Resumen</CardTitle>
                         </CardHeader>
@@ -175,8 +177,6 @@ export default function PaymentDetailPage({ params }: { params: { id: string } }
                     </Card>
                 </aside>
             </div>
-        </div>
+        </main>
     );
 }
-
-    

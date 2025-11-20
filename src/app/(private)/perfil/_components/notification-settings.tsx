@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -9,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import type { NotificationPref } from "@/lib/types";
+import { Spinner } from "@/components/ui/spinner";
 
 
 export function NotificationSettings() {
@@ -16,7 +18,7 @@ export function NotificationSettings() {
     const [prefs, setPrefs] = React.useState<NotificationPref>(mockNotificationPrefs);
     const [isSaving, setIsSaving] = React.useState(false);
 
-    const handleChannelChange = (channel: 'push' | 'email', value: boolean) => {
+    const handleChannelChange = (channel: keyof NotificationPref['channels'], value: boolean) => {
         setPrefs(current => ({ ...current, channels: { ...current.channels, [channel]: value } }));
     };
 
@@ -99,7 +101,10 @@ export function NotificationSettings() {
                 </div>
             </CardContent>
              <CardFooter className="border-t px-6 py-4">
-                <Button onClick={handleSave} disabled={isSaving}>{isSaving ? 'Guardando...' : 'Guardar Cambios'}</Button>
+                <Button onClick={handleSave} disabled={isSaving}>
+                    {isSaving && <Spinner size="sm" className="mr-2"/>}
+                    {isSaving ? 'Guardando...' : 'Guardar Cambios'}
+                </Button>
             </CardFooter>
         </Card>
     );
