@@ -1,0 +1,362 @@
+
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Identidad única en la plataforma (puede vivir en 1+ condos).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "avatarUrl": { "type": "string", "format": "uri" },
+        "language": { "type": "string" },
+        "isVerified": { "type": "boolean" }
+      },
+      "required": ["id", "name", "language", "isVerified"]
+    },
+    "UserCondoProfile": {
+      "title": "UserCondoProfile",
+      "description": "Representa a un usuario dentro de un condominio concreto.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "condoId": { "type": "string" },
+        "role": { "type": "string", "enum": ["SUPER_ADMIN", "ADMIN_EXT", "ADMIN_INT", "COMMITTEE", "SECURITY", "MAINT", "RESIDENT"] },
+        "unitIds": { "type": "array", "items": { "type": "string" } },
+        "occupantType": { "type": "string", "enum": ["OWNER", "TENANT", "FAMILY", "GUEST_REGISTERED"] },
+        "isVotingMember": { "type": "boolean" }
+      },
+      "required": ["userId", "condoId", "role", "unitIds", "occupantType", "isVotingMember"]
+    },
+    "Condo": {
+      "title": "Condo",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "legalName": { "type": "string" },
+        "address": { "type": "string" },
+        "city": { "type": "string" },
+        "country": { "type": "string" },
+        "timeZone": { "type": "string" },
+        "currency": { "type": "string" },
+        "settings": { "$ref": "#/entities/CondoSettings" }
+      },
+      "required": ["id", "name", "address", "city", "country", "timeZone", "currency", "settings"]
+    },
+    "Unit": {
+      "title": "Unit",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "code": { "type": "string", "description": "Ej: Torre A - 502" },
+        "type": { "type": "string", "enum": ["APARTMENT", "HOUSE", "PARKING", "STORAGE"] },
+        "areaM2": { "type": "number" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["id", "condoId", "code", "type", "isActive"]
+    },
+    "CondoSettings": {
+      "title": "CondoSettings",
+      "type": "object",
+      "properties": {
+        "allowTenantsToVote": { "type": "boolean" },
+        "lateFeePolicy": { "type": "object" },
+        "allowsOnlinePayments": { "type": "boolean" },
+        "offlineFirstEnabled": { "type": "boolean" }
+      },
+      "required": ["allowTenantsToVote", "allowsOnlinePayments", "offlineFirstEnabled"]
+    },
+    "Charge": {
+      "title": "Charge",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "unitId": { "type": "string" },
+        "type": { "type": "string", "enum": ["MAINTENANCE", "EXTRAORDINARY", "AMENITY", "FINE"] },
+        "description": { "type": "string" },
+        "amount": { "type": "number" },
+        "currency": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["OPEN", "PARTIALLY_PAID", "SETTLED", "CANCELLED"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "condoId", "unitId", "type", "description", "amount", "currency", "dueDate", "status", "createdAt", "updatedAt"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "chargeId": { "type": "string" },
+        "userId": { "type": "string" },
+        "method": { "type": "string", "enum": ["CARD", "CASH", "MANUAL_TRANSFER"] },
+        "status": { "type": "string", "enum": ["PENDING_VERIFICATION", "PAID", "REJECTED"] },
+        "amount": { "type": "number" },
+        "paidAt": { "type": "string", "format": "date-time" },
+        "evidenceUrl": { "type": "string", "format": "uri" },
+        "reference": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "condoId", "chargeId", "userId", "method", "status", "amount", "createdAt", "updatedAt"]
+    },
+    "Incident": {
+      "title": "Incident",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "unitId": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "priority": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+        "status": { "type": "string", "enum": ["OPEN", "IN_PROGRESS", "WAITING_EXTERNAL", "RESOLVED", "CANCELLED"] },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "condoId", "createdBy", "title", "description", "priority", "status", "category", "createdAt", "updatedAt"]
+    },
+    "WorkOrder": {
+      "title": "WorkOrder",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "incidentId": { "type": "string" },
+        "assignedToUserId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["PENDING", "ASSIGNED", "IN_PROGRESS", "COMPLETED", "CANCELLED"] },
+        "scheduledAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "condoId", "title", "description", "status", "createdAt", "updatedAt"]
+    },
+    "Visitor": {
+      "title": "Visitor",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "name": { "type": "string" },
+        "idNumber": { "type": "string" },
+        "plateNumber": { "type": "string" },
+        "hostUserId": { "type": "string" },
+        "unitId": { "type": "string" },
+        "expectedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "condoId", "name", "hostUserId", "unitId"]
+    },
+    "AccessLog": {
+      "title": "AccessLog",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "visitorId": { "type": "string" },
+        "userId": { "type": "string" },
+        "gateId": { "type": "string" },
+        "direction": { "type": "string", "enum": ["IN", "OUT"] },
+        "result": { "type": "string", "enum": ["GRANTED", "DENIED"] },
+        "recordedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "condoId", "direction", "result", "recordedAt"]
+    },
+    "Amenity": {
+      "title": "Amenity",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "requiresApproval": { "type": "boolean" },
+        "maxPeople": { "type": "integer" },
+        "rules": { "type": "string" }
+      },
+      "required": ["id", "condoId", "name", "requiresApproval"]
+    },
+    "AmenityBooking": {
+      "title": "AmenityBooking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "amenityId": { "type": "string" },
+        "userId": { "type": "string" },
+        "unitId": { "type": "string" },
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["PENDING", "CONFIRMED", "CANCELLED", "REJECTED", "NO_SHOW"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "condoId", "amenityId", "userId", "unitId", "start", "end", "status", "createdAt", "updatedAt"]
+    },
+    "Assembly": {
+      "title": "Assembly",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "scheduledAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["DRAFT", "OPEN", "CLOSED", "ARCHIVED"] }
+      },
+      "required": ["id", "condoId", "title", "scheduledAt", "status"]
+    },
+    "Motion": {
+      "title": "Motion",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "assemblyId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "requiresQuorum": { "type": "boolean" }
+      },
+      "required": ["id", "assemblyId", "title", "requiresQuorum"]
+    },
+    "Vote": {
+      "title": "Vote",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "motionId": { "type": "string" },
+        "userId": { "type": "string" },
+        "value": { "type": "string", "enum": ["YES", "NO", "ABSTAIN"] },
+        "castAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "motionId", "userId", "value", "castAt"]
+    },
+    "Announcement": {
+      "title": "Announcement",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "visibleToRoles": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["id", "condoId", "title", "body", "createdBy", "createdAt", "visibleToRoles"]
+    },
+    "Document": {
+      "title": "Document",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "name": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "category": { "type": "string", "enum": ["BYLAWS", "MINUTES", "FINANCIAL", "OTHER"] },
+        "uploadedBy": { "type": "string" },
+        "uploadedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "condoId", "name", "url", "category", "uploadedBy", "uploadedAt"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "channel": { "type": "string", "enum": ["PUSH", "EMAIL", "SMS", "IN_APP"] },
+        "sentAt": { "type": "string", "format": "date-time" },
+        "readAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "condoId", "userId", "title", "body", "channel", "sentAt"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "condoId": { "type": "string" },
+        "entityType": { "type": "string" },
+        "entityId": { "type": "string" },
+        "action": { "type": "string" },
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "data": { "type": "object" }
+      },
+      "required": ["id", "condoId", "entityType", "entityId", "action", "userId", "createdAt"]
+    }
+  },
+  "auth": {
+    "providers": ["email", "google.com"]
+  },
+  "firestore": {
+    "/condos/{condoId}": {
+      "schema": { "$ref": "#/entities/Condo" },
+      "description": "Stores information about each condominium."
+    },
+    "/condos/{condoId}/units/{unitId}": {
+      "schema": { "$ref": "#/entities/Unit" },
+      "description": "Stores all units within a specific condo."
+    },
+    "/condos/{condoId}/announcements/{announcementId}": {
+      "schema": { "$ref": "#/entities/Announcement" },
+      "description": "Stores all announcements for a condo."
+    },
+    "/condos/{condoId}/incidents/{incidentId}": {
+      "schema": { "$ref": "#/entities/Incident" },
+      "description": "Stores all maintenance incidents for a condo."
+    },
+    "/condos/{condoId}/charges/{chargeId}": {
+      "schema": { "$ref": "#/entities/Charge" },
+      "description": "Stores all financial charges for a condo."
+    },
+    "/condos/{condoId}/payments/{paymentId}": {
+      "schema": { "$ref": "#/entities/Payment" },
+      "description": "Stores all payments made within a condo."
+    },
+    "/condos/{condoId}/amenities/{amenityId}": {
+      "schema": { "$ref": "#/entities/Amenity" },
+      "description": "Stores the definition of amenities for a condo."
+    },
+    "/condos/{condoId}/bookings/{bookingId}": {
+      "schema": { "$ref": "#/entities/AmenityBooking" },
+      "description": "Stores all amenity bookings for a condo."
+    },
+    "/condos/{condoId}/assemblies/{assemblyId}": {
+      "schema": { "$ref": "#/entities/Assembly" },
+      "description": "Stores all assemblies for a condo."
+    },
+    "/condos/{condoId}/visitors/{visitorId}": {
+      "schema": { "$ref": "#/entities/Visitor" },
+      "description": "Stores information about registered visitors for a condo."
+    },
+    "/condos/{condoId}/access-logs/{logId}": {
+      "schema": { "$ref": "#/entities/AccessLog" },
+      "description": "Stores a log of all access events for a condo."
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Stores platform-wide user profiles."
+    },
+    "/users/{userId}/condo-profiles/{condoId}": {
+      "schema": { "$ref": "#/entities/UserCondoProfile" },
+      "description": "Stores user-specific roles and profiles for each condo they are a part of."
+    }
+  }
+}
+
+    

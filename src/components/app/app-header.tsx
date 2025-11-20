@@ -3,7 +3,7 @@
 
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { useUser } from "@/hooks/use-user";
+import { useCondoUser } from "@/hooks/use-condo-user";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -21,7 +21,7 @@ import { useSidebar } from "../providers/sidebar-provider";
 import { LiveClock } from "./live-clock";
 
 export function AppHeader() {
-  const { user } = useUser();
+  const { user } = useCondoUser();
   const { toggleSidebar } = useSidebar();
 
   return (

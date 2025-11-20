@@ -6,7 +6,7 @@ import Link from "next/link";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { ArrowRight, Calendar, CheckCircle, QrCode, Wrench, Bell, Users, CreditCard, Package } from "lucide-react";
-import { useUser } from "@/hooks/use-user";
+import { useCondoUser } from "@/hooks/use-condo-user";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,10 +19,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 const createActivityFeed = ({ announcements, incidents, bookings, visitorPasses, parcels, assemblies }: { announcements: Announcement[], incidents: Incident[], bookings: AmenityBooking[], visitorPasses: VisitorPass[], parcels: Parcel[], assemblies: Assembly[] }) => {
     const announcementItems = announcements.map(item => ({ ...item, type: 'announcement', date: item.createdAt, title: item.title, description: `Publicado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` }));
     const incidentItems = incidents.map(item => ({ ...item, type: 'incident', date: item.createdAt, title: item.title, description: `Creado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` }));
-    const bookingItems = bookings.map(item => ({ ...item, type: 'booking', date: item.slot.start, title: `Reserva: ${mockAmenities.find(a => a.id === item.amenityId)?.name}`, description: format(new Date(item.slot.start), "eeee dd 'a las' h:mm a", { locale: es }) }));
+    const bookingItems = bookings.map(item => ({ ...item, type: 'booking', date: item.start, title: `Reserva: ${mockAmenities.find(a => a.id === item.amenityId)?.name}`, description: format(new Date(item.start), "eeee dd 'a las' h:mm a", { locale: es }) }));
     const visitorPassItems = visitorPasses.map(item => ({ ...item, type: 'visitor_pass', date: item.validFrom, title: `Pase para: ${item.visitorName}`, description: `Generado ${formatDistanceToNow(new Date(item.validFrom), { locale: es, addSuffix: true })}` }));
     const parcelItems = parcels.filter(p => p.status === 'at_guard').map(item => ({ ...item, type: 'parcel', date: item.arrivedAt, title: `Paquete de ${item.carrier}`, description: `Recibido ${formatDistanceToNow(new Date(item.arrivedAt), { locale: es, addSuffix: true })}` }));
-    const assemblyItems = assemblies.filter(a => a.status === 'OPEN').map(item => ({ ...item, type: 'assembly', date: item.date, title: item.title, description: `Próximo ${format(new Date(item.date), "eeee dd 'de' MMMM", { locale: es })}` }));
+    const assemblyItems = assemblies.filter(a => a.status === 'OPEN').map(item => ({ ...item, type: 'assembly', date: item.scheduledAt, title: item.title, description: `Próximo ${format(new Date(item.scheduledAt), "eeee dd 'de' MMMM", { locale: es })}` }));
 
 
     const allItems = [...announcementItems, ...incidentItems, ...bookingItems, ...visitorPassItems, ...parcelItems, ...assemblyItems];
@@ -44,7 +44,7 @@ const itemTypeDetails: Record<string, { icon: React.ElementType, link: string | 
 
 
 function PrimaryAction({ charge, incident, isLoading }: { charge?: Charge, incident?: Incident, isLoading: boolean }) {
-    const { user } = useUser();
+    const { user } = useCondoUser();
 
     if (isLoading) {
         return (
@@ -75,7 +75,7 @@ function PrimaryAction({ charge, incident, isLoading }: { charge?: Charge, incid
             type: 'payment',
             title: charge.description,
             description: `Vence el ${format(new Date(charge.dueDate), "dd 'de' MMMM", { locale: es })} - $${charge.amount.toLocaleString('es-MX')}`,
-            link: itemTypeDetails.payment.link as string,
+            link: (itemTypeDetails.payment.link as string) + `/${charge.id}`,
             Icon: itemTypeDetails.payment.icon,
         }
     } else if (incident) {
@@ -196,5 +196,3 @@ export default function DashboardPage() {
     </main>
   );
 }
-
-    

@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useUser } from "@/hooks/use-user";
+import { useCondoUser } from "@/hooks/use-condo-user";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Camera } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function UserProfileCard() {
-    const { user, isLoading } = useUser();
+    const { user, isLoading } = useCondoUser();
 
     if (isLoading || !user) {
         return (
