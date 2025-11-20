@@ -3,8 +3,8 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { announcements as mockAnnouncements } from "@/lib/mocks";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { mockAnnouncements } from "@/lib/mocks";
 import type { Announcement } from "@/lib/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -95,3 +95,5 @@ export default function AvisosPageContent() {
         </div>
     )
 }
+
+    

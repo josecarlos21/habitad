@@ -3,9 +3,9 @@
 
 import React from "react";
 import Link from "next/link";
-import { tickets as mockTickets, user as mockUser } from "@/lib/mocks";
+import { mockTickets, mockUser } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
-import { notFound, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { ArrowLeft, Paperclip, Send, Wrench } from "lucide-react";
@@ -70,7 +70,6 @@ function TicketDetailSkeleton() {
 
 export default function TicketDetailPage({ params }: { params: { id: string } }) {
     const { toast } = useToast();
-    const router = useRouter();
     const [ticket, setTicket] = React.useState<Ticket | null | undefined>(undefined);
     const [isResolving, setIsResolving] = React.useState(false);
 
@@ -140,9 +139,9 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                                 <div>
                                     <Badge variant={status.variant}>{status.label}</Badge>
                                     <CardTitle className="mt-2 text-2xl sr-only">{ticket.title}</CardTitle>
-                                    <CardDescription className="mt-2">
+                                    <div className="mt-2 text-sm text-muted-foreground">
                                         Ticket #{ticket.id.split('_')[1]} &bull; Creado {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}
-                                    </CardDescription>
+                                    </div>
                                 </div>
                                 <Wrench className="h-8 w-8 text-muted-foreground" />
                             </div>
@@ -180,7 +179,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                         <CardContent>
                             <form onSubmit={handleCommentSubmit} className="flex w-full items-center gap-2">
                                 <Input name="comment" placeholder="Escribe un comentario..." />
-                                 <Button variant="ghost" size="icon" type="button" aria-label="Adjuntar archivo" onClick={() => router.push('/maintenance')}>
+                                 <Button variant="ghost" size="icon" type="button" aria-label="Adjuntar archivo">
                                     <Paperclip className="h-5 w-5"/>
                                 </Button>
                                 <Button size="icon" type="submit" aria-label="Enviar comentario">
@@ -225,3 +224,5 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
         </main>
     );
 }
+
+    

@@ -10,9 +10,10 @@ import { es } from 'date-fns/locale';
 import { Timeline, TimelineItem, TimelineConnector, TimelineHeader, TimelineTitle, TimelineIcon, TimelineDescription } from "@/components/ui/timeline";
 import { CheckCircle, Clock, Wrench } from "lucide-react";
 
-// --- Helper Components ---
+// This file is no longer used and will be removed in a future commit.
+// The new detail page is located at /src/app/(private)/mantenimiento/[id]/page.tsx
 
-const TicketStatusBadge = ({ status }: { status: Ticket['status'] }) => (
+const TicketStatusBadge = ({ status }: { status: string }) => (
     <Badge
         variant={status === 'Resuelto' ? 'default' : status === 'En Progreso' ? 'secondary' : 'destructive'}
         className={cn(
@@ -26,7 +27,7 @@ const TicketStatusBadge = ({ status }: { status: Ticket['status'] }) => (
     </Badge>
 );
 
-const StatusIcon = ({ status }: { status: Ticket['status'] }) => {
+const StatusIcon = ({ status }: { status: string }) => {
     switch (status) {
         case 'Resuelto':
             return <CheckCircle className="w-5 h-5 text-green-500" />;
@@ -39,20 +40,45 @@ const StatusIcon = ({ status }: { status: Ticket['status'] }) => {
     }
 };
 
-// --- Main Page Component ---
+type MockTicket = {
+    id: string;
+    title: string;
+    status: 'Resuelto' | 'En Progreso' | 'Abierto';
+    priority: 'Baja' | 'Media' | 'Alta';
+    area: string;
+    createdAt: string;
+    updatedAt: string;
+    description: string;
+    history: {
+        status: 'Resuelto' | 'En Progreso' | 'Abierto';
+        date: string;
+        comments: string;
+    }[];
+}
+
+const tempMockTickets: MockTicket[] = mockTickets.map(t => ({
+    id: t.id,
+    title: t.title,
+    status: t.status === 'open' ? 'Abierto' : t.status === 'in_progress' ? 'En Progreso' : 'Resuelto',
+    priority: 'Media',
+    area: 'Áreas Comunes',
+    createdAt: t.createdAt,
+    updatedAt: new Date().toISOString(),
+    description: t.description,
+    history: []
+}))
+
 
 export default function TicketDetailPage({ params }: { params: { id: string } }) {
 
-    // Simula la búsqueda del ticket en la "base de datos"
-    const ticket = mockTickets.find(t => t.id === params.id);
+    const ticket = tempMockTickets.find(t => t.id === params.id);
 
     if (!ticket) {
-        notFound(); // Muestra la página 404 si el ticket no existe
+        notFound();
     }
 
     return (
         <div className="space-y-8 animate-fade-in">
-            {/* Header */}
             <header>
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="space-y-1.5">
@@ -64,11 +90,9 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                     </div>
                 </div>
             </header>
-
-            {/* Ticket Details */}
+            
             <div className="grid gap-8 md:grid-cols-3">
                 <div className="md:col-span-2 space-y-6">
-                    {/* Description Card */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Descripción del Problema</CardTitle>
@@ -78,7 +102,6 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                         </CardContent>
                     </Card>
 
-                    {/* History Card */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Historial de Actualizaciones</CardTitle>
@@ -103,7 +126,6 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                     </Card>
                 </div>
 
-                {/* Metadata Card */}
                 <aside className="space-y-6 md:col-span-1">
                     <Card>
                         <CardHeader>
@@ -133,3 +155,5 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
         </div>
     );
 }
+
+    

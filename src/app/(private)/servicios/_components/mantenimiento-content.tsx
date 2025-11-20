@@ -9,7 +9,7 @@ import { Wrench, ArrowRight } from "lucide-react";
 import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader } from "@/components/ui/card";
-import { tickets as mockTickets } from "@/lib/mocks";
+import { mockTickets } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CreateTicketSheet } from "../../mantenimiento/_components/create-ticket-sheet";
@@ -75,9 +75,9 @@ export default function MantenimientoPageContent() {
                                         </div>
                                         <div className="flex-1">
                                             <p className="font-semibold text-sm line-clamp-1">{ticket.title}</p>
-                                            <CardDescription className="text-xs">
+                                            <div className="text-xs text-muted-foreground">
                                                 #{ticket.id.split('_')[1]} &bull; Creado {formatDistanceToNow(new Date(ticket.createdAt), { locale: es, addSuffix: true })}
-                                            </CardDescription>
+                                            </div>
                                         </div>
                                         <div className="flex items-center gap-4">
                                            <Badge variant="outline" className={status.className}>{status.label}</Badge>
@@ -100,3 +100,5 @@ export default function MantenimientoPageContent() {
         </div>
     )
 }
+
+    

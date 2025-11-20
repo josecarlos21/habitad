@@ -41,17 +41,11 @@ export interface Payment {
 export interface Ticket {
     id: string;
     title: string;
-    status: 'Abierto' | 'En Progreso' | 'Resuelto';
-    priority: 'Baja' | 'Media' | 'Alta';
-    area: string;
-    createdAt: string; // ISO
-    updatedAt: string; // ISO
     description: string;
-    history: {
-        status: 'Abierto' | 'En Progreso' | 'Resuelto';
-        date: string; // ISO
-        comments: string;
-    }[];
+    status: 'open' | 'in_progress' | 'resolved' | 'closed';
+    category: 'plumbing' | 'electrical' | 'common_area' | 'amenity' | 'other';
+    unitId: string;
+    createdAt: string; // ISO
 }
 
 export interface Amenity {
@@ -144,3 +138,5 @@ export interface FaqItem {
     question: string;
     answer: string;
 }
+
+    

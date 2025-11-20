@@ -12,7 +12,6 @@ import Link from "next/link";
 import { EmptyState } from "@/components/app/empty-state";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
-import { Spinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PerfilPage() {
@@ -84,7 +83,7 @@ export default function PerfilPage() {
                         <Card>
                             <CardHeader>
                                 <CardTitle>Información Personal</CardTitle>
-                                <CardDescription>Estos son tus datos personales. Mantenlos actualizados.</CardDescription>
+                                <div className="text-sm text-muted-foreground">Estos son tus datos personales. Mantenlos actualizados.</div>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
@@ -116,7 +115,7 @@ export default function PerfilPage() {
                                 </Avatar>
                                 <div>
                                     <CardTitle>{user.name}</CardTitle>
-                                    <CardDescription>Residente</CardDescription>
+                                    <div className="text-sm text-muted-foreground">Residente</div>
                                 </div>
                             </div>
                         </CardHeader>
@@ -130,7 +129,7 @@ export default function PerfilPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Zona de Peligro</CardTitle>
-                             <CardDescription>Esta acción cerrará tu sesión en este dispositivo.</CardDescription>
+                             <div className="text-sm text-muted-foreground">Esta acción cerrará tu sesión en este dispositivo.</div>
                         </CardHeader>
                         <CardContent>
                             <Button variant="destructive" className="w-full" asChild>
@@ -146,3 +145,5 @@ export default function PerfilPage() {
         </main>
     );
 }
+
+    

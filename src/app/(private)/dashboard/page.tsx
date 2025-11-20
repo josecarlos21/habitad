@@ -10,7 +10,7 @@ import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { announcements, bookings, invoices, tickets, amenities, visitorPasses, parcels, mockAssemblies } from "@/lib/mocks";
+import { mockAnnouncements, mockBookings, mockInvoices, mockTickets, mockAmenities, mockVisitorPasses, mockParcels, mockAssemblies } from "@/lib/mocks";
 import type { Invoice, Ticket, Booking, Announcement, VisitorPass, Parcel, Assembly } from "@/lib/types";
 import { Spinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,7 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const createActivityFeed = ({ announcements, tickets, bookings, visitorPasses, parcels, assemblies }: { announcements: Announcement[], tickets: Ticket[], bookings: Booking[], visitorPasses: VisitorPass[], parcels: Parcel[], assemblies: Assembly[] }) => {
     const announcementItems = announcements.map(item => ({ ...item, type: 'announcement', date: item.createdAt, title: item.title, description: `Publicado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` }));
     const ticketItems = tickets.map(item => ({ ...item, type: 'ticket', date: item.createdAt, title: item.title, description: `Creado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` }));
-    const bookingItems = bookings.map(item => ({ ...item, type: 'booking', date: item.slot.start, title: `Reserva: ${amenities.find(a => a.id === item.amenityId)?.name}`, description: format(new Date(item.slot.start), "eeee dd 'a las' h:mm a", { locale: es }) }));
+    const bookingItems = bookings.map(item => ({ ...item, type: 'booking', date: item.slot.start, title: `Reserva: ${mockAmenities.find(a => a.id === item.amenityId)?.name}`, description: format(new Date(item.slot.start), "eeee dd 'a las' h:mm a", { locale: es }) }));
     const visitorPassItems = visitorPasses.map(item => ({ ...item, type: 'visitor_pass', date: item.validFrom, title: `Pase para: ${item.visitorName}`, description: `Generado ${formatDistanceToNow(new Date(item.validFrom), { locale: es, addSuffix: true })}` }));
     const parcelItems = parcels.filter(p => p.status === 'at_guard').map(item => ({ ...item, type: 'parcel', date: item.arrivedAt, title: `Paquete de ${item.carrier}`, description: `Recibido ${formatDistanceToNow(new Date(item.arrivedAt), { locale: es, addSuffix: true })}` }));
     const assemblyItems = assemblies.filter(a => a.status === 'active').map(item => ({ ...item, type: 'assembly', date: item.date, title: item.title, description: `Próximo ${format(new Date(item.date), "eeee dd 'de' MMMM", { locale: es })}` }));
@@ -131,9 +131,9 @@ export default function DashboardPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const nextPayment = invoices.find(inv => inv.status === 'pending' || inv.status === 'overdue');
-  const activeTicket = tickets.find(t => t.status === 'open' || t.status === 'in_progress');
-  const activityFeed = createActivityFeed({announcements, tickets, bookings, visitorPasses, parcels, assemblies: mockAssemblies});
+  const nextPayment = mockInvoices.find(inv => inv.status === 'pending' || inv.status === 'overdue');
+  const activeTicket = mockTickets.find(t => t.status === 'open' || t.status === 'in_progress');
+  const activityFeed = createActivityFeed({announcements: mockAnnouncements, tickets: mockTickets, bookings: mockBookings, visitorPasses: mockVisitorPasses, parcels: mockParcels, assemblies: mockAssemblies});
 
   return (
     <main className="flex flex-1 flex-col p-4 md:p-6 animate-fade-in">

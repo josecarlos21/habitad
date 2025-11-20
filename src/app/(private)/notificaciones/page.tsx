@@ -11,7 +11,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/app/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 
 const categoryMap: Record<Notification['category'], { icon: React.ElementType, defaultTitle: string }> = {
     announcement: { icon: Bell, defaultTitle: "Nuevo Aviso" },
@@ -94,3 +93,5 @@ export default function NotificacionesPage() {
         </main>
     );
 }
+
+    

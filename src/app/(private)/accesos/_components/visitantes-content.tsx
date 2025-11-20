@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { visitorPasses as mockVisitorPasses } from "@/lib/mocks";
+import { mockVisitorPasses } from "@/lib/mocks";
 import type { VisitorPass } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GeneratePassSheet } from "./generate-pass-sheet";
@@ -127,3 +127,5 @@ export default function VisitantesPageContent() {
         </div>
     )
 }
+
+    

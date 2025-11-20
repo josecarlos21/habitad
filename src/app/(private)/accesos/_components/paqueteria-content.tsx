@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/app/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { parcels as mockParcels } from "@/lib/mocks";
+import { mockParcels } from "@/lib/mocks";
 import type { Parcel } from "@/lib/types";
 
 const statusMap: Record<Parcel['status'], { label: string; icon: React.ElementType; className: string }> = {
@@ -77,3 +77,5 @@ export default function PaqueteriaPageContent() {
         </div>
     );
 }
+
+    

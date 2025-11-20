@@ -1,5 +1,5 @@
 
-import { user as mockUser } from '@/lib/mocks';
+import { mockUser } from '@/lib/mocks';
 import { User } from '@/lib/types';
 import { useEffect, useState } from 'react';
 

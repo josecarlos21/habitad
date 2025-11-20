@@ -5,28 +5,33 @@ import * as React from "react";
 import Link from "next/link";
 import { mockTickets } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { format, formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ArrowRight, Tag } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const TicketStatusBadge = ({ status }: { status: Ticket['status'] }) => (
-    <Badge
-        variant={status === 'Resuelto' ? 'default' : status === 'En Progreso' ? 'secondary' : 'destructive'}
-        className={cn(
-            'capitalize',
-            status === 'Resuelto' && 'bg-green-100 text-green-800 border-green-200',
-            status === 'En Progreso' && 'bg-blue-100 text-blue-800 border-blue-200',
-            status === 'Abierto' && 'bg-yellow-100 text-yellow-800 border-yellow-200',
-        )}
-    >
-        {status}
-    </Badge>
-);
+const TicketStatusBadge = ({ status }: { status: Ticket['status'] }) => {
+    const statusMap = {
+        closed: { label: 'Cerrado', className: 'bg-green-100 text-green-800 border-green-200' },
+        resolved: { label: 'Resuelto', className: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
+        in_progress: { label: 'En Progreso', className: 'bg-blue-100 text-blue-800 border-blue-200' },
+        open: { label: 'Abierto', className: 'bg-red-100 text-red-800 border-red-200' },
+    };
+    const currentStatus = statusMap[status] || { label: status, className: ''};
+
+    return (
+        <Badge
+            variant={'outline'}
+            className={cn('capitalize', currentStatus.className)}
+        >
+            {currentStatus.label}
+        </Badge>
+    )
+};
 
 export function TicketList() {
     const [tickets, setTickets] = React.useState<Ticket[]>([]);
@@ -76,9 +81,9 @@ export function TicketList() {
                             <CardTitle className="text-lg leading-tight max-w-xs md:max-w-md">{ticket.title}</CardTitle>
                             <TicketStatusBadge status={ticket.status} />
                         </div>
-                        <CardDescription className="text-sm pt-1">
-                            {`#${ticket.id} • Creado ${formatDistanceToNow(new Date(ticket.createdAt), { addSuffix: true, locale: es })}`}
-                        </CardDescription>
+                        <div className="text-sm pt-1 text-muted-foreground">
+                            {`#${ticket.id.split('_')[1]} • Creado ${formatDistanceToNow(new Date(ticket.createdAt), { addSuffix: true, locale: es })}`}
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <p className="text-muted-foreground truncate">
@@ -88,10 +93,10 @@ export function TicketList() {
                     <CardFooter className="flex justify-between items-center">
                         <div className="flex items-center gap-2 text-muted-foreground text-sm">
                             <Tag className="w-4 h-4" />
-                            <span>{ticket.area}</span>
+                            <span>{ticket.category}</span>
                         </div>
                         <Button asChild variant="secondary" size="sm">
-                            <Link href={`/maintenance/${ticket.id}`}>
+                            <Link href={`/mantenimiento/${ticket.id}`}>
                                 Ver Detalles
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </Link>
@@ -102,3 +107,5 @@ export function TicketList() {
         </div>
     );
 }
+
+    

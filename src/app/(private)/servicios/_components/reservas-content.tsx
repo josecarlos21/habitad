@@ -6,7 +6,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { amenities as mockAmenities } from "@/lib/mocks";
+import { mockAmenities } from "@/lib/mocks";
 import { Calendar as CalendarIcon, CheckCircle, CreditCard } from "lucide-react";
 import type { Amenity } from "@/lib/types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription, SheetFooter, SheetClose } from "@/components/ui/sheet";
@@ -17,8 +17,6 @@ import { EmptyState } from "@/components/app/empty-state";
 import { es } from "date-fns/locale";
 import { Spinner } from "@/components/ui/spinner";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-
 
 function BookAmenitySheet({ amenity, onBookingSuccess }: { amenity: Amenity, onBookingSuccess: (amenityName: string, date: Date) => void }) {
     const router = useRouter();
@@ -172,7 +170,7 @@ export default function ReservasPageContent() {
                                <Skeleton className="h-10 w-full" />
                             </CardFooter>
                         </Card>
-                    ))}\
+                    ))}
                 </div>
             ) : amenityList.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -196,7 +194,7 @@ export default function ReservasPageContent() {
                             </CardHeader>
                             <div className="p-6 flex flex-col flex-1">
                                 <CardTitle>{amenity.name}</CardTitle>
-                                <CardDescription className="mt-2 flex-1">{amenity.description}</CardDescription>
+                                <div className="mt-2 flex-1 text-sm text-muted-foreground">{amenity.description}</div>
                             </div>
                             <CardFooter>
                                <BookAmenitySheet amenity={amenity} onBookingSuccess={handleBookingSuccess} />
@@ -214,3 +212,5 @@ export default function ReservasPageContent() {
         </div>
     );
 }
+
+    
