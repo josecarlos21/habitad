@@ -54,7 +54,7 @@ export function UserProfileCard() {
                         <h2 className="text-2xl font-bold">{user.name}</h2>
                         <p className="text-muted-foreground">{user.email}</p>
                         <p className="text-sm text-muted-foreground">
-                            Unidad: {user.units.map(u => `${u.tower}-${u.number}`).join(', ')}
+                            Unidades: {user.units.map(u => u.code).join(', ')}
                         </p>
                     </div>
                 </div>

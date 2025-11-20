@@ -38,7 +38,7 @@ export default function VisitantesPageContent() {
         const pass: VisitorPass = {
             id: `vp_${Date.now()}`,
             qrToken: `qr_${Date.now()}`,
-            userId: 'user_1',
+            userId: 'user_123',
             validFrom: new Date().toISOString(),
             ...newPass,
         };
@@ -100,13 +100,13 @@ export default function VisitantesPageContent() {
                                 </CardHeader>
                                 <CardContent className="flex justify-end gap-2 pt-4 border-t mt-auto">
                                     <Button variant="outline" size="sm" asChild>
-                                        <Link href="/maintenance">
+                                        <Link href="#">
                                             <Share2 className="mr-2 h-3.5 w-3.5"/>
                                             Compartir
                                         </Link>
                                     </Button>
                                     <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" asChild>
-                                        <Link href="/maintenance">
+                                        <Link href="#">
                                              <Trash2 className="mr-2 h-3.5 w-3.5"/>
                                             Cancelar
                                         </Link>
@@ -127,5 +127,3 @@ export default function VisitantesPageContent() {
         </div>
     )
 }
-
-    

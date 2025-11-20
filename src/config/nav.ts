@@ -7,6 +7,9 @@ import {
   Settings,
   Bell,
   HelpCircle,
+  Users,
+  Package,
+  UserSquare,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -19,7 +22,7 @@ export interface NavItem {
 export const mainNavItems: NavItem[] = [
   { href: "/dashboard", icon: Home, label: "Inicio" },
   { href: "/notificaciones", icon: Bell, label: "Notificaciones" },
-  { href: "/comunidad", icon: Building2, label: "Comunidad" },
+  { href: "/comunidad", icon: Users, label: "Comunidad" },
   { href: "/servicios", icon: Wrench, label: "Servicios" },
   { href: "/pagos", icon: CreditCard, label: "Pagos" },
   { href: "/accesos", icon: ShieldCheck, label: "Accesos" },

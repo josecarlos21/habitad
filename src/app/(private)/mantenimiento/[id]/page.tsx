@@ -206,7 +206,7 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
                             </div>
                              <div className="flex justify-between">
                                 <span className="text-muted-foreground">Unidad</span>
-                                <span>{mockUser.units[0].tower}-{mockUser.units[0].number}</span>
+                                <span>{mockUser.units[0].code}</span>
                             </div>
                              <Separator />
                              <Button 
