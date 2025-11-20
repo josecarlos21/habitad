@@ -34,6 +34,8 @@ export const useCondoUser = () => {
                 email: user.email || baseProfile.email,
                 name: user.displayName || baseProfile.name,
                 imageUrl: user.photoURL || baseProfile.imageUrl,
+                // CRITICAL FIX: Ensure the units object structure matches the type
+                units: baseProfile.units, 
             });
             setIsLoading(false);
         } else if (!isAuthLoading) {
