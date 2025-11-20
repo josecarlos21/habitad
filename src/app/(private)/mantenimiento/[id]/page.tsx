@@ -1,9 +1,8 @@
-
 "use client";
 
 import React from "react";
 import Link from "next/link";
-import { mockIncidents, mockUser } from "@/lib/mocks";
+import { useDoc, useFirestore } from "@/firebase";
 import type { Incident } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
@@ -12,19 +11,22 @@ import { ArrowLeft, Paperclip, Send, Wrench } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Spinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { doc } from "firebase/firestore";
+import { useCondoUser } from "@/hooks/use-condo-user";
+import { mockUser } from "@/lib/mocks"; // Keep for comments mock
 
-const statusMap: Record<Incident['status'], { label: string; variant: "destructive" | "info" | "warning" | "success" }> = {
+const statusMap: Record<Incident['status'], { label: string; variant: "destructive" | "info" | "warning" | "success" | "secondary" }> = {
     OPEN: { label: "Abierto", variant: "destructive" },
     IN_PROGRESS: { label: "En Progreso", variant: "info" },
-    WAITING_EXTERNAL: { label: "En Espera", variant: "info" },
-    RESOLVED: { label: "Resuelto", variant: "warning" },
-    CANCELLED: { label: "Cancelado", variant: "success" },
+    WAITING_EXTERNAL: { label: "En Espera", variant: "warning" },
+    RESOLVED: { label: "Resuelto", variant: "success" },
+    CANCELLED: { label: "Cancelado", variant: "secondary" },
 };
 
 const mockComments = [
@@ -71,19 +73,17 @@ function IncidentDetailSkeleton() {
 
 export default function IncidentDetailPage({ params }: { params: { id: string } }) {
     const { toast } = useToast();
-    const [incident, setIncident] = React.useState<Incident | null | undefined>(undefined);
+    const firestore = useFirestore();
+    const { user: condoUser, isLoading: isUserLoading } = useCondoUser();
+    
+    const incidentRef = React.useMemo(() => {
+        if (!firestore || !condoUser) return null;
+        return doc(firestore, `condos/${condoUser.condoId}/incidents`, params.id);
+    }, [firestore, condoUser, params.id]);
+
+    const { data: incident, isLoading: isIncidentLoading } = useDoc<Incident>(incidentRef);
+
     const [isResolving, setIsResolving] = React.useState(false);
-
-    React.useEffect(() => {
-        setIsResolving(false);
-        const foundIncident = mockIncidents.find((t) => t.id === params.id);
-        // Simulate loading
-        const timer = setTimeout(() => {
-            setIncident(foundIncident || null);
-        }, 500);
-        return () => clearTimeout(timer);
-    }, [params.id]);
-
 
     const handleCommentSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -101,22 +101,25 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
     const handleResolveIncident = async () => {
         if (incident) {
             setIsResolving(true);
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            setIncident(prev => prev ? { ...prev, status: 'RESOLVED' } : null);
+            // In a real app, you'd call a server action to update the status in Firestore
+            await new Promise(resolve => setTimeout(resolve, 1500)); 
             toast({
                 title: "Incidente Actualizado",
                 description: "Has marcado el incidente como 'Resuelto'. Administración verificará la solución.",
             });
             setIsResolving(false);
+            // The UI will update automatically thanks to the realtime listener in useDoc
         }
     };
     
-    if (incident === undefined) {
+    if (isUserLoading || isIncidentLoading) {
         return <IncidentDetailSkeleton />;
     }
 
-    if (incident === null) {
-        notFound();
+    if (!incident) {
+        // This can happen briefly on load or if doc doesn't exist
+        // If it persists, useDoc will set an error and we could show a notFound page.
+        return <IncidentDetailSkeleton />;
     }
 
     const status = statusMap[incident.status];
@@ -125,7 +128,7 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
             <div className="flex items-center gap-4">
                 <Button variant="outline" size="icon" asChild>
-                    <Link href="/servicios?tab=mantenimiento">
+                    <Link href="/mantenimiento">
                         <ArrowLeft className="h-4 w-4" />
                         <span className="sr-only">Volver</span>
                     </Link>
@@ -141,7 +144,7 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
                                     <Badge variant={status.variant}>{status.label}</Badge>
                                     <CardTitle className="mt-2 text-2xl sr-only">{incident.title}</CardTitle>
                                     <div className="mt-2 text-sm text-muted-foreground">
-                                        Incidente #{incident.id.split('_')[1]} &bull; Creado {formatDistanceToNow(new Date(incident.createdAt), { locale: es, addSuffix: true })}
+                                        Incidente #{incident.id.substring(0,7)} &bull; Creado {formatDistanceToNow(new Date(incident.createdAt), { locale: es, addSuffix: true })}
                                     </div>
                                 </div>
                                 <Wrench className="h-8 w-8 text-muted-foreground" />
@@ -198,15 +201,15 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
                         <CardContent className="space-y-4 text-sm">
                              <div className="flex justify-between">
                                 <span className="text-muted-foreground">Categoría</span>
-                                <span>{incident.category.charAt(0).toUpperCase() + incident.category.slice(1)}</span>
+                                <span>{incident.category}</span>
                             </div>
                              <div className="flex justify-between">
                                 <span className="text-muted-foreground">Creado por</span>
-                                <span>{mockUser.name}</span>
+                                <span>{condoUser?.name}</span>
                             </div>
                              <div className="flex justify-between">
                                 <span className="text-muted-foreground">Unidad</span>
-                                <span>{mockUser.units[0].code}</span>
+                                <span>{condoUser?.units[0]?.code}</span>
                             </div>
                              <Separator />
                              <Button 
