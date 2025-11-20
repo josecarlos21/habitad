@@ -1,5 +1,5 @@
 
-import type { Amenity, FaqItem, Ticket, Invoice, Announcement, User, Booking, VisitorPass, Parcel, Assembly, Notification } from "./types";
+import type { Amenity, FaqItem, Ticket, Invoice, Announcement, User, Booking, VisitorPass, Parcel, Assembly, Notification, NotificationPref } from "./types";
 
 export const mockUser: User = {
     id: 'user_123',
@@ -163,6 +163,32 @@ export const mockAnnouncements: Announcement[] = [
     }
 ];
 
+export const mockAssemblies: Assembly[] = [
+    {
+        id: 'asm_1',
+        title: 'Asamblea General Ordinaria',
+        date: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString(),
+        status: 'active',
+        topics: ['Revisión de presupuesto anual', 'Elección de nuevo comité', 'Asuntos generales'],
+        docs: [{ name: 'Convocatoria Oficial.pdf', url: '#' }],
+        vote: {
+            id: 'vote_1',
+            assemblyId: 'asm_1',
+            question: '¿Aprueba el presupuesto presentado para el próximo año?',
+            options: ['Sí, apruebo', 'No apruebo', 'Me abstengo'],
+            status: 'open'
+        }
+    },
+    {
+        id: 'asm_2',
+        title: 'Asamblea Extraordinaria - Reparación Elevador',
+        date: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString(),
+        status: 'past',
+        topics: ['Análisis y aprobación de cotización para reparación mayor del elevador de la Torre B.'],
+        docs: [{ name: 'Minuta de la Asamblea.pdf', url: '#' }],
+    }
+];
+
 export const mockBookings: Booking[] = [
     { id: 'book_1', amenityId: 'sum', userId: 'user_123', slot: { start: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString(), end: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString() }, status: 'confirmed' }
 ];
@@ -191,32 +217,6 @@ export const mockParcels: Parcel[] = [
     { id: 'p_2', unitId: 'u_101', carrier: 'Amazon', trackingNumber: 'AMZ67890', arrivedAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), status: 'picked_up' },
 ];
 
-export const mockAssemblies: Assembly[] = [
-    {
-        id: 'asm_1',
-        title: 'Asamblea General Ordinaria',
-        date: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString(),
-        status: 'active',
-        topics: ['Revisión de presupuesto anual', 'Elección de nuevo comité', 'Asuntos generales'],
-        docs: [{ name: 'Convocatoria Oficial.pdf', url: '#' }],
-        vote: {
-            id: 'vote_1',
-            assemblyId: 'asm_1',
-            question: '¿Aprueba el presupuesto presentado para el próximo año?',
-            options: ['Sí, apruebo', 'No apruebo', 'Me abstengo'],
-            status: 'open'
-        }
-    },
-    {
-        id: 'asm_2',
-        title: 'Asamblea Extraordinaria - Reparación Elevador',
-        date: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString(),
-        status: 'past',
-        topics: ['Análisis y aprobación de cotización para reparación mayor del elevador de la Torre B.'],
-        docs: [{ name: 'Minuta de la Asamblea.pdf', url: '#' }],
-    }
-];
-
 export const mockNotifications: Notification[] = [
     { id: 'n1', userId: 'user_123', category: 'parcels', title: 'Paquete Recibido', description: 'Tu paquete de Amazon ha llegado a conserjería.', createdAt: new Date().toISOString(), read: false },
     { id: 'n2', userId: 'user_123', category: 'announcement', title: 'Corte de Agua Programado', description: 'El próximo viernes se realizará un corte de 9:00 a 14:00.', createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), read: false },
@@ -224,4 +224,17 @@ export const mockNotifications: Notification[] = [
     { id: 'n4', userId: 'user_123', category: 'community', title: '¡Gracias por votar!', description: 'Tu voto en la asamblea ha sido registrado.', createdAt: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(), read: true },
 ];
 
-    
+export const mockNotificationPrefs: NotificationPref = {
+    userId: 'user_123',
+    channels: {
+        push: true,
+        email: true,
+    },
+    categories: {
+        finance: true,
+        security: true,
+        bookings: false,
+        maintenance: true,
+        community: true,
+    }
+};

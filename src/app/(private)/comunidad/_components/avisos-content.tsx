@@ -1,99 +1,56 @@
-
 "use client";
 
-import React from "react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mockAnnouncements } from "@/lib/mocks";
-import type { Announcement } from "@/lib/types";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { Bell, Calendar, Tag } from "lucide-react";
-import { EmptyState } from "@/components/app/empty-state";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Megaphone, Pin } from "lucide-react";
 
-const categoryMap: Record<Announcement['category'], { label: string; variant: "info" | "warning" | "destructive" | "success" }> = {
-    admin: { label: "Administración", variant: "info" },
-    security: { label: "Seguridad", variant: "warning" },
-    maintenance: { label: "Mantenimiento", variant: "destructive" },
-    event: { label: "Evento", variant: "success" },
-};
+export function AvisosContent() {
 
-export default function AvisosPageContent() {
-    const [announcementList, setAnnouncementList] = React.useState<Announcement[]>([]);
-    const [isLoading, setIsLoading] = React.useState(true);
-
-    React.useEffect(() => {
-        setIsLoading(true);
-        const timer = setTimeout(() => {
-            setAnnouncementList(mockAnnouncements);
-            setIsLoading(false);
-        }, 300);
-        return () => clearTimeout(timer);
-    }, []);
+    const sortedAnnouncements = [...mockAnnouncements].sort((a, b) => {
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
 
     return (
-        <div className="pt-4 animate-fade-in">
-             {isLoading ? (
-                 <div className="space-y-6">
-                    {[...Array(3)].map((_, i) => (
-                        <Card key={i}>
-                            <CardHeader>
-                                <Skeleton className="h-6 w-3/4 rounded-md" />
-                                <div className="mt-4 flex items-center gap-4">
-                                    <Skeleton className="h-4 w-1/3 rounded-md" />
-                                    <Skeleton className="h-4 w-1/4 rounded-md" />
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-2">
-                                    <Skeleton className="h-4 w-full rounded-md" />
-                                    <Skeleton className="h-4 w-5/6 rounded-md" />
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                 </div>
-            ) : announcementList.length > 0 ? (
-                <div className="space-y-6">
-                    {announcementList.map((announcement: Announcement, i) => {
-                        const category = categoryMap[announcement.category];
-                        return (
-                            <Card 
-                                key={announcement.id} 
-                                className={cn(
-                                    "transition-all duration-300 ease-in-out hover:scale-[1.01] hover:shadow-soft animate-slide-up-and-fade",
-                                    announcement.pinned && "border-primary/50"
+        <div className="space-y-4">
+            {sortedAnnouncements.length > 0 ? (
+                sortedAnnouncements.map(announcement => (
+                    <Card key={announcement.id} className={cn("overflow-hidden", announcement.pinned && "border-primary/50 bg-primary/5")}>
+                        <CardHeader className="pb-4">
+                             <div className="flex items-start justify-between">
+                                <Badge variant="secondary" className="capitalize w-fit">
+                                    <Megaphone className="w-3 h-3 mr-1.5"/>
+                                    {announcement.category}
+                                </Badge>
+                                {announcement.pinned && (
+                                    <div className="flex items-center gap-1.5 text-xs text-primary font-semibold">
+                                        <Pin className="w-3.5 h-3.5"/>
+                                        <span>Fijado</span>
+                                    </div>
                                 )}
-                                style={{animationDelay: `${i * 100}ms`}}
-                            >
-                                <CardHeader>
-                                    <div className="flex flex-wrap items-start justify-between gap-2">
-                                        <CardTitle className="text-lg">{announcement.title}</CardTitle>
-                                        {announcement.pinned && <Badge>Fijado</Badge>}
-                                    </div>
-                                    <div className="flex flex-wrap items-center gap-4 pt-1 text-xs text-muted-foreground">
-                                        <span className="flex items-center gap-1.5"><Calendar className="h-3 w-3" /> {format(new Date(announcement.createdAt), "dd 'de' MMMM, yyyy", { locale: es })}</span>
-                                        <Badge variant={category.variant}><Tag className="mr-1.5 h-3 w-3" />{category.label}</Badge>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-foreground/80 whitespace-pre-wrap">{announcement.body}</p>
-                                </CardContent>
-                            </Card>
-                        )
-                    })}
-                </div>
+                            </div>
+                            <CardTitle className="!mt-2">{announcement.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground line-clamp-3">
+                                {announcement.body}
+                            </p>
+                        </CardContent>
+                        <CardFooter>
+                             <p className="text-xs text-muted-foreground">
+                                Publicado el {new Date(announcement.createdAt).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            </p>
+                        </CardFooter>
+                    </Card>
+                ))
             ) : (
-                <EmptyState
-                    icon={Bell}
-                    title="Sin avisos por ahora"
-                    description="Todo está tranquilo. Vuelve más tarde."
-                />
+                <div className="text-center py-12">
+                     <p className="text-muted-foreground">No hay avisos para mostrar.</p>
+                </div>
             )}
         </div>
-    )
+    );
 }
-
-    

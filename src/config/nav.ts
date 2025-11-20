@@ -7,7 +7,6 @@ import {
   Settings,
   Bell,
   HelpCircle,
-  MessageCircle,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -27,7 +26,6 @@ export const mainNavItems: NavItem[] = [
 ];
 
 export const helpNavItems: NavItem[] = [
-  { href: "/whatsapp-guide", icon: MessageCircle, label: "Guía WhatsApp" },
   { href: "/faq", icon: HelpCircle, label: "FAQ" },
-  { href: "/settings", icon: Settings, label: "Ajustes" },
+  { href: "/perfil", icon: Settings, label: "Mi Perfil" }
 ];

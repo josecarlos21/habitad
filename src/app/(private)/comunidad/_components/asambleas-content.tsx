@@ -1,203 +1,103 @@
-
 "use client";
 
-import React from "react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { Users, FileText, Vote as VoteIcon, CheckCircle, ArrowRight } from "lucide-react";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { EmptyState } from "@/components/app/empty-state";
-import { Skeleton } from "@/components/ui/skeleton";
 import { mockAssemblies } from "@/lib/mocks";
-import type { Assembly } from "@/lib/types";
-import { Spinner } from "@/components/ui/spinner";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Calendar, FileText, Check, X, Circle } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
-function VotingCard({ vote, assemblyTitle }: { vote: any, assemblyTitle: string }) {
-    const { toast } = useToast();
-    const [selectedOption, setSelectedOption] = React.useState<string | null>(null);
-    const [isVoted, setIsVoted] = React.useState(false);
-    const [isLoading, setIsLoading] = React.useState(false);
+export function AsambleasContent() {
 
-    const handleSubmitVote = async () => {
-        if (selectedOption) {
-            setIsLoading(true);
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            setIsLoading(false);
-            setIsVoted(true);
-            toast({
-                title: "Voto Emitido",
-                description: `Tu voto para la asamblea "${assemblyTitle}" ha sido registrado.`,
-            });
-        } else {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "Por favor, selecciona una opción para votar.",
-            });
-        }
-    };
-    
-    return (
-        <Card className="transition-all duration-300">
-             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                    {isVoted ? <CheckCircle className="text-green-500"/> : <VoteIcon />}
-                     {isVoted ? "¡Gracias por votar!" : "Votación en Curso"}
-                </CardTitle>
-                <CardDescription>
-                    {isVoted ? "Tu participación es importante para la comunidad." : vote.question}
-                </CardDescription>
-            </CardHeader>
-            {!isVoted && (
-                <>
-                    <CardContent>
-                        <RadioGroup onValueChange={setSelectedOption} className="gap-4" disabled={isLoading}>
-                            {vote.options.map((option: string) => (
-                                <div key={option} className="flex items-center space-x-2">
-                                    <RadioGroupItem value={option} id={option} />
-                                    <Label htmlFor={option} className="font-normal">{option}</Label>
-                                </div>
-                            ))}
-                        </RadioGroup>
-                    </CardContent>
-                    <CardContent>
-                        <Button onClick={handleSubmitVote} className="w-full" disabled={!selectedOption || isLoading}>
-                            {isLoading && <Spinner size="sm" className="mr-2" />}
-                            {isLoading ? 'Enviando voto...' : 'Emitir Voto'}
-                        </Button>
-                    </CardContent>
-                </>
-            )}
-        </Card>
-    )
-}
-
-export default function AsambleasPageContent() {
-    const [assemblies, setAssemblies] = React.useState<Assembly[]>([]);
-    const [isLoading, setIsLoading] = React.useState(true);
-
-     React.useEffect(() => {
-        setIsLoading(true);
-        const timer = setTimeout(() => {
-            setAssemblies(mockAssemblies);
-            setIsLoading(false);
-        }, 500);
-        return () => clearTimeout(timer);
-    }, []);
-
-    const activeAssembly = assemblies.find(a => a.status === 'active');
-    const pastAssemblies = assemblies.filter(a => a.status === 'past');
+    const activeAssemblies = mockAssemblies.filter(a => a.status === 'active');
+    const pastAssemblies = mockAssemblies.filter(a => a.status === 'past');
 
     return (
-        <div className="pt-4 animate-fade-in">
-            {isLoading ? (
-                <div className="space-y-6">
-                    <Card>
-                        <CardHeader><Skeleton className="h-8 w-1/2" /></CardHeader>
-                        <CardContent className="space-y-4">
-                            <Skeleton className="h-6 w-full" />
-                            <Skeleton className="h-6 w-5/6" />
-                        </CardContent>
-                    </Card>
-                    <div className="grid gap-6 lg:grid-cols-2">
-                        <Skeleton className="h-40 w-full" />
-                        <Skeleton className="h-40 w-full" />
-                    </div>
-                </div>
-            ) : activeAssembly ? (
-                <div className="grid gap-6 lg:grid-cols-2">
-                    <div className="animate-slide-up-and-fade" style={{animationDelay: '150ms'}}>
-                        <Card>
+        <div className="space-y-8">
+            {/* Active Assemblies */}
+            <section>
+                <h3 className="text-lg font-semibold mb-3">Asambleas Activas</h3>
+                {activeAssemblies.length > 0 ? (
+                    activeAssemblies.map(assembly => (
+                        <Card key={assembly.id}>
                             <CardHeader>
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <Badge variant="success">Asamblea Activa</Badge>
-                                        <CardTitle className="mt-2 text-xl">{activeAssembly.title}</CardTitle>
-                                        <CardDescription>{format(new Date(activeAssembly.date), "EEEE dd 'de' MMMM, yyyy 'a las' HH:mm 'hrs'", { locale: es })}</CardDescription>
-                                    </div>
-                                    <Users className="h-8 w-8 text-muted-foreground" />
+                                <div className="flex items-center justify-between">
+                                    <CardTitle>{assembly.title}</CardTitle>
+                                    <Badge variant="secondary">Próxima</Badge>
+                                </div>
+                                <div className="flex items-center text-sm text-muted-foreground pt-1">
+                                    <Calendar className="w-4 h-4 mr-2" />
+                                    <span>{new Date(assembly.date).toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - {new Date(assembly.date).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })} hrs</span>
                                 </div>
                             </CardHeader>
-                            <CardContent>
-                                <h4 className="font-semibold mb-2">Temas a tratar:</h4>
-                                <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-                                    {activeAssembly.topics.map(topic => <li key={topic}>{topic}</li>)}
-                                </ul>
-
-                                <h4 className="font-semibold mt-6 mb-2">Documentos Adjuntos:</h4>
-                                <div className="space-y-2">
-                                    {activeAssembly.docs.map(doc => (
-                                        <a key={doc.name} href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
-                                            <FileText className="h-4 w-4" />
-                                            {doc.name}
-                                        </a>
-                                    ))}
+                            <CardContent className="space-y-4">
+                                <div>
+                                    <h4 className="font-semibold mb-2">Temas a tratar:</h4>
+                                    <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                                        {assembly.topics.map((topic, i) => <li key={i}>{topic}</li>)}
+                                    </ul>
                                 </div>
+                                {assembly.docs && assembly.docs.length > 0 && (
+                                     <div>
+                                        <h4 className="font-semibold mb-2">Documentos:</h4>
+                                        {assembly.docs.map(doc => (
+                                            <Button key={doc.name} variant="outline" size="sm" asChild>
+                                                <a href={doc.url} target="_blank" rel="noopener noreferrer">
+                                                    <FileText className="w-4 h-4 mr-2" />{doc.name}
+                                                </a>
+                                            </Button>
+                                        ))}
+                                    </div>
+                                )}
+                                {assembly.vote && (
+                                     <div className="pt-4">
+                                         <Separator />
+                                        <div className="mt-4 p-4 rounded-lg bg-secondary/50">
+                                            <h4 className="font-semibold mb-3">Votación Abierta</h4>
+                                            <p className="mb-3 text-muted-foreground">{assembly.vote.question}</p>
+                                            <div className="flex flex-col sm:flex-row gap-2">
+                                                <Button className="w-full sm:w-auto justify-start gap-2"><Check size={16}/> {assembly.vote.options[0]}</Button>
+                                                <Button className="w-full sm:w-auto justify-start gap-2" variant="secondary"><X size={16}/> {assembly.vote.options[1]}</Button>
+                                                <Button className="w-full sm:w-auto justify-start gap-2" variant="secondary"><Circle size={16}/> {assembly.vote.options[2]}</Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
+                    ))
+                ) : (
+                     <p className="text-sm text-muted-foreground text-center py-4">No hay asambleas activas.</p>
+                )}
+            </section>
+
+            {/* Past Assemblies */}
+            <section>
+                <h3 className="text-lg font-semibold mb-3">Historial de Asambleas</h3>
+                 {pastAssemblies.length > 0 ? (
+                    <div className="space-y-3">
+                        {pastAssemblies.map(assembly => (
+                            <Card key={assembly.id} className="bg-muted/30">
+                                <CardHeader className="flex-row items-center justify-between py-4">
+                                    <div>
+                                        <CardTitle className="text-base">{assembly.title}</CardTitle>
+                                        <p className="text-sm text-muted-foreground">{new Date(assembly.date).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                    </div>
+                                     {assembly.docs && assembly.docs.length > 0 && (
+                                        <Button variant="ghost" size="sm" asChild>
+                                            <a href={assembly.docs[0].url} target="_blank" rel="noopener noreferrer">
+                                                <FileText className="w-4 h-4 mr-2" />Ver Minuta
+                                            </a>
+                                        </Button>
+                                     )}
+                                </CardHeader>
+                            </Card>
+                        ))}
                     </div>
-                     <div className="animate-slide-up-and-fade" style={{animationDelay: '300ms'}}>
-                        {activeAssembly.vote && <VotingCard vote={activeAssembly.vote} assemblyTitle={activeAssembly.title} />}
-                    </div>
-                </div>
-            ) : (
-                 <EmptyState
-                    icon={Users}
-                    title="No hay asambleas próximas"
-                    description="Se te notificará cuando se convoque una nueva asamblea."
-                />
-            )}
-            
-            {!isLoading && (
-                <div className="mt-8">
-                    <h2 className="text-xl font-bold mb-4">Historial de Asambleas</h2>
-                    {pastAssemblies.length > 0 ? (
-                        <Accordion type="single" collapsible className="w-full space-y-2">
-                            {pastAssemblies.map((assembly, i) => (
-                                <AccordionItem 
-                                    value={assembly.id} 
-                                    key={assembly.id} 
-                                    className="border-none" 
-                                >
-                                     <Card className="transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-soft animate-slide-up-and-fade" style={{animationDelay: `${i * 100 + 400}ms`}}>
-                                        <AccordionTrigger className="p-0 hover:no-underline group">
-                                            <CardHeader className="flex-row items-center gap-4 w-full">
-                                                <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
-                                                    <FileText className="h-5 w-5"/>
-                                                </div>
-                                                <div className="flex-1 text-left">
-                                                    <p className="font-semibold text-sm">{assembly.title}</p>
-                                                    <p className="text-xs text-muted-foreground">{format(new Date(assembly.date), "dd 'de' MMMM, yyyy", { locale: es })}</p>
-                                                </div>
-                                                <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-90 mr-4" />
-                                            </CardHeader>
-                                        </AccordionTrigger>
-                                        <AccordionContent>
-                                            <div className="p-4 pt-0">
-                                                <p className="text-sm text-muted-foreground mb-4">{assembly.topics.join(', ')}</p>
-                                                <Button asChild variant="link" className="p-0 h-auto">
-                                                    <a href={assembly.docs[0].url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-primary hover:underline">
-                                                        Ver minuta de la asamblea
-                                                    </a>
-                                                </Button>
-                                            </div>
-                                        </AccordionContent>
-                                     </Card>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
-                    ) : (
-                        <p className="text-sm text-muted-foreground">No hay asambleas pasadas registradas.</p>
-                    )}
-                </div>
-            )}
+                 ) : (
+                     <p className="text-sm text-muted-foreground">No hay historial de asambleas.</p>
+                 )}
+            </section>
         </div>
     );
 }
