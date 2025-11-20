@@ -1,17 +1,5 @@
-
 "use client";
 
-import {
-  Home,
-  CreditCard,
-  Wrench,
-  ShieldCheck,
-  Building2,
-  Settings,
-  Bell,
-  HelpCircle,
-  MessageCircle,
-} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icons } from "@/components/icons";
@@ -21,7 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useSidebar } from "@/components/providers/sidebar-provider";
+import { useSidebar } from "../providers/sidebar-provider";
 import {
   Sheet,
   SheetContent,
@@ -29,28 +17,16 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
-
-const mainNavItems = [
-  { href: "/dashboard", icon: Home, label: "Inicio" },
-  { href: "/notificaciones", icon: Bell, label: "Notificaciones" },
-  { href: "/comunidad", icon: Building2, label: "Comunidad" },
-  { href: "/servicios", icon: Wrench, label: "Servicios" },
-  { href: "/pagos", icon: CreditCard, label: "Pagos" },
-  { href: "/accesos", icon: ShieldCheck, label: "Accesos" },
-];
-
-const helpNavItems = [
-  { href: "/whatsapp-guide", icon: MessageCircle, label: "Guía WhatsApp" },
-  { href: "/faq", icon: HelpCircle, label: "FAQ" },
-  { href: "/settings", icon: Settings, label: "Ajustes" },
-];
+import { mainNavItems, helpNavItems, type NavItem } from "@/config/nav";
 
 function NavLink({
   item,
   isCollapsed,
+  closeSheet,
 }: {
-  item: (typeof mainNavItems)[0];
+  item: NavItem;
   isCollapsed: boolean;
+  closeSheet?: () => void;
 }) {
   const pathname = usePathname();
   const isActive =
@@ -77,44 +53,47 @@ function NavLink({
     </>
   );
 
-  return (
-    <Tooltip delayDuration={0}>
-      <TooltipTrigger asChild>
-        <Link
-          href={item.href}
-          className={cn(
-            "flex items-center gap-4 rounded-lg px-4 py-3 transition-colors duration-200",
-            isActive
-              ? "bg-primary/10 text-primary"
-              : "hover:bg-muted"
-          )}
-        >
-          {linkContent}
-        </Link>
-      </TooltipTrigger>
-      {isCollapsed && (
+  const linkProps = {
+    href: item.href,
+    onClick: closeSheet,
+    className: cn(
+      "flex items-center gap-4 rounded-lg px-4 py-3 transition-colors duration-200",
+      isActive
+        ? "bg-primary/10 text-primary"
+        : "text-foreground hover:bg-muted"
+    ),
+  };
+
+  if (isCollapsed) {
+    return (
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <Link {...linkProps}>{linkContent}</Link>
+        </TooltipTrigger>
         <TooltipContent
           side="right"
           className="bg-background text-foreground"
         >
           <p>{item.label}</p>
         </TooltipContent>
-      )}
-    </Tooltip>
-  );
+      </Tooltip>
+    );
+  }
+
+  return <Link {...linkProps}>{linkContent}</Link>;
 }
 
-function NavLinks({ isCollapsed }: { isCollapsed: boolean }) {
+function NavLinks({ isCollapsed, closeSheet }: { isCollapsed: boolean, closeSheet?: () => void }) {
   return (
     <>
       <nav className="flex-1 space-y-2 px-4 py-4">
         {mainNavItems.map((item) => (
-          <NavLink key={item.href} item={item} isCollapsed={isCollapsed} />
+          <NavLink key={item.href} item={item} isCollapsed={isCollapsed} closeSheet={closeSheet}/>
         ))}
       </nav>
       <div className="border-t p-4 space-y-2">
         {helpNavItems.map((item) => (
-          <NavLink key={item.href} item={item} isCollapsed={isCollapsed} />
+          <NavLink key={item.href} item={item} isCollapsed={isCollapsed} closeSheet={closeSheet} />
         ))}
       </div>
     </>
@@ -122,8 +101,11 @@ function NavLinks({ isCollapsed }: { isCollapsed: boolean }) {
 }
 
 export function AppSidebar() {
-  const { isSidebarOpen, setSidebarOpen, isCollapsed } = useSidebar();
+  const { isSidebarOpen, setSidebarOpen } = useSidebar();
   const isMobile = useIsMobile();
+  const isCollapsed = false; // For now, we don't implement collapse on desktop.
+
+  const closeSheet = () => setSidebarOpen(false);
 
   if (isMobile) {
     return (
@@ -131,15 +113,13 @@ export function AppSidebar() {
         <SheetContent side="left" className="p-0">
           <div className="flex h-full flex-col">
             <SheetHeader className="h-16 flex-shrink-0 items-center border-b px-4">
-                <Link href="/dashboard" className="flex items-center gap-2">
-                  <Icons.logo className="h-6 w-6 text-primary" />
-                  <span className="text-lg font-semibold">
-                      Habitat
-                  </span>
-                </Link>
+              <Link href="/dashboard" className="flex items-center gap-2" onClick={closeSheet}>
+                <Icons.logo className="h-6 w-6 text-primary" />
+                <span className="text-lg font-semibold">Habitat</span>
                 <SheetTitle className="sr-only">Menú principal</SheetTitle>
+              </Link>
             </SheetHeader>
-            <NavLinks isCollapsed={false} />
+            <NavLinks isCollapsed={false} closeSheet={closeSheet} />
           </div>
         </SheetContent>
       </Sheet>
@@ -147,7 +127,10 @@ export function AppSidebar() {
   }
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-64 flex-shrink-0 border-r md:block">
+    <aside className={cn(
+        "sticky top-0 hidden h-screen flex-shrink-0 border-r md:block transition-[width] duration-300",
+        isCollapsed ? "w-20" : "w-64"
+      )}>
         <div className="flex h-full flex-col">
           <div className="flex h-16 items-center border-b px-4">
             <Link href="/dashboard" className="flex items-center gap-2">
