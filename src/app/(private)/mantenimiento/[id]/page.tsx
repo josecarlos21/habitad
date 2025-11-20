@@ -6,13 +6,13 @@ import Link from "next/link";
 import { tickets as mockTickets, user as mockUser } from "@/lib/mocks";
 import type { Ticket } from "@/lib/types";
 import { notFound, useRouter } from "next/navigation";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { ArrowLeft, Paperclip, Send, Wrench } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
@@ -34,13 +34,39 @@ const mockComments = [
 function TicketDetailSkeleton() {
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            <div className="flex items-center justify-center h-full">
-                <Spinner size="lg" />
+            <div className="flex items-center gap-4">
+                <Skeleton className="h-10 w-10" />
+                <Skeleton className="h-7 w-48" />
+            </div>
+            <div className="grid gap-6 lg:grid-cols-3">
+                <div className="lg:col-span-2 space-y-6">
+                    <Card>
+                        <CardHeader><Skeleton className="h-6 w-1/2" /></CardHeader>
+                        <CardContent><Skeleton className="h-10 w-full" /></CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader><Skeleton className="h-6 w-1/3" /></CardHeader>
+                        <CardContent className="space-y-4">
+                            <Skeleton className="h-16 w-full" />
+                            <Skeleton className="h-16 w-full" />
+                        </CardContent>
+                    </Card>
+                </div>
+                <div className="space-y-6">
+                    <Card>
+                         <CardHeader><Skeleton className="h-6 w-1/3" /></CardHeader>
+                         <CardContent className="space-y-4">
+                            <Skeleton className="h-5 w-full" />
+                            <Skeleton className="h-5 w-full" />
+                            <Skeleton className="h-5 w-full" />
+                            <Skeleton className="h-10 w-full mt-2" />
+                         </CardContent>
+                    </Card>
+                </div>
             </div>
         </main>
     )
 }
-
 
 export default function TicketDetailPage({ params }: { params: { id: string } }) {
     const { toast } = useToast();
@@ -49,11 +75,12 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
     const [isResolving, setIsResolving] = React.useState(false);
 
     React.useEffect(() => {
-        setTicket(undefined);
+        setIsResolving(false);
+        const foundTicket = mockTickets.find((t) => t.id === params.id);
+        // Simulate loading
         const timer = setTimeout(() => {
-            const foundTicket = mockTickets.find((t) => t.id === params.id);
             setTicket(foundTicket || null);
-        }, 1000);
+        }, 500);
         return () => clearTimeout(timer);
     }, [params.id]);
 
@@ -150,7 +177,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                                 </div>
                             ))}
                         </CardContent>
-                        <CardFooter>
+                        <CardContent>
                             <form onSubmit={handleCommentSubmit} className="flex w-full items-center gap-2">
                                 <Input name="comment" placeholder="Escribe un comentario..." />
                                  <Button variant="ghost" size="icon" type="button" aria-label="Adjuntar archivo" onClick={() => router.push('/maintenance')}>
@@ -160,7 +187,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                                     <Send className="h-5 w-5"/>
                                 </Button>
                             </form>
-                        </CardFooter>
+                        </CardContent>
                     </Card>
                 </div>
                  <div className="space-y-6">

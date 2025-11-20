@@ -26,7 +26,7 @@ export default function PaqueteriaPageContent() {
         const timer = setTimeout(() => {
             setParcels(mockParcels);
             setIsLoading(false);
-        }, 300); // Reduced delay
+        }, 300);
         return () => clearTimeout(timer);
     }, []);
 

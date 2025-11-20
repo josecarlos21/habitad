@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { Skeleton } from '../ui/skeleton';
 
 export function LiveClock() {
   const [time, setTime] = useState<Date | null>(null);
@@ -20,18 +21,16 @@ export function LiveClock() {
       clearInterval(timerId);
     };
   }, []);
-
-  if (!isClient || !time) {
-    // Render a placeholder or nothing on the server and initial client render
+  
+  if (!isClient) {
+    // Render a placeholder on the server and initial client render
     // to prevent hydration mismatch.
-    return (
-        <div className="hidden h-5 w-72 animate-pulse rounded-md bg-muted md:block" />
-    );
+    return <Skeleton className="hidden h-5 w-72 md:block" />;
   }
 
   return (
     <div className="hidden text-sm font-medium text-muted-foreground md:block">
-      {format(time, "eeee, dd 'de' MMMM, yyyy HH:mm:ss", { locale: es })}
+      {time ? format(time, "eeee, dd 'de' MMMM, yyyy HH:mm:ss", { locale: es }) : "Cargando..."}
     </div>
   );
 }

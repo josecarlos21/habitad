@@ -8,7 +8,7 @@ import { es } from "date-fns/locale";
 import { ArrowRight, CheckCircle, Clock, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { invoices as mockInvoices } from "@/lib/mocks";
 import type { Invoice } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";

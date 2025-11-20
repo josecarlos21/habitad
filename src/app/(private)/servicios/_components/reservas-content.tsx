@@ -4,16 +4,15 @@
 import Image from "next/image";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { amenities as mockAmenities } from "@/lib/mocks";
-import { Calendar as CalendarIcon, CheckCircle } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import type { Amenity } from "@/lib/types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/app/empty-state";
-import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
@@ -40,7 +39,8 @@ function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
 
         setIsSubmitting(false);
         setOpen(false);
-        router.push('/maintenance');
+        // Redirect to a confirmation or bookings list page
+        router.push('/servicios?tab=reservas');
     };
     
     const handleOpenChange = (isOpen: boolean) => {

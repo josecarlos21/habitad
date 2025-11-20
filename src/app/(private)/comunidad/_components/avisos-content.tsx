@@ -29,7 +29,7 @@ export default function AvisosPageContent() {
         const timer = setTimeout(() => {
             setAnnouncementList(mockAnnouncements);
             setIsLoading(false);
-        }, 300); // Reduced delay
+        }, 300);
         return () => clearTimeout(timer);
     }, []);
 
@@ -73,10 +73,10 @@ export default function AvisosPageContent() {
                                         <CardTitle className="text-lg">{announcement.title}</CardTitle>
                                         {announcement.pinned && <Badge>Fijado</Badge>}
                                     </div>
-                                    <CardDescription className="flex flex-wrap items-center gap-4 pt-1 text-xs">
+                                    <div className="flex flex-wrap items-center gap-4 pt-1 text-xs text-muted-foreground">
                                         <span className="flex items-center gap-1.5"><Calendar className="h-3 w-3" /> {format(new Date(announcement.createdAt), "dd 'de' MMMM, yyyy", { locale: es })}</span>
                                         <Badge variant={category.variant}><Tag className="mr-1.5 h-3 w-3" />{category.label}</Badge>
-                                    </CardDescription>
+                                    </div>
                                 </CardHeader>
                                 <CardContent>
                                     <p className="text-foreground/80 whitespace-pre-wrap">{announcement.body}</p>
