@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -10,21 +10,19 @@ import { useCondoUser } from "@/hooks/use-condo-user";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { mockAnnouncements, mockBookings, mockAmenities, mockAssemblies } from "@/lib/mocks";
 import type { Charge, Incident, AmenityBooking, Announcement, VisitorPass, Parcel, Assembly } from "@/lib/types";
-import { Spinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCollection, useFirestore } from "@/firebase";
 import { collection, query, where, orderBy, limit } from "firebase/firestore";
 
 // Helper to combine and sort all relevant items into a single feed
-const createActivityFeed = ({ announcements, incidents, bookings, visitorPasses, parcels, assemblies }: { announcements: Announcement[], incidents: Incident[] | null, bookings: AmenityBooking[], visitorPasses: VisitorPass[] | null, parcels: Parcel[] | null, assemblies: Assembly[] }) => {
-    const announcementItems = announcements.map(item => ({ ...item, type: 'announcement', date: item.createdAt, title: item.title, description: `Publicado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` }));
+const createActivityFeed = ({ announcements, incidents, bookings, visitorPasses, parcels, assemblies }: { announcements: Announcement[] | null, incidents: Incident[] | null, bookings: AmenityBooking[] | null, visitorPasses: VisitorPass[] | null, parcels: Parcel[] | null, assemblies: Assembly[] | null }) => {
+    const announcementItems = announcements?.map(item => ({ ...item, type: 'announcement', date: item.createdAt, title: item.title, description: `Publicado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` })) || [];
     const incidentItems = incidents?.map(item => ({ ...item, type: 'incident', date: item.createdAt, title: item.title, description: `Creado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` })) || [];
-    const bookingItems = bookings.map(item => ({ ...item, type: 'booking', date: item.start, title: `Reserva: ${mockAmenities.find(a => a.id === item.amenityId)?.name}`, description: format(new Date(item.start), "eeee dd 'a las' h:mm a", { locale: es }) }));
+    const bookingItems = bookings?.map(item => ({ ...item, type: 'booking', date: item.start, title: `Reserva`, description: format(new Date(item.start), "eeee dd 'a las' h:mm a", { locale: es }) })) || [];
     const visitorPassItems = visitorPasses?.map(item => ({ ...item, type: 'visitor_pass', date: item.validFrom, title: `Pase para: ${item.visitorName}`, description: `Generado ${formatDistanceToNow(new Date(item.validFrom), { locale: es, addSuffix: true })}` })) || [];
     const parcelItems = parcels?.filter(p => p.status === 'at_guard').map(item => ({ ...item, type: 'parcel', date: item.arrivedAt, title: `Paquete de ${item.carrier}`, description: `Recibido ${formatDistanceToNow(new Date(item.arrivedAt), { locale: es, addSuffix: true })}` })) || [];
-    const assemblyItems = assemblies.filter(a => a.status === 'OPEN').map(item => ({ ...item, type: 'assembly', date: item.scheduledAt, title: item.title, description: `Próximo ${format(new Date(item.scheduledAt), "eeee dd 'de' MMMM", { locale: es })}` }));
+    const assemblyItems = assemblies?.filter(a => a.status === 'OPEN').map(item => ({ ...item, type: 'assembly', date: item.scheduledAt, title: item.title, description: `Próximo ${format(new Date(item.scheduledAt), "eeee dd 'de' MMMM", { locale: es })}` })) || [];
 
 
     const allItems = [...announcementItems, ...incidentItems, ...bookingItems, ...visitorPassItems, ...parcelItems, ...assemblyItems];
@@ -134,17 +132,23 @@ export default function DashboardPage() {
         if (!firestore || !user || user.units.length === 0) return null;
         return query(collection(firestore, `condos/${user.condoId}/parcels`), where('unitId', 'in', user.units.map(u=>u.id)), orderBy('arrivedAt', 'desc'), limit(5));
     }, [firestore, user]);
+    const announcementsQuery = useMemo(() => !firestore || !user ? null : query(collection(firestore, `condos/${user.condoId}/announcements`), orderBy('createdAt', 'desc'), limit(5)), [firestore, user]);
+    const assembliesQuery = useMemo(() => !firestore || !user ? null : query(collection(firestore, `condos/${user.condoId}/assemblies`), orderBy('scheduledAt', 'desc'), limit(5)), [firestore, user]);
+    // Bookings are not yet implemented in this version
+    // const bookingsQuery = ...
 
     const { data: incidents, isLoading: isIncidentsLoading } = useCollection<Incident>(incidentsQuery);
     const { data: charges, isLoading: isChargesLoading } = useCollection<Charge>(chargesQuery);
     const { data: visitorPasses, isLoading: isPassesLoading } = useCollection<VisitorPass>(passesQuery);
     const { data: parcels, isLoading: isParcelsLoading } = useCollection<Parcel>(parcelsQuery);
+    const { data: announcements, isLoading: isAnnouncementsLoading } = useCollection<Announcement>(announcementsQuery);
+    const { data: assemblies, isLoading: isAssembliesLoading } = useCollection<Assembly>(assembliesQuery);
 
-    const isLoading = isUserLoading || isIncidentsLoading || isChargesLoading || isPassesLoading || isParcelsLoading;
+    const isLoading = isUserLoading || isIncidentsLoading || isChargesLoading || isPassesLoading || isParcelsLoading || isAnnouncementsLoading || isAssembliesLoading;
 
     const nextPayment = charges?.[0];
     const activeIncident = incidents?.[0];
-    const activityFeed = createActivityFeed({ announcements: mockAnnouncements, incidents, bookings: mockBookings, visitorPasses, parcels, assemblies: mockAssemblies });
+    const activityFeed = createActivityFeed({ announcements, incidents, bookings: null, visitorPasses, parcels, assemblies });
 
     return (
         <main className="flex flex-1 flex-col p-4 md:p-6 animate-fade-in">
@@ -206,3 +210,5 @@ export default function DashboardPage() {
         </main>
     );
 }
+
+    
