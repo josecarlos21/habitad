@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import type { Auth, User } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
 
-export function useUser(auth: Auth) {
+export function useUser(auth: Auth | null) {
   const [userState, setUserState] = useState<{
     data: User | null;
     isLoading: boolean;
@@ -17,6 +17,11 @@ export function useUser(auth: Auth) {
   });
 
   useEffect(() => {
+    if (!auth) {
+        // Auth object is not ready yet.
+        return;
+    }
+
     const unsubscribe = onAuthStateChanged(
       auth,
       (user) => {

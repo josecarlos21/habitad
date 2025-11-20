@@ -35,15 +35,18 @@ export function useFirebase() {
 }
 
 export function useFirebaseApp() {
-  return useFirebase().app;
+  const context = useFirebase();
+  return context?.app;
 }
 
 export function useAuth() {
-  return useFirebase().auth;
+  const context = useFirebase();
+  return context?.auth;
 }
 
 export function useFirestore() {
-  return useFirebase().firestore;
+  const context = useFirebase();
+  return context?.firestore;
 }
 
 export function useUser() {
