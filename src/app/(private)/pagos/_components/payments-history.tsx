@@ -2,7 +2,6 @@
 "use client";
 
 import * as React from "react";
-import { mockCharges } from "@/lib/mocks";
 import type { Charge } from "@/lib/types";
 import {
     Table,
@@ -15,20 +14,24 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCollection, useFirestore } from "@/firebase";
+import { useCondoUser } from "@/hooks/use-condo-user";
+import { collection, query, where, orderBy } from "firebase/firestore";
 
 const ChargeStatusBadge = ({ status, dueDate }: { status: Charge['status'], dueDate: string }) => {
     const isOverdue = new Date(dueDate) < new Date() && status === 'OPEN';
-    const finalStatus = isOverdue ? 'overdue' : status;
+    
+    let finalStatus: 'overdue' | Charge['status'] = status;
+    if (isOverdue) finalStatus = 'overdue';
 
     const statusMap = {
-        SETTLED: { label: 'Pagado', className: 'bg-green-100 text-green-800 border-green-200' },
-        OPEN: { label: 'Pendiente', className: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
-        overdue: { label: 'Vencido', className: 'bg-red-100 text-red-800 border-red-200' },
-        PARTIALLY_PAID: { label: 'Parcial', className: 'bg-blue-100 text-blue-800 border-blue-200' },
-        CANCELLED: { label: 'Cancelado', className: 'bg-gray-100 text-gray-800 border-gray-200' },
+        SETTLED: { label: 'Pagado', className: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-300' },
+        OPEN: { label: 'Pendiente', className: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300' },
+        overdue: { label: 'Vencido', className: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/50 dark:text-red-300' },
+        PARTIALLY_PAID: { label: 'Parcial', className: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/50 dark:text-blue-300' },
+        CANCELLED: { label: 'Cancelado', className: 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800/50 dark:text-gray-400' },
     }
-    const current = statusMap[finalStatus as keyof typeof statusMap] || statusMap.OPEN;
-
+    const current = statusMap[finalStatus] || statusMap.OPEN;
 
     return (
         <Badge
@@ -41,19 +44,23 @@ const ChargeStatusBadge = ({ status, dueDate }: { status: Charge['status'], dueD
 }
 
 export function PaymentsHistory() {
-    const [charges, setCharges] = React.useState<Charge[]>([]);
-    const [isLoading, setIsLoading] = React.useState(true);
+    const firestore = useFirestore();
+    const { user } = useCondoUser();
+    
+    const chargesQuery = React.useMemo(() => {
+        if (!firestore || !user) return null;
+        // This query should get all charges for the user's units
+        const userUnitIds = user.units.map(u => u.id);
+        if (userUnitIds.length === 0) return null;
 
-    React.useEffect(() => {
-        setIsLoading(true);
-        // Simula la carga de datos
-        const timer = setTimeout(() => {
-            const sortedCharges = [...mockCharges].sort((a, b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
-            setCharges(sortedCharges);
-            setIsLoading(false);
-        }, 500);
-        return () => clearTimeout(timer);
-    }, []);
+        return query(
+          collection(firestore, `condos/${user.condoId}/charges`),
+          where("unitId", "in", userUnitIds),
+          orderBy("dueDate", "desc")
+        );
+    }, [firestore, user]);
+
+    const { data: charges, isLoading } = useCollection<Charge>(chargesQuery);
 
     return (
         <section>
@@ -78,7 +85,7 @@ export function PaymentsHistory() {
                                     <TableCell className="text-center"><Skeleton className="h-6 w-20 mx-auto" /></TableCell>
                                 </TableRow>
                             ))
-                        ) : (
+                        ) : charges && charges.length > 0 ? (
                             charges.map((charge) => (
                                 <TableRow key={charge.id}>
                                     <TableCell className="font-medium max-w-[200px] truncate">{charge.description}</TableCell>
@@ -87,6 +94,12 @@ export function PaymentsHistory() {
                                     <TableCell className="text-center"><ChargeStatusBadge status={charge.status} dueDate={charge.dueDate} /></TableCell>
                                 </TableRow>
                             ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={4} className="h-24 text-center">
+                                    No se encontraron cargos.
+                                </TableCell>
+                            </TableRow>
                         )}
                     </TableBody>
                 </Table>
@@ -94,5 +107,3 @@ export function PaymentsHistory() {
         </section>
     );
 }
-
-    

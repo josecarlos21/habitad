@@ -2,44 +2,72 @@
 "use client";
 
 import * as React from "react";
-import { mockCharges } from "@/lib/mocks";
 import type { Charge } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, AlertTriangle } from "lucide-react";
+import { ArrowRight, AlertTriangle, Wallet } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCollection, useFirestore } from "@/firebase";
+import { useCondoUser } from "@/hooks/use-condo-user";
+import { collection, query, where } from "firebase/firestore";
+import { EmptyState } from "@/components/app/empty-state";
 
 export function PendingPayments() {
-    const [pendingCharges, setPendingCharges] = React.useState<Charge[]>([]);
-    const [isLoading, setIsLoading] = React.useState(true);
+    const firestore = useFirestore();
+    const { user } = useCondoUser();
+    
+    const pendingChargesQuery = React.useMemo(() => {
+        if (!firestore || !user) return null;
+        // This query should get all charges for the user's units
+        const userUnitIds = user.units.map(u => u.id);
+        if (userUnitIds.length === 0) return null;
 
-    React.useEffect(() => {
-        setIsLoading(true);
-        // Simula la carga de datos
-        const timer = setTimeout(() => {
-            const filtered = mockCharges.filter(charge => charge.status === 'OPEN' || charge.status === 'PARTIALLY_PAID')
-                                      .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
-            setPendingCharges(filtered);
-            setIsLoading(false);
-        }, 500);
+        return query(
+          collection(firestore, `condos/${user.condoId}/charges`),
+          where("unitId", "in", userUnitIds),
+          where("status", "in", ["OPEN", "PARTIALLY_PAID"])
+        );
+    }, [firestore, user]);
 
-        return () => clearTimeout(timer);
-    }, []);
+    const { data: pendingCharges, isLoading } = useCollection<Charge>(pendingChargesQuery);
+
 
     if (isLoading) {
-        return <Skeleton className="h-40 w-full" />;
+        return (
+             <section>
+                <h2 className="text-xl font-semibold mb-4">Pagos Pendientes</h2>
+                <div className="grid gap-4 md:grid-cols-2">
+                    <Skeleton className="h-48 w-full" />
+                    <Skeleton className="h-48 w-full" />
+                </div>
+            </section>
+        )
     }
 
-    if (pendingCharges.length === 0) {
-        return null; // No mostrar nada si no hay pendientes
+    if (!pendingCharges || pendingCharges.length === 0) {
+        return (
+            <section>
+                <h2 className="text-xl font-semibold mb-4">Pagos Pendientes</h2>
+                 <Card className="flex flex-col items-center justify-center text-center p-8 border-dashed">
+                    <CardHeader className="p-0">
+                        <Wallet className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                        <CardTitle>¡Estás al día!</CardTitle>
+                        <CardDescription>No tienes ningún pago pendiente.</CardDescription>
+                    </CardHeader>
+                </Card>
+            </section>
+        );
     }
+
+    // Sort by due date ascending
+    const sortedCharges = pendingCharges.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
     return (
         <section>
             <h2 className="text-xl font-semibold mb-4">Pagos Pendientes</h2>
             <div className="grid gap-4 md:grid-cols-2">
-                {pendingCharges.map(charge => {
+                {sortedCharges.map(charge => {
                     const isOverdue = new Date(charge.dueDate) < new Date();
                     return (
                     <Card key={charge.id} className={isOverdue ? 'border-destructive' : ''}>
@@ -72,5 +100,3 @@ export function PendingPayments() {
         </section>
     );
 }
-
-    
