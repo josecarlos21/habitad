@@ -3,10 +3,11 @@
 
 import Image from "next/image";
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { amenities as mockAmenities } from "@/lib/mocks";
-import { Calendar as CalendarIcon, CheckCircle } from "lucide-react";
+import { Calendar as CalendarIcon, CheckCircle, CreditCard } from "lucide-react";
 import type { Amenity } from "@/lib/types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { Calendar } from "@/components/ui/calendar";
@@ -20,6 +21,7 @@ import { cn } from "@/lib/utils";
 
 
 function BookAmenitySheet({ amenity, onBookingSuccess }: { amenity: Amenity, onBookingSuccess: (amenityName: string, date: Date) => void }) {
+    const router = useRouter();
     const { toast } = useToast();
     const [open, setOpen] = React.useState(false);
     const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -54,6 +56,11 @@ function BookAmenitySheet({ amenity, onBookingSuccess }: { amenity: Amenity, onB
             }, 300);
         }
     }
+    
+    const handleGoToPayments = () => {
+        handleOpenChange(false);
+        router.push('/pagos');
+    }
 
     return (
         <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -71,8 +78,24 @@ function BookAmenitySheet({ amenity, onBookingSuccess }: { amenity: Amenity, onB
                         <p className="text-muted-foreground mt-2">
                             Tu solicitud para <span className="font-semibold text-foreground">{amenity.name}</span> el día <span className="font-semibold text-foreground">{date ? format(date, "dd 'de' MMMM", { locale: es }) : ''}</span> ha sido enviada.
                         </p>
-                        <p className="text-sm text-muted-foreground mt-2">Recibirás una notificación cuando sea aprobada por la administración.</p>
-                        <Button className="mt-6 w-full" onClick={() => handleOpenChange(false)}>Cerrar</Button>
+                        
+                        {amenity.requiresDeposit ? (
+                            <>
+                                <div className="text-sm text-muted-foreground mt-4 p-3 bg-secondary rounded-lg">
+                                    <p>Esta reserva requiere un depósito de seguridad de <span className="font-semibold text-foreground">${amenity.depositAmount} MXN</span>.</p>
+                                    <p className="mt-1">Por favor, procede al pago para confirmar tu solicitud.</p>
+                                </div>
+                                <Button className="mt-6 w-full" onClick={handleGoToPayments}>
+                                    <CreditCard className="mr-2 h-4 w-4" />
+                                    Pagar Depósito
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <p className="text-sm text-muted-foreground mt-2">Recibirás una notificación cuando sea aprobada por la administración.</p>
+                                <Button className="mt-6 w-full" onClick={() => handleOpenChange(false)}>Cerrar</Button>
+                            </>
+                        )}
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="flex flex-col h-full">
@@ -149,7 +172,7 @@ export default function ReservasPageContent() {
                                <Skeleton className="h-10 w-full" />
                             </CardFooter>
                         </Card>
-                    ))}
+                    ))}\
                 </div>
             ) : amenityList.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

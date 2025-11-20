@@ -1,102 +1,82 @@
-import type { User, Unit, Invoice, Ticket, Amenity, Booking, Parcel, Announcement, VisitorPass, Assembly, Notification, FaqItem } from './types';
 
-export const units: Unit[] = [
-    { id: 'u_101', tower: 'A', number: '101' },
-    { id: 'u_102', tower: 'A', number: '102' },
-];
-
-export const user: User = {
-    id: 'user_1_live',
-    name: 'Residente Conectado',
-    email: 'residente@habitat.com',
-    phone: '555 555 5555',
-    units: [{ tower: 'A', number: '101' }],
-    imageUrl: 'https://i.pravatar.cc/150?u=user_1_live',
-    role: 'resident',
-};
-
-
-export const invoices: Invoice[] = [
-    { id: 'inv_1', unitId: 'u_101', concept: 'Mantenimiento Noviembre 2025', amount: 2450.00, currency: 'MXN', dueDate: '2025-11-30T23:59:59Z', status: 'pending' },
-    { id: 'inv_2', unitId: 'u_101', concept: 'Cuota Extra Gimnasio', amount: 300.00, currency: 'MXN', dueDate: '2025-11-20T23:59:59Z', status: 'overdue' },
-    { id: 'inv_3', unitId: 'u_101', concept: 'Mantenimiento Octubre 2025', amount: 2450.00, currency: 'MXN', dueDate: '2025-10-31T23:59:59Z', status: 'paid' },
-    { id: 'inv_4', unitId: 'u_101', concept: 'Mantenimiento Septiembre 2025', amount: 2450.00, currency: 'MXN', dueDate: '2025-09-30T23:59:59Z', status: 'paid' },
-];
-
-export const tickets: Ticket[] = [
-    { id: 't_1', unitId: 'u_101', category: 'plumbing', title: 'Fuga de agua en lavabo de baño', description: 'La llave de agua fría del lavabo principal tiene un goteo constante.', status: 'open', createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString() },
-    { id: 't_2', unitId: 'u_101', category: 'common_area', title: 'Luz parpadeante en pasillo piso 1', description: 'Una de las lámparas del corredor del primer piso no funciona correctamente.', status: 'in_progress', createdAt: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString() },
-    { id: 't_3', unitId: 'u_101', category: 'electrical', title: 'Contacto no funciona', description: 'El enchufe de la pared de la sala no tiene corriente.', status: 'resolved', createdAt: '2025-10-15T10:00:00Z' },
-];
+import type { Amenity, FaqItem, Ticket } from "./types";
 
 export const amenities: Amenity[] = [
-    { id: 'a_1', name: 'Salón de Usos Múltiples', description: 'Ideal para tus eventos y reuniones. Capacidad para 50 personas.', image: 'https://picsum.photos/seed/amenity1/600/400', requiresDeposit: true, depositAmount: 1000 },
-    { id: 'a_2', name: 'Gimnasio', description: 'Equipado con todo lo necesario para tu rutina de ejercicio.', image: 'https://picsum.photos/seed/amenity2/600/400', requiresDeposit: false },
-    { id: 'a_3', name: 'Alberca', description: 'Relájate y disfruta del sol en nuestra alberca con carril de nado.', image: 'https://picsum.photos/seed/amenity3/600/400', requiresDeposit: false },
-    { id: 'a_4', name: 'Asadores', description: 'Zona de asadores al aire libre para convivencias.', image: 'https://picsum.photos/seed/amenity4/600/400', requiresDeposit: true, depositAmount: 250 },
-];
-
-export const bookings: Booking[] = [
-    { id: 'b_1', amenityId: 'a_3', userId: 'user_1', slot: { start: new Date(new Date().setHours(14, 0, 0, 0)).toISOString(), end: new Date(new Date().setHours(15, 0, 0, 0)).toISOString() }, status: 'confirmed' },
-    { id: 'b_2', amenityId: 'a_1', userId: 'user_1', slot: { start: new Date(new Date().setDate(new Date().getDate() + 5)).toISOString(), end: new Date(new Date().setDate(new Date().getDate() + 5)).toISOString() }, status: 'confirmed' },
-];
-
-export const parcels: Parcel[] = [
-    { id: 'p_1', unitId: 'u_101', carrier: 'Amazon', trackingNumber: 'AMZ123456789', arrivedAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), status: 'at_guard' },
-    { id: 'p_2', unitId: 'u_101', carrier: 'Mercado Libre', trackingNumber: 'ML987654321', arrivedAt: '2025-11-08T11:00:00Z', status: 'picked_up' },
-];
-
-export const announcements: Announcement[] = [
-    { id: 'ann_1', title: 'Corte de Agua Programado', body: 'Se realizará un corte en el suministro de agua el próximo viernes de 10:00 a 14:00 por mantenimiento en la cisterna principal. Agradecemos su comprensión.', category: 'maintenance', createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), pinned: true },
-    { id: 'ann_2', title: 'Clase de Yoga Semanal', body: 'No te pierdas la clase de yoga todos los miércoles a las 7:00 am en el jardín central. ¡Es gratuita!', category: 'event', createdAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), pinned: false },
-    { id: 'ann_3', title: 'Recordatorio de Seguridad', body: 'Se les recuerda a todos los residentes verificar que la puerta principal quede bien cerrada al entrar y salir del edificio.', category: 'security', createdAt: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(), pinned: false },
-];
-
-export const visitorPasses: VisitorPass[] = [
-    { id: 'vp_1', userId: 'user_1', visitorName: 'Ana García', validFrom: new Date().toISOString(), validTo: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString(), qrToken: 'qr_token_ana_garcia_123' },
-    { id: 'vp_2', userId: 'user_1', visitorName: 'Servicio de Internet', validFrom: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(), validTo: new Date(new Date(new Date().setDate(new Date().getDate() + 2)).setHours(18, 0, 0, 0)).toISOString(), qrToken: 'qr_token_internet_456' },
-];
-
-export const mockAssemblies: Assembly[] = [
-    { 
-        id: 'as_1', 
-        title: 'Asamblea General Ordinaria Noviembre 2025', 
-        date: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString(),
-        status: 'active',
-        topics: ['Revisión de presupuesto anual', 'Elección de nuevo comité de vigilancia', 'Propuesta de mejora de amenidades'],
-        docs: [{ name: 'Convocatoria Noviembre 2025.pdf', url: '#' }, { name: 'Presupuesto Propuesto.xlsx', url: '#' }],
-        vote: {
-            id: 'v_1',
-            assemblyId: 'as_1',
-            question: '¿Aprueba el presupuesto de mejoras para el gimnasio?',
-            options: ['Sí, apruebo', 'No, rechazo', 'Me abstengo'],
-            status: 'open'
-        }
+    {
+        id: 'sum',
+        name: 'Salón de Usos Múltiples',
+        description: 'Ideal para eventos y reuniones. Equipado con mesas, sillas y proyector. Capacidad para 50 personas.',
+        image: '/images/amenities/sum.jpg',
+        requiresDeposit: true,
+        depositAmount: 1500,
     },
-    { 
-        id: 'as_2', 
-        title: 'Asamblea General Extraordinaria Octubre 2025', 
-        date: '2025-10-15T19:00:00Z',
-        status: 'past',
-        topics: ['Votación sobre el nuevo sistema de seguridad'],
-        docs: [{ name: 'Minuta Asamblea Octubre 2025.pdf', url: '#' }],
+    {
+        id: 'asadores',
+        name: 'Asadores',
+        description: 'Zona al aire libre con parrillas y mesas. Perfecto para una tarde de parrillada con familia y amigos.',
+        image: '/images/amenities/bbq.jpg',
+        requiresDeposit: true,
+        depositAmount: 500,
     },
-     { 
-        id: 'as_3', 
-        title: 'Asamblea General Ordinaria Septiembre 2025', 
-        date: '2025-09-20T19:00:00Z',
-        status: 'past',
-        topics: ['Reporte financiero del trimestre', 'Asuntos generales'],
-        docs: [{ name: 'Minuta Asamblea Septiembre 2025.pdf', url: '#' }],
+    {
+        id: 'gym',
+        name: 'Gimnasio',
+        description: 'Área climatizada con equipo de cardio y pesas para tu rutina de ejercicio diaria. Acceso 24/7.',
+        image: '/images/amenities/gym.jpg',
+        requiresDeposit: false,
+    },
+    {
+        id: 'alberca',
+        name: 'Alberca',
+        description: 'Alberca semi-olímpica con camastros y sombrillas. Disponible de 8:00 a 22:00 hrs.',
+        image: '/images/amenities/pool.jpg',
+        requiresDeposit: false,
     }
 ];
 
-export const mockNotifications: Notification[] = [
-    { id: 'n_1', userId: 'user_1_live', category: 'parcels', title: '¡Ha llegado un paquete!', description: 'Recibiste un paquete de Amazon.', createdAt: new Date(new Date().setHours(new Date().getHours() - 1)).toISOString(), read: false, link: '/accesos?tab=paqueteria' },
-    { id: 'n_2', userId: 'user_1_live', category: 'announcement', title: 'Corte de Agua Programado', description: 'El suministro de agua será suspendido el próximo viernes.', createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), read: false, link: '/comunidad?tab=avisos' },
-    { id: 'n_3', userId: 'user_1_live', category: 'maintenance', title: 'Tu ticket fue actualizado', description: 'El ticket "Fuga de agua" ahora está "En Progreso".', createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(), read: true, link: '/mantenimiento/t_1' },
-    { id: 'n_4', userId: 'user_1_live', category: 'community', title: 'Asamblea General Ordinaria', description: 'Se ha convocado una nueva asamblea para el próximo mes.', createdAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), read: true, link: '/comunidad?tab=asambleas' },
-    { id: 'n_5', userId: 'user_1_live', category: 'parcels', title: 'Recogiste tu paquete', description: 'El paquete de Mercado Libre ha sido entregado.', createdAt: new Date(new Date().setDate(new Date().getDate() - 4)).toISOString(), read: true, link: '/accesos?tab=paqueteria' },
+export const mockTickets: Ticket[] = [
+  {
+    id: 'TKT-001',
+    title: 'Foco quemado en pasillo Torre A, Piso 5',
+    status: 'Resuelto',
+    priority: 'Baja',
+    createdAt: '2023-10-28T10:00:00Z',
+    updatedAt: '2023-10-29T11:00:00Z',
+    area: 'Áreas Comunes',
+    description: 'Uno de los focos del pasillo principal del piso 5, cerca del elevador, está quemado y no enciende. Solicito su reemplazo.',
+    history: [
+      { status: 'Resuelto', date: '2023-10-29T11:00:00Z', comments: 'El equipo de mantenimiento cambió el foco. Ticket cerrado.' },
+      { status: 'En Progreso', date: '2023-10-28T14:00:00Z', comments: 'Ticket asignado a personal de mantenimiento.' },
+      { status: 'Abierto', date: '2023-10-28T10:00:00Z', comments: 'Ticket creado por el residente.' },
+    ]
+  },
+  {
+    id: 'TKT-002',
+    title: 'Falla en puerta de acceso vehicular',
+    status: 'En Progreso',
+    priority: 'Alta',
+    createdAt: '2023-10-30T09:30:00Z',
+    updatedAt: '2023-10-30T10:00:00Z',
+    area: 'Accesos',
+    description: 'La pluma de la puerta de acceso vehicular no está levantando completamente y los coches tienen que pasar con mucho cuidado. Representa un riesgo.',
+    history: [
+      { status: 'En Progreso', date: '2023-10-30T10:00:00Z', comments: 'Se ha contactado al proveedor externo para la reparación. Se espera su llegada en las próximas 3 horas.' },
+      { status: 'Abierto', date: '2023-10-30T09:30:00Z', comments: 'Ticket creado por el residente.' },
+    ]
+  },
+    {
+    id: 'TKT-003',
+    title: 'Limpieza requerida en zona de asadores',
+    status: 'Abierto',
+    priority: 'Media',
+    createdAt: '2023-10-31T12:00:00Z',
+    updatedAt: '2023-10-31T12:00:00Z',
+    area: 'Amenidades',
+    description: 'La zona de asadores quedó muy sucia después de un evento ayer. Los botes de basura están llenos y hay restos de comida en las mesas.',
+    history: [
+        { status: 'Abierto', date: '2023-10-31T12:00:00Z', comments: 'Ticket creado por el residente.' }
+    ]
+  },
 ];
 
 export const mockFaqs: FaqItem[] = [

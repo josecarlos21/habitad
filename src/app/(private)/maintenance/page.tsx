@@ -1,26 +1,35 @@
 
-"use client";
-
-import { EmptyState } from "@/components/app/empty-state";
-import { Button } from "@/components/ui/button";
-import { Wrench } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { CreateTicketSheet } from "./_components/create-ticket-sheet";
+import { TicketList } from "./_components/ticket-list";
 
 export default function MaintenancePage() {
-    const router = useRouter();
+
+    // En el futuro, este estado se manejaría con una llamada a la API
+    // y se pasaría a los componentes hijos.
+    // Por ahora, los datos mock se importan directamente en TicketList.
+
+    const handleTicketCreated = async (newTicket: any) => {
+        "use server";
+        // Lógica para simular la adición de un ticket
+        // En un escenario real, aquí se llamaría a la API para crear el ticket
+        // y luego se revalidarían los datos para actualizar la lista.
+        console.log("New ticket created (simulated):", newTicket);
+    };
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 animate-fade-in">
-            <EmptyState
-                icon={Wrench}
-                title="Funcionalidad en Construcción"
-                description="Esta sección estará disponible próximamente. Estamos trabajando para traértela lo antes posible."
-                action={
-                    <Button onClick={() => router.back()}>
-                        Volver
-                    </Button>
-                }
-            />
-        </main>
+        <div className="space-y-6">
+            <header className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold">Mantenimiento</h1>
+                    <p className="text-muted-foreground">Historial de tus solicitudes de mantenimiento.</p>
+                </div>
+                <CreateTicketSheet onTicketCreated={handleTicketCreated} />
+            </header>
+            
+            <div className="animate-fade-in">
+                 <TicketList />
+            </div>
+
+        </div>
     );
 }
