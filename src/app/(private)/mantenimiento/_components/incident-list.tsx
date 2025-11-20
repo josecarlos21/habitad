@@ -3,9 +3,10 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { mockIncidents } from "@/lib/mocks";
+import { useCollection, useFirestore } from "@/firebase";
+import { collection, query, orderBy } from "firebase/firestore";
 import type { Incident } from "@/lib/types";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ArrowRight, Tag } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCondoUser } from "@/hooks/use-condo-user";
 
 const IncidentStatusBadge = ({ status }: { status: Incident['status'] }) => {
     const statusMap: Record<Incident['status'], { label: string; className: string }> = {
@@ -35,21 +37,20 @@ const IncidentStatusBadge = ({ status }: { status: Incident['status'] }) => {
 };
 
 export function IncidentList() {
-    const [incidents, setIncidents] = React.useState<Incident[]>([]);
-    const [isLoading, setIsLoading] = React.useState(true);
+    const firestore = useFirestore();
+    const { user } = useCondoUser();
+    
+    const incidentsQuery = React.useMemo(() => {
+        if (!firestore || !user) return null;
+        // In a real app, you would also filter by user or condo.
+        // For now, we'll fetch all incidents for the condo.
+        return query(
+          collection(firestore, `condos/${user.condoId}/incidents`),
+          orderBy("createdAt", "desc")
+        );
+    }, [firestore, user]);
 
-    React.useEffect(() => {
-        setIsLoading(true);
-        // Simula la carga de datos desde una API
-        const timer = setTimeout(() => {
-            // Ordenamos los incidentes para mostrar los más recientes primero
-            const sortedIncidents = [...mockIncidents].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-            setIncidents(sortedIncidents);
-            setIsLoading(false);
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, []);
+    const { data: incidents, isLoading } = useCollection<Incident>(incidentsQuery);
 
     if (isLoading) {
         return (
@@ -73,6 +74,10 @@ export function IncidentList() {
         );
     }
 
+    if (!incidents || incidents.length === 0) {
+        return <p className="text-muted-foreground text-center py-8">No hay incidentes reportados.</p>
+    }
+
     return (
         <div className="space-y-4">
             {incidents.map((incident) => (
@@ -83,7 +88,7 @@ export function IncidentList() {
                             <IncidentStatusBadge status={incident.status} />
                         </div>
                         <div className="text-sm pt-1 text-muted-foreground">
-                            {`#${incident.id.split('_')[1]} • Creado ${formatDistanceToNow(new Date(incident.createdAt), { addSuffix: true, locale: es })}`}
+                            {`#${incident.id.substring(0, 7)} • Creado ${formatDistanceToNow(new Date(incident.createdAt), { addSuffix: true, locale: es })}`}
                         </div>
                     </CardHeader>
                     <CardContent>

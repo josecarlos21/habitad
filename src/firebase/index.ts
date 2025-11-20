@@ -7,6 +7,8 @@ import { getFirestore, Firestore } from "firebase/firestore";
 import { firebaseConfig } from "./config";
 import { FirebaseProvider, useAuth, useFirebaseApp, useFirestore } from './provider';
 import { useUser } from './auth/use-user';
+import { useCollection } from './firestore/use-collection';
+import { useDoc } from './firestore/use-doc';
 
 function initializeFirebase(): {
   firebaseApp: FirebaseApp;
@@ -33,4 +35,6 @@ export {
   useUser,
   useFirebaseApp,
   useFirestore,
+  useCollection,
+  useDoc,
 };
