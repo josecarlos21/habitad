@@ -18,6 +18,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { LanguageToggle } from "./language-toggle";
 import { Menu, Bell } from "lucide-react";
 import { useSidebar } from "../providers/sidebar-provider";
+import { LiveClock } from "./live-clock";
 
 export function AppHeader() {
   const { user } = useUser();
@@ -35,15 +36,16 @@ export function AppHeader() {
           <Menu className="h-5 w-5" />
           <span className="sr-only">Toggle navigation menu</span>
         </Button>
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link href="/dashboard" className="hidden items-center gap-2 md:flex">
           <Icons.logo className="h-6 w-6 text-primary" />
-          <span className="hidden text-lg font-semibold md:block">
+          <span className="text-lg font-semibold">
             Habitat <span className="font-light text-muted-foreground">Conectado</span>
           </span>
         </Link>
       </div>
       
       <div className="flex w-full items-center justify-end gap-2 md:ml-auto md:gap-4">
+        <LiveClock />
         <div className="hidden items-center gap-2 md:flex">
           <LanguageToggle />
         </div>
