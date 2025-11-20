@@ -16,6 +16,7 @@ export const useCondoUser = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        // Start loading whenever the auth state changes.
         setIsLoading(true);
         if (user) {
             // In a real app, you would fetch the user's condo profile from Firestore
@@ -44,5 +45,3 @@ export const useCondoUser = () => {
 
     return { user: profile, isLoading, error };
 };
-
-    

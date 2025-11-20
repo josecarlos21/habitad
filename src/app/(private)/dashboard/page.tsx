@@ -20,7 +20,7 @@ const createActivityFeed = ({ announcements, incidents, bookings, visitorPasses,
     const announcementItems = announcements?.map(item => ({ ...item, type: 'announcement', date: item.createdAt, title: item.title, description: `Publicado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` })) || [];
     const incidentItems = incidents?.map(item => ({ ...item, type: 'incident', date: item.createdAt, title: item.title, description: `Creado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` })) || [];
     const bookingItems = bookings?.map(item => ({ ...item, type: 'booking', date: item.start, title: `Reserva: ${item.amenityId}`, description: format(new Date(item.start), "eeee dd 'a las' h:mm a", { locale: es }) })) || [];
-    const visitorPassItems = visitorPasses?.map(item => ({ ...item, type: 'visitor_pass', date: item.validFrom, title: `Pase para: ${item.visitorName}`, description: `Generado ${formatDistanceToNow(new Date(item.validFrom), { locale: es, addSuffix: true })}` })) || [];
+    const visitorPassItems = visitorPasses?.map(item => ({ ...item, type: 'visitor_pass', date: item.createdAt, title: `Pase para: ${item.visitorName}`, description: `Generado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` })) || [];
     const parcelItems = parcels?.filter(p => p.status === 'at_guard').map(item => ({ ...item, type: 'parcel', date: item.arrivedAt, title: `Paquete de ${item.carrier}`, description: `Recibido ${formatDistanceToNow(new Date(item.arrivedAt), { locale: es, addSuffix: true })}` })) || [];
     const assemblyItems = assemblies?.filter(a => a.status === 'OPEN').map(item => ({ ...item, type: 'assembly', date: item.scheduledAt, title: item.title, description: `Próximo ${format(new Date(item.scheduledAt), "eeee dd 'de' MMMM", { locale: es })}` })) || [];
 
@@ -43,12 +43,11 @@ const itemTypeDetails: Record<string, { icon: React.ElementType, link: string | 
 };
 
 
-function PrimaryAction({ charge, incident, isLoading }: { charge?: Charge, incident?: Incident, isLoading: boolean }) {
-    const { user } = useCondoUser();
+function PrimaryAction({ charge, incident, isLoading, userName }: { charge?: Charge, incident?: Incident, isLoading: boolean, userName?: string }) {
 
     if (isLoading) {
         return (
-            <Card>
+             <Card className="mb-8">
                 <CardHeader className="flex-row items-center gap-4">
                     <Skeleton className="h-12 w-12 rounded-lg" />
                     <div className="flex-1 space-y-2">
@@ -90,7 +89,7 @@ function PrimaryAction({ charge, incident, isLoading }: { charge?: Charge, incid
 
     return (
         <section className="mb-8">
-            <h2 className="text-xl font-semibold tracking-tight mb-4">Hola, {user?.name.split(' ')[0]}</h2>
+            <h2 className="text-xl font-semibold tracking-tight mb-4">Hola, {userName}</h2>
             {item ? (
                  <Link href={item.link} className="block group">
                      <Card className="bg-gradient-to-tr from-primary/10 via-card to-card text-foreground transition-all duration-300 ease-in-out group-hover:shadow-soft group-hover:border-primary/40 group-hover:scale-[1.02]">
@@ -124,35 +123,40 @@ export default function DashboardPage() {
     const firestore = useFirestore();
     const { user, isLoading: isUserLoading } = useCondoUser();
 
-    // Fetch all required data using our hooks
+    // Queries Memoization
     const incidentsQuery = useMemo(() => !firestore || !user ? null : query(collection(firestore, `condos/${user.condoId}/incidents`), where('status', 'in', ['OPEN', 'IN_PROGRESS']), orderBy('createdAt', 'desc'), limit(5)), [firestore, user]);
-    const chargesQuery = useMemo(() => !firestore || !user ? null : query(collection(firestore, `condos/${user.condoId}/charges`), where('status', 'in', ['OPEN', 'PARTIALLY_PAID']), orderBy('dueDate', 'asc')), [firestore, user]);
-    const passesQuery = useMemo(() => !firestore || !user ? null : query(collection(firestore, `condos/${user.condoId}/visitor-passes`), where('userId', '==', user.userId), orderBy('validFrom', 'desc'), limit(5)), [firestore, user]);
+    const chargesQuery = useMemo(() => {
+        if (!firestore || !user || user.units.length === 0) return null;
+        return query(collection(firestore, `condos/${user.condoId}/charges`), where('unitId', 'in', user.units.map(u=>u.id)), where('status', 'in', ['OPEN', 'PARTIALLY_PAID']), orderBy('dueDate', 'asc'))
+    }, [firestore, user]);
+    const passesQuery = useMemo(() => !firestore || !user ? null : query(collection(firestore, `condos/${user.condoId}/visitor-passes`), where('userId', '==', user.userId), orderBy('createdAt', 'desc'), limit(5)), [firestore, user]);
     const parcelsQuery = useMemo(() => {
         if (!firestore || !user || user.units.length === 0) return null;
         return query(collection(firestore, `condos/${user.condoId}/parcels`), where('unitId', 'in', user.units.map(u=>u.id)), orderBy('arrivedAt', 'desc'), limit(5));
     }, [firestore, user]);
     const announcementsQuery = useMemo(() => !firestore || !user ? null : query(collection(firestore, `condos/${user.condoId}/announcements`), orderBy('createdAt', 'desc'), limit(5)), [firestore, user]);
     const assembliesQuery = useMemo(() => !firestore || !user ? null : query(collection(firestore, `condos/${user.condoId}/assemblies`), orderBy('scheduledAt', 'desc'), limit(5)), [firestore, user]);
-    // Bookings are not yet implemented in this version
-    // const bookingsQuery = ...
 
+    // Data Fetching
     const { data: incidents, isLoading: isIncidentsLoading } = useCollection<Incident>(incidentsQuery);
     const { data: charges, isLoading: isChargesLoading } = useCollection<Charge>(chargesQuery);
     const { data: visitorPasses, isLoading: isPassesLoading } = useCollection<VisitorPass>(passesQuery);
     const { data: parcels, isLoading: isParcelsLoading } = useCollection<Parcel>(parcelsQuery);
     const { data: announcements, isLoading: isAnnouncementsLoading } = useCollection<Announcement>(announcementsQuery);
     const { data: assemblies, isLoading: isAssembliesLoading } = useCollection<Assembly>(assembliesQuery);
-
+    
+    // Global loading state
     const isLoading = isUserLoading || isIncidentsLoading || isChargesLoading || isPassesLoading || isParcelsLoading || isAnnouncementsLoading || isAssembliesLoading;
 
-    const nextPayment = charges?.[0];
-    const activeIncident = incidents?.[0];
-    const activityFeed = createActivityFeed({ announcements, incidents, bookings: null, visitorPasses, parcels, assemblies });
-
+    // Data processing
+    const nextPayment = useMemo(() => charges?.[0], [charges]);
+    const activeIncident = useMemo(() => incidents?.[0], [incidents]);
+    const activityFeed = useMemo(() => createActivityFeed({ announcements, incidents, bookings: null, visitorPasses, parcels, assemblies }), [announcements, incidents, visitorPasses, parcels, assemblies]);
+    const userName = useMemo(() => user?.name.split(' ')[0], [user]);
+    
     return (
         <main className="flex flex-1 flex-col p-4 md:p-6 animate-fade-in">
-           <PrimaryAction charge={nextPayment} incident={activeIncident} isLoading={isLoading} />
+           <PrimaryAction charge={nextPayment} incident={activeIncident} isLoading={isLoading} userName={userName} />
        
             <section className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -210,5 +214,3 @@ export default function DashboardPage() {
         </main>
     );
 }
-
-    
