@@ -2,7 +2,7 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CreditCard, Download, QrCode, Share2 } from 'lucide-react';
+import { ArrowLeft, CreditCard, Download, Share2 } from 'lucide-react';
 import { useDoc, useFirestore } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useCondoUser } from '@/hooks/use-condo-user';
@@ -23,7 +23,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 const ChargeStatusBadge = ({ status, dueDate }: { status: Charge['status'], dueDate: string }) => {
     const isOverdue = new Date(dueDate) < new Date() && status === 'OPEN';
@@ -37,7 +39,7 @@ const ChargeStatusBadge = ({ status, dueDate }: { status: Charge['status'], dueD
         overdue: { label: 'Vencido', className: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300' },
         PARTIALLY_PAID: { label: 'Parcial', className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300' },
         CANCELLED: { label: 'Cancelado', className: 'bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-400' },
-    }
+    };
     const current = statusMap[finalStatus] || statusMap.OPEN;
 
     return (
@@ -48,7 +50,7 @@ const ChargeStatusBadge = ({ status, dueDate }: { status: Charge['status'], dueD
             {current.label}
         </Badge>
     );
-}
+};
 
 function PaymentDetailSkeleton() {
     return (
@@ -60,7 +62,8 @@ function PaymentDetailSkeleton() {
                         <Skeleton className="h-4 w-1/2" />
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <Skeleton className="h-6 w-1/3" />
+                        <Skeleton className="h-10 w-1/3" />
+                         <Separator />
                         <Skeleton className="h-10 w-full" />
                         <Skeleton className="h-10 w-full" />
                     </CardContent>
@@ -80,7 +83,7 @@ function PaymentDetailSkeleton() {
                  </Card>
             </div>
         </div>
-    )
+    );
 }
 
 export default function PaymentDetailPage({ params }: { params: { id: string } }) {
@@ -107,7 +110,7 @@ export default function PaymentDetailPage({ params }: { params: { id: string } }
                 </header>
                 <PaymentDetailSkeleton />
             </main>
-        )
+        );
     }
 
     return (
@@ -130,7 +133,7 @@ export default function PaymentDetailPage({ params }: { params: { id: string } }
                                 <div>
                                     <CardTitle className="text-2xl">{charge.description}</CardTitle>
                                     <CardDescription className="mt-1">
-                                        Vence el {new Date(charge.dueDate).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                        Vence el {format(new Date(charge.dueDate), 'dd \'de\' MMMM \'de\' yyyy', { locale: es })}
                                     </CardDescription>
                                 </div>
                                 <ChargeStatusBadge status={charge.status} dueDate={charge.dueDate} />
