@@ -1,11 +1,28 @@
 "use client";
 
+import React, { useState, useEffect } from 'react';
 import { mockAssemblies } from "@/lib/mocks";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, FileText, Check, X, Circle } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
+import { Calendar, FileText } from "lucide-react";
+
+const AssemblyTime = ({ date }: { date: string }) => {
+    const [clientTime, setClientTime] = useState('');
+
+    useEffect(() => {
+        // This effect runs only on the client, after hydration
+        setClientTime(new Date(date).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }));
+    }, [date]);
+
+    if (!clientTime) {
+        // Render a placeholder or nothing on the server and initial client render
+        return <span className="w-16 h-4 inline-block bg-muted animate-pulse rounded-md" />;
+    }
+
+    return <span>{clientTime} hrs</span>;
+}
+
 
 export function AsambleasContent() {
 
@@ -27,7 +44,7 @@ export function AsambleasContent() {
                                 </div>
                                 <div className="flex items-center text-sm text-muted-foreground pt-1">
                                     <Calendar className="w-4 h-4 mr-2" />
-                                    <span>{new Date(assembly.scheduledAt).toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - {new Date(assembly.scheduledAt).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })} hrs</span>
+                                    <span>{new Date(assembly.scheduledAt).toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - <AssemblyTime date={assembly.scheduledAt} /></span>
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-4">
