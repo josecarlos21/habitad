@@ -1,13 +1,36 @@
+
 "use client";
 
-import { mockUser } from "@/lib/mocks";
+import { useUser } from "@/hooks/use-user";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Camera } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function UserProfileCard() {
-    const user = mockUser;
+    const { user, isLoading } = useUser();
+
+    if (isLoading || !user) {
+        return (
+             <Card>
+                <CardHeader>
+                    <CardTitle>Información Personal</CardTitle>
+                    <CardDescription>Estos son tus datos como residente.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center space-x-6">
+                        <Skeleton className="h-24 w-24 rounded-full" />
+                        <div className="space-y-2">
+                            <Skeleton className="h-7 w-48" />
+                            <Skeleton className="h-5 w-64" />
+                            <Skeleton className="h-4 w-24" />
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        );
+    }
 
     return (
         <Card>
