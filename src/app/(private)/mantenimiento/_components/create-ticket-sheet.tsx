@@ -33,9 +33,9 @@ import { useToast } from "@/hooks/use-toast";
 
 
 const ticketSchema = z.object({
-  title: z.string().min(5, "El título debe tener al menos 5 caracteres"),
+  title: z.string().min(5, { message: "El título debe tener al menos 5 caracteres." }),
   category: z.enum(["plumbing", "electrical", "common_area", "other"], { required_error: "Debes seleccionar una categoría."}),
-  description: z.string().min(10, "La descripción debe tener al menos 10 caracteres"),
+  description: z.string().min(10, { message: "La descripción debe tener al menos 10 caracteres." }),
 });
 
 type TicketFormValues = z.infer<typeof ticketSchema>;
@@ -47,7 +47,6 @@ interface CreateTicketSheetProps {
 
 export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
     const [open, setOpen] = React.useState(false);
-    const [isSubmitting, setIsSubmitting] = React.useState(false);
     const { toast } = useToast();
     
     const form = useForm<TicketFormValues>({
@@ -55,11 +54,13 @@ export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
         defaultValues: {
             title: "",
             description: "",
+            category: undefined,
         },
     });
 
+    const { isSubmitting } = form.formState;
+
   const onSubmit = async (data: TicketFormValues) => {
-    setIsSubmitting(true);
     try {
         await onTicketCreated(data);
         toast({
@@ -74,8 +75,6 @@ export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
             title: "Error al crear ticket",
             description: "No se pudo crear el ticket. Inténtalo de nuevo.",
         });
-    } finally {
-        setIsSubmitting(false);
     }
   };
 
@@ -102,10 +101,10 @@ export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
                 <SheetHeader>
                     <SheetTitle>Crear Nuevo Ticket</SheetTitle>
                     <SheetDescription>
-                    Describe el problema que estás experimentando.
+                    Describe el problema que estás experimentando. Sé lo más detallado posible.
                     </SheetDescription>
                 </SheetHeader>
-                <div className="py-4 space-y-4 flex-1">
+                <div className="py-4 space-y-4 flex-1 overflow-y-auto pr-2">
                     <FormField
                         control={form.control}
                         name="title"
@@ -147,9 +146,9 @@ export function CreateTicketSheet({ onTicketCreated }: CreateTicketSheetProps) {
                         name="description"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Descripción</FormLabel>
+                                <FormLabel>Descripción Detallada</FormLabel>
                                 <FormControl>
-                                    <Textarea placeholder="Describe detalladamente el problema..." {...field} disabled={isSubmitting} />
+                                    <Textarea placeholder="Describe detalladamente el problema, cuándo comenzó y su ubicación exacta..." {...field} disabled={isSubmitting} rows={5} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

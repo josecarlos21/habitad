@@ -6,7 +6,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { amenities as mockAmenities } from "@/lib/mocks";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, CheckCircle } from "lucide-react";
 import type { Amenity } from "@/lib/types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription, SheetFooter, SheetClose } from "@/components/ui/sheet";
 import { Calendar } from "@/components/ui/calendar";
@@ -15,14 +15,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/app/empty-state";
 import { es } from "date-fns/locale";
 import { Spinner } from "@/components/ui/spinner";
-import { useRouter } from "next/navigation";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
-function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
+
+function BookAmenitySheet({ amenity, onBookingSuccess }: { amenity: Amenity, onBookingSuccess: (amenityName: string, date: Date) => void }) {
     const { toast } = useToast();
-    const router = useRouter();
     const [open, setOpen] = React.useState(false);
     const [date, setDate] = React.useState<Date | undefined>(new Date());
     const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [isSuccess, setIsSuccess] = React.useState(false);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -38,14 +40,19 @@ function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
         });
 
         setIsSubmitting(false);
-        setOpen(false);
-        // Redirect to a confirmation or bookings list page
-        router.push('/servicios?tab=reservas');
+        setIsSuccess(true);
+        onBookingSuccess(amenity.name, date);
     };
     
     const handleOpenChange = (isOpen: boolean) => {
         if(isSubmitting) return;
         setOpen(isOpen);
+        if (!isOpen) {
+             setTimeout(() => {
+                setDate(new Date());
+                setIsSuccess(false);
+            }, 300);
+        }
     }
 
     return (
@@ -57,33 +64,50 @@ function BookAmenitySheet({ amenity }: { amenity: Amenity }) {
                 </Button>
             </SheetTrigger>
             <SheetContent>
-                 <SheetHeader>
-                    <SheetTitle>Reservar: {amenity.name}</SheetTitle>
-                    <SheetDescription>
-                        Selecciona una fecha y horario para tu reserva.
-                    </SheetDescription>
-                </SheetHeader>
-                <form onSubmit={handleSubmit} className="flex flex-col h-full">
-                    <div className="py-4 flex-1">
-                        <Calendar
-                            mode="single"
-                            selected={date}
-                            onSelect={setDate}
-                            className="rounded-md border"
-                            disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1)) || isSubmitting}
-                            locale={es}
-                        />
+                {isSuccess ? (
+                    <div className="flex flex-col items-center justify-center h-full text-center p-4 animate-fade-in">
+                        <CheckCircle className="w-20 h-20 text-green-500 mb-4" />
+                        <h3 className="text-xl font-semibold">¡Reserva Solicitada!</h3>
+                        <p className="text-muted-foreground mt-2">
+                            Tu solicitud para <span className="font-semibold text-foreground">{amenity.name}</span> el día <span className="font-semibold text-foreground">{date ? format(date, "dd 'de' MMMM", { locale: es }) : ''}</span> ha sido enviada.
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-2">Recibirás una notificación cuando sea aprobada por la administración.</p>
+                        <Button className="mt-6 w-full" onClick={() => handleOpenChange(false)}>Cerrar</Button>
                     </div>
-                    <SheetFooter>
-                         <SheetClose asChild>
-                            <Button variant="outline" disabled={isSubmitting}>Cancelar</Button>
-                        </SheetClose>
-                        <Button type="submit" disabled={!date || isSubmitting}>
-                            {isSubmitting && <Spinner size="sm" className="mr-2"/>}
-                            {isSubmitting ? 'Enviando...' : 'Confirmar Reserva'}
-                        </Button>
-                    </SheetFooter>
-                </form>
+                ) : (
+                    <form onSubmit={handleSubmit} className="flex flex-col h-full">
+                        <SheetHeader>
+                            <SheetTitle>Reservar: {amenity.name}</SheetTitle>
+                            <SheetDescription>
+                                Selecciona una fecha y horario para tu reserva. La administración confirmará la disponibilidad.
+                            </SheetDescription>
+                        </SheetHeader>
+                        <div className="py-4 flex-1">
+                            <Calendar
+                                mode="single"
+                                selected={date}
+                                onSelect={setDate}
+                                className="rounded-md border"
+                                disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1)) || isSubmitting}
+                                locale={es}
+                            />
+                            {amenity.requiresDeposit && (
+                                <div className="mt-4 text-sm text-muted-foreground p-3 bg-muted rounded-lg">
+                                    Esta amenidad requiere un depósito de seguridad de ${amenity.depositAmount} MXN que se cargará a tu cuenta.
+                                </div>
+                            )}
+                        </div>
+                        <SheetFooter>
+                            <SheetClose asChild>
+                                <Button variant="outline" disabled={isSubmitting}>Cancelar</Button>
+                            </SheetClose>
+                            <Button type="submit" disabled={!date || isSubmitting}>
+                                {isSubmitting && <Spinner size="sm" className="mr-2"/>}
+                                {isSubmitting ? 'Enviando Solicitud...' : 'Confirmar Reserva'}
+                            </Button>
+                        </SheetFooter>
+                    </form>
+                )}
             </SheetContent>
         </Sheet>
     )
@@ -101,6 +125,11 @@ export default function ReservasPageContent() {
         }, 500);
         return () => clearTimeout(timer);
     }, []);
+
+    const handleBookingSuccess = (amenityName: string, date: Date) => {
+        // Here you would typically refetch bookings or update the state
+        console.log(`Booking for ${amenityName} on ${date} was successful.`);
+    }
 
     return (
         <div className="pt-4 animate-fade-in">
@@ -137,7 +166,7 @@ export default function ReservasPageContent() {
                                         alt={amenity.name} 
                                         fill
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                        style={{ objectFit: 'cover' }}
+                                        className="object-cover"
                                         data-ai-hint="amenity lifestyle"
                                     />
                                 </div>
@@ -147,7 +176,7 @@ export default function ReservasPageContent() {
                                 <CardDescription className="mt-2 flex-1">{amenity.description}</CardDescription>
                             </div>
                             <CardFooter>
-                               <BookAmenitySheet amenity={amenity} />
+                               <BookAmenitySheet amenity={amenity} onBookingSuccess={handleBookingSuccess} />
                             </CardFooter>
                         </Card>
                     ))}

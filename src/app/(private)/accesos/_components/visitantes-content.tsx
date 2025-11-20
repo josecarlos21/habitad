@@ -43,7 +43,6 @@ export default function VisitantesPageContent() {
             ...newPass,
         };
         setVisitorPasses(prev => [pass, ...prev]);
-        // Toast is now handled inside the sheet for better feedback
     }
 
     return (

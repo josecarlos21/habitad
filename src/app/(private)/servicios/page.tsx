@@ -12,21 +12,22 @@ export default function ServiciosPage() {
     const tab = searchParams.get('tab')
 
     const handleTabChange = (value: string) => {
-        router.push(`/servicios?tab=${value}`);
+        // Use `replace` to avoid adding a new entry to the browser's history
+        router.replace(`/servicios?tab=${value}`, { scroll: false });
     };
     
     return (
         <main className="flex flex-1 flex-col p-4 md:p-6">
-            <h1 className="text-2xl font-bold tracking-tight mb-4">Servicios</h1>
+            <h1 className="text-2xl font-bold tracking-tight mb-4">Servicios y Reportes</h1>
             <Tabs 
-                defaultValue={tab || "reservas"} 
+                value={tab || "reservas"} 
                 className="w-full" 
                 onValueChange={handleTabChange}
-                activationMode="manual"
+                activationMode="automatic"
             >
                 <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="reservas">Reservas</TabsTrigger>
-                    <TabsTrigger value="mantenimiento">Mantenimiento</TabsTrigger>
+                    <TabsTrigger value="reservas">Reservar Amenidades</TabsTrigger>
+                    <TabsTrigger value="mantenimiento">Tickets de Mantenimiento</TabsTrigger>
                 </TabsList>
                 <TabsContent value="reservas">
                     <ReservasPageContent />
