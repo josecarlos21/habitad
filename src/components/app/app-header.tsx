@@ -16,13 +16,25 @@ import {
 import { Icons } from "../icons";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageToggle } from "./language-toggle";
-import { Menu, Bell } from "lucide-react";
+import { Menu, Bell, LogOut } from "lucide-react";
 import { useSidebar } from "../providers/sidebar-provider";
 import { LiveClock } from "./live-clock";
+import { useAuth } from "@/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export function AppHeader() {
   const { user } = useCondoUser();
   const { toggleSidebar } = useSidebar();
+  const auth = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    if (!auth) return;
+    signOut(auth).then(() => {
+      router.push('/auth/login');
+    });
+  }
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur-sm md:px-6">
@@ -86,8 +98,9 @@ export function AppHeader() {
                 <Link href="/settings">Ajustes</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/auth/login">Cerrar sesión</Link>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Cerrar sesión
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

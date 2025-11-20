@@ -5,7 +5,7 @@ import { createContext, useContext } from "react";
 import type { FirebaseApp } from "firebase/app";
 import type { Auth } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
-import { useUser as useAuthUser } from "./auth/use-user";
+import { useUser as useAuthUserHook } from "./auth/use-user";
 
 interface FirebaseContextValue {
   app: FirebaseApp;
@@ -48,5 +48,5 @@ export function useFirestore() {
 
 export function useUser() {
     const auth = useAuth();
-    return useAuthUser(auth);
+    return useAuthUserHook(auth);
 }

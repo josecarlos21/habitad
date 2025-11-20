@@ -5,7 +5,8 @@ import { initializeApp, getApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 import { firebaseConfig } from "./config";
-import { FirebaseProvider, useAuth, useUser, useFirebaseApp, useFirestore } from './provider';
+import { FirebaseProvider, useAuth, useFirebaseApp, useFirestore } from './provider';
+import { useUser } from './auth/use-user';
 
 function initializeFirebase(): {
   firebaseApp: FirebaseApp;

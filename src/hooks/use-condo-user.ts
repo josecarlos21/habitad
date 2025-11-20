@@ -1,17 +1,16 @@
 
-import { useAuth, useUser as useFirebaseUser } from "@/firebase";
+import { useUser as useFirebaseUser } from "@/firebase";
 import { mockUser } from '@/lib/mocks';
 import { UserCondoProfile } from '@/lib/types';
 import { useEffect, useState } from 'react';
 
-// This is a mock hook. In a real app, you would fetch this from your auth provider.
+// This hook merges the authenticated Firebase user with the mock condo profile.
 export const useCondoUser = () => {
-    const auth = useAuth();
     const {
         data: user,
         isLoading: isAuthLoading,
         error,
-    } = useFirebaseUser(auth);
+    } = useFirebaseUser();
 
     const [profile, setProfile] = useState<UserCondoProfile | null>(null);
     const [isLoading, setIsLoading] = useState(true);
