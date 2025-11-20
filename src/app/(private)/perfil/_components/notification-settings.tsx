@@ -2,16 +2,17 @@
 
 import * as React from "react";
 import { mockNotificationPrefs } from "@/lib/mocks";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import type { NotificationPref } from "@/lib/types";
 
 
 export function NotificationSettings() {
+    const { toast } = useToast();
     const [prefs, setPrefs] = React.useState<NotificationPref>(mockNotificationPrefs);
     const [isSaving, setIsSaving] = React.useState(false);
 

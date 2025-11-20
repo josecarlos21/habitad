@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import type { Ticket } from "@/lib/types";
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Timeline, TimelineItem, TimelineConnector, TimelineHeader, TimelineTitle, TimelineIcon, TimelineDescription } from "@/components/ui/timeline";
+// import { Timeline, TimelineItem, TimelineConnector, TimelineHeader, TimelineTitle, TimelineIcon, TimelineDescription } from "@/components/ui/timeline";
 import { CheckCircle, Clock, Wrench } from "lucide-react";
 
 // This file is no longer used and will be removed in a future commit.
@@ -107,7 +107,8 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                             <CardTitle>Historial de Actualizaciones</CardTitle>
                         </CardHeader>
                         <CardContent>
-                             <Timeline>
+                            <p className="text-muted-foreground">El historial de actualizaciones aún no está disponible.</p>
+                            {/* <Timeline>
                                 {ticket.history.map((entry, index) => (
                                     <TimelineItem key={index}>
                                         <TimelineConnector />
@@ -121,7 +122,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                                         </TimelineDescription>
                                     </TimelineItem>
                                 ))}
-                            </Timeline>
+                            </Timeline> */}
                         </CardContent>
                     </Card>
                 </div>
