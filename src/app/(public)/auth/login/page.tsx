@@ -19,6 +19,7 @@ import React from "react";
 import { useAuth } from "@/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 
 export default function LoginPage() {
@@ -29,11 +30,19 @@ export default function LoginPage() {
   const auth = useAuth();
   const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = (e?: React.FormEvent, demoUser?: 'residente' | 'admin') => {
+    if (e) e.preventDefault();
     if (!auth) return;
+
+    let finalEmail = email;
+    if (demoUser === 'residente') {
+      finalEmail = 'residente@habitat.com';
+    } else if (demoUser === 'admin') {
+      finalEmail = 'admin@habitat.com';
+    }
+    
     setIsLoading(true);
-    signInWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(auth, finalEmail, "password")
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
@@ -49,6 +58,8 @@ export default function LoginPage() {
           title: "Error de inicio de sesión",
           description: "Usuario o contraseña incorrectos. Inténtalo de nuevo.",
         })
+      })
+      .finally(() => {
         setIsLoading(false);
       });
   };
@@ -88,13 +99,6 @@ export default function LoginPage() {
                 disabled={isLoading}
               />
             </div>
-             <div className="text-xs text-muted-foreground pt-2">
-                <p>Usuarios de prueba (pass: password):</p>
-                <ul className="list-disc pl-4">
-                    <li>residente@habitat.com (Rol: Residente)</li>
-                    <li>admin@habitat.com (Rol: Admin)</li>
-                </ul>
-            </div>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
@@ -102,6 +106,20 @@ export default function LoginPage() {
             {isLoading && <Spinner size="sm" className="mr-2" />}
             {isLoading ? "Ingresando..." : "Iniciar Sesión"}
           </Button>
+           <div className="relative w-full">
+            <Separator />
+            <span className="absolute left-1/2 -translate-x-1/2 -top-2.5 bg-card px-2 text-xs text-muted-foreground">
+              O entra como demo
+            </span>
+          </div>
+           <div className="grid grid-cols-2 gap-4 w-full">
+             <Button variant="secondary" onClick={() => handleLogin(undefined, 'residente')} disabled={isLoading}>
+                Residente
+            </Button>
+             <Button variant="secondary" onClick={() => handleLogin(undefined, 'admin')} disabled={isLoading}>
+                Admin
+            </Button>
+           </div>
           <Button variant="link" size="sm" className="text-muted-foreground" asChild>
             <Link href="/auth">Volver a opciones</Link>
           </Button>
@@ -110,5 +128,3 @@ export default function LoginPage() {
     </Card>
   );
 }
-
-    
