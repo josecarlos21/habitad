@@ -88,7 +88,7 @@ function PrimaryAction({ charge, incident, isLoading, userName }: { charge?: Cha
 
     return (
         <section className="mb-8">
-            <h2 className="text-xl font-semibold tracking-tight mb-4">Hola, {userName}</h2>
+            <h2 className="text-xl font-semibold tracking-tight mb-4">Hola, {userName || 'Residente'}</h2>
             {item ? (
                  <Link href={item.link} className="block group">
                      <Card className="bg-gradient-to-tr from-primary/10 via-card to-card text-foreground transition-all duration-300 ease-in-out group-hover:shadow-soft group-hover:border-primary/40 group-hover:scale-[1.02]">
@@ -213,3 +213,5 @@ export default function DashboardPage() {
         </main>
     );
 }
+
+    
