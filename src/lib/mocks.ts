@@ -22,7 +22,7 @@ export const mockUser: UserCondoProfile = {
     name: 'Residente Conectado',
     email: 'residente@habitat.com',
     role: 'RESIDENT',
-    units: [{ id: 'unit_101', condoId: 'condo_1', code: 'A-101', type: 'APARTMENT', isActive: true, tower: 'A', number: '101' }],
+    units: [{ id: 'unit_101', condoId: 'condo_1', code: 'A-101', type: 'APARTMENT', isActive: true, areaM2: 90, tower: 'A', number: '101' }],
     imageUrl: 'https://i.pravatar.cc/150?u=residente',
     unitIds: ['unit_101'],
     occupantType: 'OWNER',

@@ -133,7 +133,7 @@ export default function PaymentDetailPage({ params }: { params: { id: string } }
                                 <div>
                                     <CardTitle className="text-2xl">{charge.description}</CardTitle>
                                     <CardDescription className="mt-1">
-                                        Vence el {format(new Date(charge.dueDate), 'dd \'de\' MMMM \'de\' yyyy', { locale: es })}
+                                        Vence el {format(new Date(charge.dueDate), 'dd \\'de\\' MMMM \\'de\\' yyyy', { locale: es })}
                                     </CardDescription>
                                 </div>
                                 <ChargeStatusBadge status={charge.status} dueDate={charge.dueDate} />

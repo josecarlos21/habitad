@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 
 // NOTE: Firebase Auth is temporarily bypassed to allow access.
+// We simulate the login to grant access to the rest of the app.
 // import { useAuth } from "@/firebase";
 // import { signInWithEmailAndPassword } from "firebase/auth";
 
@@ -34,46 +35,25 @@ export default function LoginPage() {
   const handleLogin = (demoUser?: 'residente' | 'admin') => {
     setIsLoading(true);
 
-    // Simulate login and redirect to dashboard
+    // In a real scenario, this would set some user state in a global store
+    // or context after successful Firebase authentication.
+    // For this simulation, we'll use a simple timeout and redirect.
+    console.log(`Simulating login for: ${demoUser || email}`);
+    
+    // We choose the user based on the button clicked or the form input
+    if (demoUser === 'admin') {
+      // Logic to handle admin login if needed, e.g. setting a specific cookie/storage item.
+      console.log('Logging in as admin demo user.');
+    } else {
+      // Default to resident
+      console.log('Logging in as resident demo user.');
+    }
+
     setTimeout(() => {
-      // In a real scenario, you'd set some user state here
-      // For now, we just redirect. The useCondoUser hook will use a mock.
-      console.log(`Simulating login for: ${demoUser || email}`);
       router.push("/dashboard");
     }, 500);
 
-    // --- REAL FIREBASE LOGIC (TEMPORARILY DISABLED) ---
-    // if (!auth) {
-    //   toast({
-    //     variant: "destructive",
-    //     title: "Error de configuración",
-    //     description: "El servicio de autenticación no está disponible.",
-    //   });
-    //   setIsLoading(false);
-    //   return;
-    // }
-
-    // let loginEmail = email;
-    // if (demoUser === 'residente') loginEmail = 'residente@habitat.com';
-    // if (demoUser === 'admin') loginEmail = 'admin@habitat.com';
-
-    // signInWithEmailAndPassword(auth, loginEmail, "password")
-    //   .then((userCredential) => {
-    //     const user = userCredential.user;
-    //     console.log("Signed in as", user);
-    //     router.push("/dashboard");
-    //   })
-    //   .catch((error) => {
-    //     console.error("Login error", error.code, error.message);
-    //     toast({
-    //       variant: "destructive",
-    //       title: "Error de inicio de sesión",
-    //       description: "Usuario o contraseña incorrectos. Inténtalo de nuevo.",
-    //     });
-    //   })
-    //   .finally(() => {
-    //     setIsLoading(false);
-    //   });
+    // --- REAL FIREBASE LOGIC IS CURRENTLY DISABLED TO GUARANTEE ACCESS ---
   };
 
   return (

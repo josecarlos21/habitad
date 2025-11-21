@@ -6,7 +6,6 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReservasPageContent from "./_components/reservas-content";
 import { Calendar, Wrench } from "lucide-react";
-import { useEffect } from "react";
 
 export default function ServiciosPage() {
     const router = useRouter();
@@ -23,14 +22,6 @@ export default function ServiciosPage() {
         params.set('tab', value);
         router.replace(`${pathname}?${params.toString()}`);
     }
-
-    // Redirect to maintenance if tab is set from another page
-    useEffect(() => {
-        if (tab === 'mantenimiento') {
-            router.replace('/mantenimiento');
-        }
-    }, [tab, router]);
-
 
     return (
         <main className="flex flex-1 flex-col p-4 md:p-6">
@@ -52,8 +43,7 @@ export default function ServiciosPage() {
                 <TabsContent value="reservas">
                     <ReservasPageContent />
                 </TabsContent>
-                {/* The maintenance tab is now handled by redirection */}
-                <TabsContent value="mantenimiento">
+                 <TabsContent value="mantenimiento">
                     <div className="pt-4 text-center text-muted-foreground">
                         Redirigiendo a Mantenimiento...
                     </div>
