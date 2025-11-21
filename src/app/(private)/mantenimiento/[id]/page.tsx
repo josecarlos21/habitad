@@ -5,7 +5,6 @@ import React from "react";
 import Link from "next/link";
 import { useDoc, useFirestore } from "@/firebase";
 import type { Incident } from "@/lib/types";
-import { notFound } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { ArrowLeft, Paperclip, Send, Wrench } from "lucide-react";
@@ -21,6 +20,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { doc } from "firebase/firestore";
 import { useCondoUser } from "@/hooks/use-condo-user";
 import { mockUser } from "@/lib/mocks"; // Keep for comments mock
+import { updateIncidentStatus } from "../_services/update-incident-status-service";
 
 const statusMap: Record<Incident['status'], { label: string; variant: "destructive" | "info" | "warning" | "success" | "secondary" }> = {
     OPEN: { label: "Abierto", variant: "destructive" },
@@ -100,16 +100,23 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
     };
 
     const handleResolveIncident = async () => {
-        if (incident) {
-            setIsResolving(true);
-            // In a real app, you'd call a server action to update the status in Firestore
-            await new Promise(resolve => setTimeout(resolve, 1500)); 
+        if (!incident) return;
+        setIsResolving(true);
+        try {
+            await updateIncidentStatus(incident.id, 'RESOLVED');
             toast({
+                variant: 'success',
                 title: "Incidente Actualizado",
-                description: "Has marcado el incidente como 'Resuelto'. Administración verificará la solución.",
+                description: "Has marcado el incidente como 'Resuelto'.",
             });
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "No se pudo actualizar el incidente. Inténtalo de nuevo.",
+            });
+        } finally {
             setIsResolving(false);
-            // The UI will update automatically thanks to the realtime listener in useDoc
         }
     };
     
@@ -119,7 +126,6 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
 
     if (!incident) {
         // This can happen briefly on load or if doc doesn't exist
-        // If it persists, useDoc will set an error and we could show a notFound page.
         return <IncidentDetailSkeleton />;
     }
 
@@ -229,3 +235,5 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
         </main>
     );
 }
+
+    
