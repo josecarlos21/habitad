@@ -30,8 +30,7 @@ export default function LoginPage() {
   const auth = useAuth();
   const { toast } = useToast();
 
-  const handleLogin = (e?: React.FormEvent, demoUser?: 'residente' | 'admin') => {
-    if (e) e.preventDefault();
+  const handleLogin = (demoUser?: 'residente' | 'admin') => {
     if (!auth) return;
 
     let finalEmail = email;
@@ -72,7 +71,10 @@ export default function LoginPage() {
           Ingresa tu correo y contraseña para continuar.
         </CardDescription>
       </CardHeader>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        handleLogin();
+      }}>
         <CardContent>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -113,10 +115,10 @@ export default function LoginPage() {
             </span>
           </div>
            <div className="grid grid-cols-2 gap-4 w-full">
-             <Button variant="secondary" onClick={() => handleLogin(undefined, 'residente')} disabled={isLoading}>
+             <Button variant="secondary" onClick={() => handleLogin('residente')} disabled={isLoading}>
                 Residente
             </Button>
-             <Button variant="secondary" onClick={() => handleLogin(undefined, 'admin')} disabled={isLoading}>
+             <Button variant="secondary" onClick={() => handleLogin('admin')} disabled={isLoading}>
                 Admin
             </Button>
            </div>
