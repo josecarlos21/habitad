@@ -85,7 +85,6 @@ function PrimaryAction({ charge, incident, isLoading, userName }: { charge?: Cha
         }
     }
 
-
     return (
         <section className="mb-8">
             <h2 className="text-xl font-semibold tracking-tight mb-4">Hola, {userName || 'Residente'}</h2>
@@ -151,7 +150,7 @@ export default function DashboardPage() {
     const nextPayment = useMemo(() => charges?.[0], [charges]);
     const activeIncident = useMemo(() => incidents?.[0], [incidents]);
     const activityFeed = useMemo(() => createActivityFeed({ announcements, incidents, visitorPasses, parcels, assemblies }), [announcements, incidents, visitorPasses, parcels, assemblies]);
-    const userName = useMemo(() => user?.name.split(' ')[0], [user]);
+    const userName = useMemo(() => user?.name?.split(' ')[0], [user]);
     
     return (
         <main className="flex flex-1 flex-col p-4 md:p-6 animate-fade-in">
@@ -213,5 +212,3 @@ export default function DashboardPage() {
         </main>
     );
 }
-
-    

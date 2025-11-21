@@ -122,7 +122,7 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
     
     const isLoading = isUserLoading || isIncidentLoading;
 
-    if (isLoading || !incident) {
+    if (isLoading || !condoUser || !incident) {
         return <IncidentDetailSkeleton />;
     }
 
