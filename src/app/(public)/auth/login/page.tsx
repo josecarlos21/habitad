@@ -16,46 +16,64 @@ import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { useAuth } from "@/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 
+// NOTE: Firebase Auth is temporarily bypassed to allow access.
+// import { useAuth } from "@/firebase";
+// import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
   const [email, setEmail] = React.useState("residente@habitat.com");
   const [password, setPassword] = React.useState("password");
-  const auth = useAuth();
+  // const auth = useAuth();
   const { toast } = useToast();
 
-  const handleLogin = (loginEmail?: string) => {
-    if (!auth) return;
-
-    const finalEmail = loginEmail || email;
-    
+  const handleLogin = (demoUser?: 'residente' | 'admin') => {
     setIsLoading(true);
-    signInWithEmailAndPassword(auth, finalEmail, "password")
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        console.log("Signed in as", user);
-        router.push("/dashboard");
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error("Login error", errorCode, errorMessage);
-        toast({
-          variant: "destructive",
-          title: "Error de inicio de sesión",
-          description: "Usuario o contraseña incorrectos. Inténtalo de nuevo.",
-        })
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+
+    // Simulate login and redirect to dashboard
+    setTimeout(() => {
+      // In a real scenario, you'd set some user state here
+      // For now, we just redirect. The useCondoUser hook will use a mock.
+      console.log(`Simulating login for: ${demoUser || email}`);
+      router.push("/dashboard");
+    }, 500);
+
+    // --- REAL FIREBASE LOGIC (TEMPORARILY DISABLED) ---
+    // if (!auth) {
+    //   toast({
+    //     variant: "destructive",
+    //     title: "Error de configuración",
+    //     description: "El servicio de autenticación no está disponible.",
+    //   });
+    //   setIsLoading(false);
+    //   return;
+    // }
+
+    // let loginEmail = email;
+    // if (demoUser === 'residente') loginEmail = 'residente@habitat.com';
+    // if (demoUser === 'admin') loginEmail = 'admin@habitat.com';
+
+    // signInWithEmailAndPassword(auth, loginEmail, "password")
+    //   .then((userCredential) => {
+    //     const user = userCredential.user;
+    //     console.log("Signed in as", user);
+    //     router.push("/dashboard");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Login error", error.code, error.message);
+    //     toast({
+    //       variant: "destructive",
+    //       title: "Error de inicio de sesión",
+    //       description: "Usuario o contraseña incorrectos. Inténtalo de nuevo.",
+    //     });
+    //   })
+    //   .finally(() => {
+    //     setIsLoading(false);
+    //   });
   };
 
   return (
@@ -110,10 +128,10 @@ export default function LoginPage() {
             </span>
           </div>
            <div className="grid grid-cols-2 gap-4 w-full">
-             <Button variant="secondary" onClick={() => handleLogin('residente@habitat.com')} disabled={isLoading}>
+             <Button type="button" variant="secondary" onClick={() => handleLogin('residente')} disabled={isLoading}>
                 Residente
             </Button>
-             <Button variant="secondary" onClick={() => handleLogin('admin@habitat.com')} disabled={isLoading}>
+             <Button type="button" variant="secondary" onClick={() => handleLogin('admin')} disabled={isLoading}>
                 Admin
             </Button>
            </div>
