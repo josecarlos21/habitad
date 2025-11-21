@@ -30,15 +30,10 @@ export default function LoginPage() {
   const auth = useAuth();
   const { toast } = useToast();
 
-  const handleLogin = (demoUser?: 'residente' | 'admin') => {
+  const handleLogin = (loginEmail?: string) => {
     if (!auth) return;
 
-    let finalEmail = email;
-    if (demoUser === 'residente') {
-      finalEmail = 'residente@habitat.com';
-    } else if (demoUser === 'admin') {
-      finalEmail = 'admin@habitat.com';
-    }
+    const finalEmail = loginEmail || email;
     
     setIsLoading(true);
     signInWithEmailAndPassword(auth, finalEmail, "password")
@@ -115,10 +110,10 @@ export default function LoginPage() {
             </span>
           </div>
            <div className="grid grid-cols-2 gap-4 w-full">
-             <Button variant="secondary" onClick={() => handleLogin('residente')} disabled={isLoading}>
+             <Button variant="secondary" onClick={() => handleLogin('residente@habitat.com')} disabled={isLoading}>
                 Residente
             </Button>
-             <Button variant="secondary" onClick={() => handleLogin('admin')} disabled={isLoading}>
+             <Button variant="secondary" onClick={() => handleLogin('admin@habitat.com')} disabled={isLoading}>
                 Admin
             </Button>
            </div>
