@@ -38,22 +38,51 @@ export default function LoginPage() {
     // In a real scenario, this would set some user state in a global store
     // or context after successful Firebase authentication.
     // For this simulation, we'll use a simple timeout and redirect.
-    console.log(`Simulating login for: ${demoUser || email}`);
-    
-    // We choose the user based on the button clicked or the form input
+
+    let loginEmail = email;
     if (demoUser === 'admin') {
-      // Logic to handle admin login if needed, e.g. setting a specific cookie/storage item.
-      console.log('Logging in as admin demo user.');
-    } else {
-      // Default to resident
-      console.log('Logging in as resident demo user.');
+      loginEmail = 'admin@habitat.com';
+    } else if (demoUser === 'residente') {
+      loginEmail = 'residente@habitat.com';
     }
+    
+    console.log(`Simulating login for: ${loginEmail}`);
 
     setTimeout(() => {
+      // Here you would typically use a state management library to set the user
+      // For this demo, we just redirect.
       router.push("/dashboard");
     }, 500);
 
     // --- REAL FIREBASE LOGIC IS CURRENTLY DISABLED TO GUARANTEE ACCESS ---
+    // if (!auth) {
+    //     toast({
+    //         variant: "destructive",
+    //         title: "Error",
+    //         description: "El servicio de autenticación no está disponible. Inténtalo de nuevo más tarde."
+    //     });
+    //     setIsLoading(false);
+    //     return;
+    // }
+    // signInWithEmailAndPassword(auth, loginEmail, password)
+    // .then((userCredential) => {
+    //   // Signed in
+    //   router.push("/dashboard");
+    // })
+    // .catch((error) => {
+    //   const errorCode = error.code;
+    //   const errorMessage = error.message;
+    //   toast({
+    //     variant: "destructive",
+    //     title: "Error de autenticación",
+    //     description: "El correo o la contraseña son incorrectos.",
+    //   });
+    //   console.error(errorCode, errorMessage);
+    // })
+    // .finally(() => {
+    //   setIsLoading(false);
+    // });
+    // --- END OF REAL FIREBASE LOGIC ---
   };
 
   return (

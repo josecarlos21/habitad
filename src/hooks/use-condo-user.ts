@@ -18,7 +18,7 @@ export const useCondoUser = () => {
     useEffect(() => {
         setIsLoading(true);
         if (user) {
-            // Determine which mock profile to use based on email
+            // Determine which mock profile to use based on email for the demo
             let baseProfile = user.email === 'admin@habitat.com' ? mockAdmin : mockUser;
 
             setProfile({
@@ -31,6 +31,7 @@ export const useCondoUser = () => {
             });
             setIsLoading(false);
         } else if (!isAuthLoading) {
+            // Only set to null if auth is not loading and user is definitely not there
             setProfile(null);
             setIsLoading(false);
         }
