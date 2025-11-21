@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import type { Amenity } from '@/lib/types';
 import { useCollection, useFirestore } from '@/firebase';
 import { useCondoUser } from '@/hooks/use-condo-user';
-import { collection } from 'firebase/firestore';
+import { collection, query } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/app/empty-state';
 
@@ -36,7 +36,7 @@ export default function ReservasPageContent() {
 
     const amenitiesQuery = React.useMemo(() => {
         if (!firestore || !user) return null;
-        return collection(firestore, `condos/${user.condoId}/amenities`);
+        return query(collection(firestore, `condos/${user.condoId}/amenities`));
     }, [firestore, user]);
 
     const { data: amenities, isLoading } = useCollection<Amenity>(amenitiesQuery);

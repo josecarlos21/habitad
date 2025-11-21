@@ -54,7 +54,7 @@ export default function VisitantesPageContent() {
                 await navigator.share({
                     title: `Acceso para ${pass.visitorName}`,
                     text: `¡Hola! Te comparto el acceso para tu visita al condominio. Es válido hasta ${format(new Date(pass.validTo), "dd/MMM hh:mm a", { locale: es })}.`,
-                    url: window.location.href, // En una app real, sería una URL pública para el pase
+                    url: window.location.href, // In a real app, this would be a public URL for the pass
                 });
             } catch (error) {
                 console.error("Error al compartir", error);

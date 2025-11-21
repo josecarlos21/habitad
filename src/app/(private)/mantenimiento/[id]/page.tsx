@@ -84,7 +84,7 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
 
     const { data: incident, isLoading: isIncidentLoading } = useDoc<Incident>(incidentRef);
 
-    const [isResolving, setIsResolving] = React.useState(false);
+    const [isUpdating, setIsUpdating] = React.useState(false);
 
     const handleCommentSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -101,7 +101,7 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
 
     const handleResolveIncident = async () => {
         if (!incident) return;
-        setIsResolving(true);
+        setIsUpdating(true);
         try {
             await updateIncidentStatus(incident.id, 'RESOLVED');
             toast({
@@ -116,16 +116,13 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
                 description: "No se pudo actualizar el incidente. Inténtalo de nuevo.",
             });
         } finally {
-            setIsResolving(false);
+            setIsUpdating(false);
         }
     };
     
-    if (isUserLoading || isIncidentLoading) {
-        return <IncidentDetailSkeleton />;
-    }
+    const isLoading = isUserLoading || isIncidentLoading;
 
-    if (!incident) {
-        // This can happen briefly on load or if doc doesn't exist
+    if (isLoading || !incident) {
         return <IncidentDetailSkeleton />;
     }
 
@@ -223,10 +220,10 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
                                 variant="secondary" 
                                 className="w-full" 
                                 onClick={handleResolveIncident} 
-                                disabled={isResolving || incident.status === 'RESOLVED' || incident.status === 'CANCELLED'}
+                                disabled={isUpdating || incident.status === 'RESOLVED' || incident.status === 'CANCELLED'}
                             >
-                                {isResolving && <Spinner size="sm" className="mr-2" />}
-                                {isResolving ? 'Actualizando...' : 'Marcar como Resuelto'}
+                                {isUpdating && <Spinner size="sm" className="mr-2" />}
+                                {isUpdating ? 'Actualizando...' : 'Marcar como Resuelto'}
                              </Button>
                         </CardContent>
                     </Card>
@@ -235,5 +232,3 @@ export default function IncidentDetailPage({ params }: { params: { id: string } 
         </main>
     );
 }
-
-    

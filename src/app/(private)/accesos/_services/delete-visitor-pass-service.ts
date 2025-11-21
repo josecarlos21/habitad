@@ -12,7 +12,7 @@ export async function deleteVisitorPass(passId: string) {
     }
 
     const headersList = headers();
-    const condoId = headersList.get('x-condo-id') || 'condo_1'; 
+    const condoId = headersList.get('x-condo-id'); 
     
     if (!condoId) {
         throw new Error("La información del condominio es requerida.");
@@ -24,7 +24,7 @@ export async function deleteVisitorPass(passId: string) {
     try {
         await deleteDoc(passRef);
         console.log("Visitor pass deleted successfully: ", passId);
-        revalidatePath('/accesos'); // Revalidate the page to reflect the change
+        revalidatePath('/accesos'); // This might not be needed with real-time updates but is good practice
         return { success: true };
     } catch (error) {
         console.error("Error deleting visitor pass:", error);

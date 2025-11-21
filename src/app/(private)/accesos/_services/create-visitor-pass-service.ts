@@ -16,8 +16,8 @@ export async function createVisitorPass(data: VisitorPassFormData) {
     const validatedData = visitorPassSchema.parse(data);
     
     const headersList = headers();
-    const condoId = headersList.get('x-condo-id') || 'condo_1'; 
-    const userId = headersList.get('x-user-id') || 'user_123';
+    const condoId = headersList.get('x-condo-id'); 
+    const userId = headersList.get('x-user-id');
     
     if (!condoId || !userId) {
         throw new Error("User or condo information is missing.");

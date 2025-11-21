@@ -40,5 +40,3 @@ export async function updateIncidentStatus(incidentId: string, status: IncidentS
         throw new Error("No se pudo actualizar el estado del incidente en Firestore.");
     }
 }
-
-    

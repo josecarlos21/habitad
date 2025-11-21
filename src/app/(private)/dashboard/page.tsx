@@ -16,16 +16,15 @@ import { useCollection, useFirestore } from "@/firebase";
 import { collection, query, where, orderBy, limit } from "firebase/firestore";
 
 // Helper to combine and sort all relevant items into a single feed
-const createActivityFeed = ({ announcements, incidents, bookings, visitorPasses, parcels, assemblies }: { announcements: Announcement[] | null, incidents: Incident[] | null, bookings: AmenityBooking[] | null, visitorPasses: VisitorPass[] | null, parcels: Parcel[] | null, assemblies: Assembly[] | null }) => {
+const createActivityFeed = ({ announcements, incidents, visitorPasses, parcels, assemblies }: { announcements: Announcement[] | null, incidents: Incident[] | null, visitorPasses: VisitorPass[] | null, parcels: Parcel[] | null, assemblies: Assembly[] | null }) => {
     const announcementItems = announcements?.map(item => ({ ...item, type: 'announcement', date: item.createdAt, title: item.title, description: `Publicado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` })) || [];
     const incidentItems = incidents?.map(item => ({ ...item, type: 'incident', date: item.createdAt, title: item.title, description: `Creado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` })) || [];
-    const bookingItems = bookings?.map(item => ({ ...item, type: 'booking', date: item.start, title: `Reserva: ${item.amenityId}`, description: format(new Date(item.start), "eeee dd 'a las' h:mm a", { locale: es }) })) || [];
     const visitorPassItems = visitorPasses?.map(item => ({ ...item, type: 'visitor_pass', date: item.createdAt, title: `Pase para: ${item.visitorName}`, description: `Generado ${formatDistanceToNow(new Date(item.createdAt), { locale: es, addSuffix: true })}` })) || [];
     const parcelItems = parcels?.filter(p => p.status === 'at_guard').map(item => ({ ...item, type: 'parcel', date: item.arrivedAt, title: `Paquete de ${item.carrier}`, description: `Recibido ${formatDistanceToNow(new Date(item.arrivedAt), { locale: es, addSuffix: true })}` })) || [];
     const assemblyItems = assemblies?.filter(a => a.status === 'OPEN').map(item => ({ ...item, type: 'assembly', date: item.scheduledAt, title: item.title, description: `Próximo ${format(new Date(item.scheduledAt), "eeee dd 'de' MMMM", { locale: es })}` })) || [];
 
 
-    const allItems = [...announcementItems, ...incidentItems, ...bookingItems, ...visitorPassItems, ...parcelItems, ...assemblyItems];
+    const allItems = [...announcementItems, ...incidentItems, ...visitorPassItems, ...parcelItems, ...assemblyItems];
     
     // Sort by date, most recent first
     return allItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -126,12 +125,12 @@ export default function DashboardPage() {
     // Queries Memoization
     const incidentsQuery = useMemo(() => !firestore || !user ? null : query(collection(firestore, `condos/${user.condoId}/incidents`), where('status', 'in', ['OPEN', 'IN_PROGRESS']), orderBy('createdAt', 'desc'), limit(5)), [firestore, user]);
     const chargesQuery = useMemo(() => {
-        if (!firestore || !user || user.units.length === 0) return null;
+        if (!firestore || !user || !user.units || user.units.length === 0) return null;
         return query(collection(firestore, `condos/${user.condoId}/charges`), where('unitId', 'in', user.units.map(u=>u.id)), where('status', 'in', ['OPEN', 'PARTIALLY_PAID']), orderBy('dueDate', 'asc'))
     }, [firestore, user]);
     const passesQuery = useMemo(() => !firestore || !user ? null : query(collection(firestore, `condos/${user.condoId}/visitor-passes`), where('userId', '==', user.userId), orderBy('createdAt', 'desc'), limit(5)), [firestore, user]);
     const parcelsQuery = useMemo(() => {
-        if (!firestore || !user || user.units.length === 0) return null;
+        if (!firestore || !user || !user.units || user.units.length === 0) return null;
         return query(collection(firestore, `condos/${user.condoId}/parcels`), where('unitId', 'in', user.units.map(u=>u.id)), orderBy('arrivedAt', 'desc'), limit(5));
     }, [firestore, user]);
     const announcementsQuery = useMemo(() => !firestore || !user ? null : query(collection(firestore, `condos/${user.condoId}/announcements`), orderBy('createdAt', 'desc'), limit(5)), [firestore, user]);
@@ -151,7 +150,7 @@ export default function DashboardPage() {
     // Data processing
     const nextPayment = useMemo(() => charges?.[0], [charges]);
     const activeIncident = useMemo(() => incidents?.[0], [incidents]);
-    const activityFeed = useMemo(() => createActivityFeed({ announcements, incidents, bookings: null, visitorPasses, parcels, assemblies }), [announcements, incidents, visitorPasses, parcels, assemblies]);
+    const activityFeed = useMemo(() => createActivityFeed({ announcements, incidents, visitorPasses, parcels, assemblies }), [announcements, incidents, visitorPasses, parcels, assemblies]);
     const userName = useMemo(() => user?.name.split(' ')[0], [user]);
     
     return (

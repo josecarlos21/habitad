@@ -18,10 +18,8 @@ export const useCondoUser = () => {
     useEffect(() => {
         setIsLoading(true);
         if (user) {
-            let baseProfile = mockUser; // Default to resident
-            if (user.email === 'admin@habitat.com') {
-                baseProfile = mockAdmin;
-            }
+            // Determine which mock profile to use based on email
+            let baseProfile = user.email === 'admin@habitat.com' ? mockAdmin : mockUser;
 
             setProfile({
                 ...baseProfile,
@@ -30,7 +28,6 @@ export const useCondoUser = () => {
                 email: user.email || baseProfile.email,
                 name: user.displayName || baseProfile.name,
                 imageUrl: user.photoURL || baseProfile.imageUrl,
-                units: baseProfile.units, 
             });
             setIsLoading(false);
         } else if (!isAuthLoading) {

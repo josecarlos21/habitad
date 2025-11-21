@@ -13,7 +13,6 @@ import type { Assembly } from "@/lib/types";
 import { useCollection, useFirestore } from "@/firebase";
 import { useCondoUser } from "@/hooks/use-condo-user";
 import { collection, query, orderBy } from "firebase/firestore";
-import Link from "next/link";
 
 const statusMap: Record<Assembly['status'], { label: string; className: string }> = {
     DRAFT: { label: "Borrador", className: "bg-gray-100 text-gray-800" },

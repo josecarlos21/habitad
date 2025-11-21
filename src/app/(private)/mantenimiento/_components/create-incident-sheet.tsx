@@ -17,7 +17,6 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { CheckCircle, PlusCircle } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/hooks/use-toast";
@@ -60,6 +59,7 @@ export function CreateIncidentSheet() {
     try {
       await createIncident(data);
       setIsSuccess(true);
+      // No need to call onIncidentCreated prop anymore
     } catch (error) {
        toast({
         variant: "destructive",

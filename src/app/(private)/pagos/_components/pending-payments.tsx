@@ -10,22 +10,23 @@ import { ArrowRight, AlertTriangle, Wallet } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCollection, useFirestore } from "@/firebase";
 import { useCondoUser } from "@/hooks/use-condo-user";
-import { collection, query, where } from "firebase/firestore";
+import { collection, query, where, orderBy } from "firebase/firestore";
 
 export function PendingPayments() {
     const firestore = useFirestore();
     const { user } = useCondoUser();
     
     const pendingChargesQuery = React.useMemo(() => {
-        if (!firestore || !user || user.units.length === 0) return null;
-        // This query should get all charges for the user's units
+        if (!firestore || !user || !user.units || user.units.length === 0) return null;
+        
         const userUnitIds = user.units.map(u => u.id);
         if (userUnitIds.length === 0) return null;
 
         return query(
           collection(firestore, `condos/${user.condoId}/charges`),
           where("unitId", "in", userUnitIds),
-          where("status", "in", ["OPEN", "PARTIALLY_PAID"])
+          where("status", "in", ["OPEN", "PARTIALLY_PAID"]),
+          orderBy("dueDate", "asc")
         );
     }, [firestore, user]);
 
@@ -59,14 +60,11 @@ export function PendingPayments() {
         );
     }
 
-    // Sort by due date ascending
-    const sortedCharges = pendingCharges.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
-
     return (
         <section>
             <h2 className="text-xl font-semibold mb-4">Pagos Pendientes</h2>
             <div className="grid gap-4 md:grid-cols-2">
-                {sortedCharges.map(charge => {
+                {pendingCharges.map(charge => {
                     const isOverdue = new Date(charge.dueDate) < new Date();
                     return (
                     <Card key={charge.id} className={isOverdue ? 'border-destructive' : ''}>

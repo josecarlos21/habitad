@@ -17,6 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCollection, useFirestore } from "@/firebase";
 import { useCondoUser } from "@/hooks/use-condo-user";
 import { collection, query, where, orderBy } from "firebase/firestore";
+import Link from 'next/link';
 
 const ChargeStatusBadge = ({ status, dueDate }: { status: Charge['status'], dueDate: string }) => {
     const isOverdue = new Date(dueDate) < new Date() && status === 'OPEN';
@@ -48,8 +49,8 @@ export function PaymentsHistory() {
     const { user } = useCondoUser();
     
     const chargesQuery = React.useMemo(() => {
-        if (!firestore || !user || user.units.length === 0) return null;
-        // This query should get all charges for the user's units
+        if (!firestore || !user || !user.units || user.units.length === 0) return null;
+        
         const userUnitIds = user.units.map(u => u.id);
         if (userUnitIds.length === 0) return null;
 
@@ -87,8 +88,12 @@ export function PaymentsHistory() {
                             ))
                         ) : charges && charges.length > 0 ? (
                             charges.map((charge) => (
-                                <TableRow key={charge.id}>
-                                    <TableCell className="font-medium max-w-[200px] truncate">{charge.description}</TableCell>
+                                <TableRow key={charge.id} className="cursor-pointer hover:bg-muted/50">
+                                    <TableCell className="font-medium max-w-[200px] truncate">
+                                        <Link href={`/pagos/${charge.id}`} className="hover:underline">
+                                            {charge.description}
+                                        </Link>
+                                    </TableCell>
                                     <TableCell className="hidden md:table-cell">{new Date(charge.dueDate).toLocaleDateString('es-MX', { month: 'long', day: 'numeric', year: 'numeric' })}</TableCell>
                                     <TableCell className="text-right">${charge.amount.toLocaleString('es-MX')}</TableCell>
                                     <TableCell className="text-center"><ChargeStatusBadge status={charge.status} dueDate={charge.dueDate} /></TableCell>

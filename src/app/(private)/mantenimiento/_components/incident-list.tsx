@@ -16,14 +16,15 @@ import { ArrowRight, Tag, Wrench } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCondoUser } from "@/hooks/use-condo-user";
 import { EmptyState } from "@/components/app/empty-state";
+import { CreateIncidentSheet } from "./create-incident-sheet";
 
 const IncidentStatusBadge = ({ status }: { status: Incident['status'] }) => {
     const statusMap: Record<Incident['status'], { label: string; className: string }> = {
-        OPEN: { label: 'Abierto', className: 'bg-red-100 text-red-800 border-red-200' },
-        IN_PROGRESS: { label: 'En Progreso', className: 'bg-blue-100 text-blue-800 border-blue-200' },
-        WAITING_EXTERNAL: { label: 'En Espera', className: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
-        RESOLVED: { label: 'Resuelto', className: 'bg-green-100 text-green-800 border-green-200' },
-        CANCELLED: { label: 'Cancelado', className: 'bg-gray-100 text-gray-800 border-gray-200' },
+        OPEN: { label: 'Abierto', className: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/50 dark:text-red-300' },
+        IN_PROGRESS: { label: 'En Progreso', className: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/50 dark:text-blue-300' },
+        WAITING_EXTERNAL: { label: 'En Espera', className: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300' },
+        RESOLVED: { label: 'Resuelto', className: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-300' },
+        CANCELLED: { label: 'Cancelado', className: 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800/50 dark:text-gray-400' },
     };
     const currentStatus = statusMap[status] || { label: status, className: ''};
 
@@ -80,13 +81,14 @@ export function IncidentList() {
             icon={Wrench} 
             title="Sin Reportes" 
             description="No hay reportes de mantenimiento activos. ¡Todo parece estar en orden!"
+            action={<CreateIncidentSheet />}
         />
     }
 
     return (
         <div className="space-y-4">
-            {incidents.map((incident) => (
-                <Card key={incident.id}>
+            {incidents.map((incident, i) => (
+                <Card key={incident.id} className="animate-slide-up-and-fade" style={{animationDelay: `${i * 100}ms`}}>
                     <CardHeader>
                         <div className="flex justify-between items-start">
                             <CardTitle className="text-lg leading-tight max-w-xs md:max-w-md">{incident.title}</CardTitle>
