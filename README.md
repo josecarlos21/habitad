@@ -1,6 +1,6 @@
-# Habitat Conectado · Frontend Mock
+# Habitad Conectado v1.0
 
-Prototype UI for a condominium super-app built with Next.js 15, React 18, Tailwind, and Radix primitives. It focuses on a polished end-to-end resident experience (onboarding, dashboard, payments, maintenance, reservations, visitors, paquetería, perfil, ajustes) using static data mocks while backend services are defined.
+Production-ready super-app for condominiums built with Next.js 15, React 18, Tailwind, and Radix primitives. Complete end-to-end resident experience (onboarding, dashboard, payments, maintenance, reservations, visitors, packages, profile, settings) ready for backend integration.
 
 ## Flujo principal
 
